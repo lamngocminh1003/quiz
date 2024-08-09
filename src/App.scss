@@ -1,0 +1,102 @@
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  .text {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: rgb(124, 121, 121);
+    color: #eeeded;
+  }
+}
+@media (max-width: 767px) {
+  .input-group-text {
+    display: none;
+  }
+}
+/* Khi trình duyệt có chiều rộng dưới 768px (hoặc bất kỳ ngưỡng nào bạn chọn) */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background-color: rgb(241, 247, 248);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-track:hover {
+  background-color: #787676;
+}
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap");
+html,
+body,
+.app-container {
+  font-family: "Be Vietnam Pro", sans-serif;
+}
+.MuiTablePagination-selectLabel {
+  &.css-pdct74-MuiTablePagination-selectLabel {
+    margin-bottom: 0.9%;
+  }
+}
+
+.MuiTablePagination-displayedRows {
+  &.css-levciy-MuiTablePagination-displayedRows {
+    margin-bottom: 0.9%;
+  }
+}
+.MuiDataGrid-cell {
+  border-bottom: none !important;
+}
+.name-column--cell {
+  color: #2e7c67;
+  border-bottom: none !important;
+}
+.MuiDataGrid-columnHeaders {
+  background-color: #94e2cd;
+}
+.MuiDataGrid-virtualScroller {
+  background-color: #f2f0f0;
+}
+.MuiDataGrid-toolbarContainer {
+  border: none !important;
+}
+.underline-opening {
+  cursor: pointer;
+  color: #176b87;
+  &:hover {
+    color: #365486;
+    text-decoration-line: underline;
+  }
+}
+.underline-opening-success {
+  cursor: pointer;
+  color: #557c55;
+  &:hover {
+    color: #163020;
+    text-decoration-line: underline;
+  }
+}
+.department {
+  width: fit-content;
+}
+.footer {
+  width: 100%;
+  min-height: 20px;
+  padding: 20px 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+.card-footer {
+  background: rgb(248, 249, 250) !important;
+}

@@ -1,0 +1,75 @@
+.buttonActive {
+  color: #eeeded;
+  font-size: 12px !important;
+  width: 100%;
+  border-radius: 4px;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+}
+.boxActive {
+  color: #eeeded;
+  font-size: 12px !important;
+  width: 100%;
+  border-radius: 4px;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  text-align: center;
+}
+.buttonNoneResult {
+  background-color: #0d6efd;
+  color: #eeeded;
+  font-size: 12px !important;
+  width: 100%;
+  border-radius: 4px;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+}
+.NoneResult {
+  color: #0d6efd !important;
+  font-size: 12px !important;
+  width: 100%;
+  border-radius: 4px;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  text-align: center;
+}
+.cellStyle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 4px;
+}
+.iconStyle {
+  font-size: 12px !important;
+  margin-right: 5px;
+}
+.textStyle {
+  font-size: 12px !important;
+}
+.resultColorActive {
+  background-color: #0d6efd;
+  color: #eeeded;
+}
+
+.resultColorInactive {
+  background-color: #6c757d;
+  color: #eeeded;
+}

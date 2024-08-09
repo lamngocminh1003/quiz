@@ -1,0 +1,19 @@
+.scrollToTopButton {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 40px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  padding: 1px;
+  font-size: 20px;
+  cursor: pointer;
+  width: 40px; /* Đặt chiều rộng và chiều cao thành giá trị cố định */
+  height: 40px;
+}
+
+.scrollToTopButton.visible {
+  display: block;
+}

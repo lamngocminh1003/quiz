@@ -1,0 +1,29 @@
+# Ignore common Node.js and npm files
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Ignore development and build files
+*.log
+*.swp
+*.swo
+*.swn
+*.swn
+*.swn
+*.log
+*.swo
+*.swn
+*.swp
+coverage/
+build/
+dist/
+
+# Ignore editor and IDE-specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore system files
+.DS_Store
+Thumbs.db

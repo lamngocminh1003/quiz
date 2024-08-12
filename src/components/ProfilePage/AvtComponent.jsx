@@ -11,7 +11,7 @@ const AvtComponent = () => {
           className="rounded-circle img-fluid"
           style={{ width: "150px" }}
         />
-        <h5 className="my-3">John Smith</h5>
+        <h5 className="my-3">Amie</h5>
         <p className="text-muted mb-1">Full Stack Developer</p>
       </div>
     </>

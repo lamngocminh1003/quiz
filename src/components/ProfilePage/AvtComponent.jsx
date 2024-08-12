@@ -12,7 +12,7 @@ const AvtComponent = () => {
           style={{ width: "150px" }}
         />
         <h5 className="my-3">Amie</h5>
-        <p className="text-muted mb-1">Full Stack Developer</p>
+        <p className="text-muted mb-1">Full </p>
       </div>
     </>
   );

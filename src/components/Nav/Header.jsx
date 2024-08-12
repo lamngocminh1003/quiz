@@ -2,7 +2,7 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import logo from "../../assets/image/logo512.png";
+import logo from "../../assets/image/logo.png";
 import { useEffect, useState } from "react";
 import { getCategoryById } from "../../services/categoryService";
 import {
@@ -53,6 +53,7 @@ const Header = (props) => {
           collapseOnSelect
           expand="lg"
           className="bg-body-tertiary"
+          bg="light"
           sticky="top"
         >
           <Container>
@@ -60,11 +61,8 @@ const Header = (props) => {
               <img
                 alt="Logo ReactJS"
                 src={logo}
-                width="30"
-                height="30"
                 className="d-inline-block align-top"
               />
-              Quản lý chất lượng - BVNĐ2
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
@@ -76,43 +74,30 @@ const Header = (props) => {
                     </NavLink>
                     <>
                       <NavLink to="/categories" className="nav-link">
-                        Quy trình
+                        Đề thi online
                       </NavLink>
-                    </>
-                    <>
-                      <NavDropdown
-                        title="Chỉ số chất lượng"
-                        id="basic-nav-dropdown"
-                      >
-                        <NavDropdown.Item as={Link} to="/index-hospital">
-                          Hệ thống chỉ số bệnh viện
-                        </NavDropdown.Item>
-                        {categoryId != 1 && (
-                          <NavDropdown.Item
-                            as={Link}
-                            to={`/department-index/${categoryId}`}
-                          >
-                            Chỉ số {categoryData.categoryName}
-                          </NavDropdown.Item>
-                        )}
-                        <NavDropdown.Item as={Link} to="/department-index">
-                          Hệ thống chỉ số khoa/ phòng
-                        </NavDropdown.Item>
-                      </NavDropdown>
                     </>
                   </>
                 )}
               </Nav>
               <Nav>
-                <Navbar.Text>Xin chào {username}</Navbar.Text>
-                <a
-                  className="nav-link"
-                  target="_blank"
-                  href="https://ee.kobotoolbox.org/x/TbaYJful"
+                <NavDropdown
+                  title={`Xin chào ${username}`}
+                  id="basic-nav-dropdown"
                 >
-                  Góp ý
-                </a>
-                <NavDropdown title="Cài đặt" id="basic-nav-dropdown">
+                  <NavDropdown.Item as={Link} to="/profile-page">
+                    Trang cá nhân
+                  </NavDropdown.Item>
+                  {categoryId == 1 && (
+                    <NavDropdown.Item as={Link} to="/admin-page">
+                      Trang quản lý
+                    </NavDropdown.Item>
+                  )}
+                  <hr />
+                  <NavDropdown.Item
+                    as={Link}
+                    to="/department-index"
+                  ></NavDropdown.Item>
                   {auth === false ||
                     (!auth && (
                       <NavDropdown.Item as={Link} to="/login">

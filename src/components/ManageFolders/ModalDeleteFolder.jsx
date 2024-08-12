@@ -24,15 +24,15 @@ const ModalDeleteFolder = (props) => {
       if (res) {
         //success
         setShowDelete(false);
-        toast.success("Xóa quy trình thành công");
+        toast.success("Xóa đề thi thành công");
         handleDeleteFromModal(dataFolders);
         setIsShowLoadingDelete(false);
       } else {
-        toast.error("Xóa quy trình không thành công");
+        toast.error("Xóa đề thi không thành công");
         setIsShowLoadingDelete(false);
       }
     } catch (error) {
-      toast.error("Xóa quy trình không thành công");
+      toast.error("Xóa đề thi không thành công");
       setIsShowLoadingDelete(false);
     }
   };
@@ -42,13 +42,13 @@ const ModalDeleteFolder = (props) => {
       if (res) {
         //success
         setShowDelete(false);
-        toast.success("Xóa quy trình liên kết thành công");
+        toast.success("Xóa đề thi liên kết thành công");
         handleDeleteFromModal(dataFolders);
       } else {
-        toast.error("Xóa quy trình liên kết không thành công");
+        toast.error("Xóa đề thi liên kết không thành công");
       }
     } catch (error) {
-      toast.error("Xóa quy trình liên kết không thành công");
+      toast.error("Xóa đề thi liên kết không thành công");
     }
   };
   useEffect(() => {
@@ -63,35 +63,23 @@ const ModalDeleteFolder = (props) => {
       <Modal show={showDelete} onHide={handleClose} backdrop="static" centered>
         <Modal.Header closeButton>
           <Modal.Title className="fs-6 text-uppercase text-danger">
-            Xóa quy trình
+            Xóa đề thi
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <input type="text" className="form-control" value={id} hidden />
           <div className="input-group mb-3">
             <p className="input-group" id="inputGroup-sizing-default">
-              Bạn có muốn xóa quy trình
+              Bạn có muốn xóa đề thi
               <span className="text-primary mx-1">{folderName}</span> này không?
             </p>
             <p className="input-group mb-3 text-danger">
-              <h6>Lưu ý:</h6> Khi xóa các tha chiếu quy trình này tại các thư
-              mục, tài liệu và phiên bản thuộc quy trình này sẽ mất!
+              <h6>Lưu ý:</h6> Khi xóa đề thi này các đáp án và kết quả liên quan
+              sẽ mất!
             </p>
           </div>
         </Modal.Body>
-        <Modal.Footer className="d-flex justify-content-between mt-2 ">
-          {dataFolders.attachedOn && dataFolders.attachedBy ? (
-            <Box>
-              <Button variant="danger" onClick={handDeleteReference}>
-                {isShowLoadingDelete && (
-                  <i className="fas fa-spinner fa-pulse me-2 text-white"></i>
-                )}
-                Xóa liên kết
-              </Button>
-            </Box>
-          ) : (
-            <Box></Box>
-          )}
+        <Modal.Footer className="d-flex justify-content-end mt-2 ">
           <Box className="d-flex gap-2">
             <Button variant="secondary" onClick={handleClose}>
               Hủy

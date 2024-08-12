@@ -10,20 +10,11 @@ import {
 import ModalEditFolder from "./ModalEditFolder";
 import ModalAddNewFolder from "./ModalAddNewFolder";
 import ModalDeleteFolder from "./ModalDeleteFolder";
-import ModalFolderReference from "./ModalFolderReference";
-import ModalAddFolderReference from "./ModalAddFolderReference";
-import ModalDeleteFolderReference from "./ModalDeleteFolderReference";
 import { useHistory } from "react-router-dom";
 import _ from "lodash";
 import ScrollToTopButton from "../input/ScrollToTopButton";
-import SearchByName from "./SearchByName";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import FolderOffIcon from "@mui/icons-material/FolderOff";
-import FolderOpenIcon from "@mui/icons-material/FolderOpen";
-import CopyAllIcon from "@mui/icons-material/CopyAll";
-import SignalCellularNoSimOutlinedIcon from "@mui/icons-material/SignalCellularNoSimOutlined";
-import { renderCellExpand } from "../input/DesignLongContentInColumn";
 import {
   DataGrid,
   viVN,
@@ -34,7 +25,7 @@ import {
   GridToolbarExport,
 } from "@mui/x-data-grid";
 import { Box, Button } from "@mui/material";
-import { columnInfoFolder } from "../input/Column";
+import { columnInfoFolder, columnUser } from "../input/Column";
 const Folders = (props) => {
   const [pageSize, setPageSize] = useState(10);
   const [categoryData, setCategoryData] = useState([]);
@@ -49,7 +40,6 @@ const Folders = (props) => {
     useState(false);
   const [categoryId, setCategoryId] = useState("");
   const [sortOption, setSortOption] = useState(5);
-  const [isLoading, setIsLoading] = useState(false);
   const categoryIdLocalStorage = localStorage.getItem("categoryId");
   let history = useHistory();
   useEffect(() => {
@@ -67,7 +57,6 @@ const Folders = (props) => {
     }
   }, []);
   const fetchFolders = async (sortOption) => {
-    setIsLoading(true);
     let res = await fetchAllFolders(sortOption);
     if (res && res.data.folders) {
       if (categoryId) {
@@ -76,7 +65,6 @@ const Folders = (props) => {
         );
         setListAllFolders(updatedArray);
       }
-      setIsLoading(false);
     }
   };
   const getAllCategory = async () => {
@@ -91,7 +79,6 @@ const Folders = (props) => {
     }
   }; // Hàm để ánh xạ categoryId sang categoryName
   const fetchFoldersByCategoryId = async (categoryId) => {
-    setIsLoading(true);
     let res = await fetchAllFoldersByCategoryBlended(categoryId);
     if (res && res.data.folders) {
       res.data.folders.sort((a, b) => {
@@ -113,9 +100,7 @@ const Folders = (props) => {
           .join(", "),
       }));
       setListFolders(newData);
-      setIsLoading(false);
     }
-    setIsLoading(false);
   };
   const getCategoryByCategoryId = async (categoryId) => {
     let res = await getCategoryById(categoryId);
@@ -130,14 +115,7 @@ const Folders = (props) => {
     setShowEdit(true);
     setDataFolders(user);
   };
-  const handleFolderReference = (user) => {
-    setShowFolderReference(true);
-    setDataFolders(user);
-  };
-  const handleDeleteFolderReference = (user) => {
-    setShowDeleteFolderReference(true);
-    setDataFolders(user);
-  };
+
   const handleDeleteFile = (user) => {
     setShowDelete(true);
     setDataFolders(user);
@@ -145,67 +123,8 @@ const Folders = (props) => {
   const handleDeleteFromModal = (user) => {
     fetchFoldersByCategoryId(categoryId, sortOption);
   };
-  const handleViewRevisionActive = (folder) => {
-    history.push(`/revision-active/${folder.id}_${folder.categoryId}`);
-  };
-  const handleViewRevisionExpired = (folder) => {
-    history.push(`/revision-expired/${folder.id}_${folder.categoryId}`);
-  };
-  const handleBack = () => {
-    history.push(`/categories`);
-  };
-  const columnViewActiveColumn = [
-    {
-      field: "Tài liệu",
-      headerName: "Tài liệu",
-      disableExport: true,
-      Width: "fit-content",
-      sortable: false, // Tắt sắp xếp cho cột "Thao tác"
-      filterable: false, // Tắt lọc cho cột "Thao tác"
-      renderCell: (params) => {
-        return (
-          <>
-            <button
-              onClick={() => handleViewRevisionActive(params.row)}
-              variant="contained"
-              title="Tài liệu hiệu lực"
-              className="btn btn-success"
-            >
-              {categoryIdLocalStorage == 1 ? (
-                <>
-                  <FolderOpenIcon /> {params.row.activeFilesCount}
-                </>
-              ) : (
-                <FolderOpenIcon />
-              )}
-            </button>
-          </>
-        );
-      },
-    },
-  ];
+
   const columns2 = [
-    {
-      field: "Hết hiệu lực",
-      headerName: "Hết hiệu lực",
-      disableExport: true,
-      sortable: false, // Tắt sắp xếp cho cột "Thao tác"
-      filterable: false, // Tắt lọc cho cột "Thao tác"
-      renderCell: (params) => {
-        return (
-          <>
-            <button
-              onClick={() => handleViewRevisionExpired(params.row)}
-              variant="contained"
-              title="Tài liệu hết hiệu lực"
-              className="btn btn-secondary"
-            >
-              <FolderOffIcon /> {params.row.inactiveRevisionsCount}
-            </button>
-          </>
-        );
-      },
-    },
     {
       field: "Sửa",
       headerName: "Sửa",
@@ -218,7 +137,7 @@ const Folders = (props) => {
             <button
               onClick={() => handleEditFile(params.row)}
               variant="contained"
-              title="Sửa quy trình"
+              title="Sửa đề thi"
               className="btn btn-warning"
             >
               <EditIcon />
@@ -239,7 +158,7 @@ const Folders = (props) => {
             <button
               onClick={() => handleDeleteFile(params.row)}
               variant="contained"
-              title="Xóa quy trình"
+              title="Xóa đề thi"
               className="btn btn-danger"
             >
               <DeleteIcon />
@@ -249,66 +168,7 @@ const Folders = (props) => {
       },
     },
   ];
-  const columnOther = [...columnInfoFolder, ...columnViewActiveColumn];
-  const columnAdmin = [
-    ...columnInfoFolder,
-    {
-      field: "referencingFrom",
-      headerName: "Thư mục gốc",
-      cellClassName: "name-column--cell",
-      renderCell: renderCellExpand,
-      minWidth: 120,
-      valueGetter: (params) => {
-        if (params?.row?.referencingFrom?.categoryName) {
-          return params?.row?.referencingFrom?.categoryName; // Trả về ngày đã định dạng
-        }
-        return ""; // Hoặc giá trị mặc định khi không có ngày
-      },
-    },
-    {
-      field: "Tham chiếu",
-      headerName: "Tham chiếu",
-      disableExport: true,
-      sortable: false, // Tắt sắp xếp cho cột "Thao tác"
-      filterable: false, // Tắt lọc cho cột "Thao tác"
-      renderCell: (params) => {
-        return (
-          <>
-            <Button
-              onClick={() => handleFolderReference(params.row)}
-              variant="outlined"
-              title={params.row.referencesName}
-            >
-              <CopyAllIcon /> {params.row.references.length}
-            </Button>
-          </>
-        );
-      },
-    },
-    {
-      field: "Hủy tham chiếu",
-      headerName: "Hủy Tham chiếu",
-      disableExport: true,
-      sortable: false,
-      filterable: false,
-      renderCell: (params) => {
-        return params?.row?.references?.length > 0 ? (
-          <Button
-            color="error"
-            onClick={() => handleDeleteFolderReference(params.row)}
-            variant="outlined"
-            title={params?.row?.referencesName}
-          >
-            <SignalCellularNoSimOutlinedIcon />
-            {params.row.references.length}
-          </Button>
-        ) : null; // Trả về null nếu không có references
-      },
-    },
-    ...columnViewActiveColumn,
-    ...columns2,
-  ];
-
+  const columnAdmin = [...columnInfoFolder, ...columnUser, ...columns2];
   function CustomToolbar() {
     return (
       <GridToolbarContainer>
@@ -318,7 +178,7 @@ const Folders = (props) => {
         <GridToolbarExport
           printOptions={{ disableToolbarButton: true }}
           csvOptions={{
-            fileName: `Quản lý quy trình thư mục ${categoryData.categoryName}`,
+            fileName: `Quản lý đề thi môn học ${categoryData.categoryName}`,
             utf8WithBom: true,
           }}
         />
@@ -333,19 +193,6 @@ const Folders = (props) => {
         dataFolders={dataFolders}
         handleEditTable={handleEditTable}
       />
-      <ModalFolderReference
-        setShowFolderReference={setShowFolderReference}
-        showFolderReference={showFolderReference}
-        dataFolders={dataFolders}
-        handleEditTable={handleEditTable}
-        categoryData={listCategoryData}
-      />
-      <ModalDeleteFolderReference
-        setShowDeleteFolderReference={setShowDeleteFolderReference}
-        showDeleteFolderReference={showDeleteFolderReference}
-        dataFolders={dataFolders}
-        handleEditTable={handleEditTable}
-      />
       <ModalDeleteFolder
         setShowDelete={setShowDelete}
         showDelete={showDelete}
@@ -353,21 +200,13 @@ const Folders = (props) => {
         handleDeleteFromModal={handleDeleteFromModal}
       />
       <div className="user-header">
-        {categoryIdLocalStorage == 1 ? (
-          <div className="h1 text-center text-primary m-3 px-md-5 px-3">
-            Quản lý quy trình thư mục&nbsp;
-            <span className="text-lowercase text-warning">
-              {categoryData.categoryName}
-            </span>
-          </div>
-        ) : (
-          <div className="h1 text-center text-primary m-3 px-md-5 px-3">
-            Danh sách quy trình thư mục&nbsp;
-            <span className="text-lowercase text-warning">
-              {categoryData.categoryName}
-            </span>
-          </div>
-        )}
+        <div className="h1 text-center text-primary m-3 px-md-5 px-3">
+          Quản lý đề thi môn học&nbsp;
+          <span className="text-lowercase text-warning">
+            {categoryData.categoryName}
+          </span>
+        </div>
+
         <div className="container">
           <div className="d-flex gap-3">
             {categoryIdLocalStorage == 1 && (
@@ -380,40 +219,10 @@ const Folders = (props) => {
                     sortOption={sortOption}
                   />
                 </span>
-                <span>
-                  <ModalAddFolderReference
-                    fetchFoldersByCategoryId={fetchFoldersByCategoryId}
-                    listFolders={listFolders}
-                    idCategory={categoryId}
-                    sortOption={sortOption}
-                    categoryData={listAllFolders}
-                  />
-                </span>
               </>
             )}
-            <span>
-              <button
-                className="btn btn-info mb-1"
-                onClick={() => handleBack()}
-              >
-                <span>
-                  <i className="fa-solid fa-rotate-left me-1"></i>
-                </span>
-                <span>Trở về</span>
-              </button>
-            </span>
           </div>
-          {/* <div className="row">
-            <div className="col-bg-6 ">
-              <SearchByName
-                fetchFoldersByCategoryId={fetchFoldersByCategoryId}
-                setListFolders={setListFolders}
-                listFolders={listFolders}
-                categoryId={categoryId}
-                sortOption={sortOption}
-              />
-            </div>
-          </div> */}
+
           <Box style={{ height: 600, width: "100%" }}>
             {listFolders?.length > 0 ? (
               <DataGrid
@@ -421,9 +230,7 @@ const Folders = (props) => {
                   ...row,
                   stt: index + 1,
                 }))}
-                columns={
-                  categoryIdLocalStorage == 1 ? columnAdmin : columnOther
-                }
+                columns={columnAdmin}
                 components={{ Toolbar: CustomToolbar }}
                 localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
                 checkboxSelection
@@ -435,7 +242,7 @@ const Folders = (props) => {
               />
             ) : (
               <div className="h6 text-center text-secondary m-3">
-                Hiện tại chưa có quy trình. Vui lòng tạo mới
+                Hiện tại chưa có đề thi. Vui lòng tạo mới
               </div>
             )}
           </Box>

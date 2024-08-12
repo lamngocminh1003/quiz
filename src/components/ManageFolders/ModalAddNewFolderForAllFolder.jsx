@@ -1,9 +1,11 @@
 import { useState, useRef } from "react";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
+import { Button, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { createNewFolder } from "../../services/folderService";
 import { TextField, Box, Autocomplete } from "@mui/material";
+import { uuid } from "uuidv4";
+
+import SingleQuestion from "../GlobalComponent/SingleQuestion";
 const ModalAddNewFolderForAllFolder = (props) => {
   let { fetchFolders, sortOption, listFolders, categoryData } = props;
   const [isShowLoading, setIsShowLoading] = useState(false);
@@ -18,6 +20,7 @@ const ModalAddNewFolderForAllFolder = (props) => {
     setFolderId("");
     setFolderName("");
   };
+  const [questionArr, setQuestionArr] = useState([{ id: 1, mainQuestion: "" }]);
   const handleShow = () => setShow(true);
   const inputRefs = useRef([]);
   const handleKeyDown = (e, index) => {
@@ -62,16 +65,16 @@ const ModalAddNewFolderForAllFolder = (props) => {
   };
   const handleOnClickAdd = async () => {
     if (!folderId) {
-      toast.error("Mã quy trình không được bỏ trống!");
+      toast.error("Mã đề thi không được bỏ trống!");
       return;
     }
     let check = checkFolderId(folderId);
     if (check === true) {
-      toast.error("Mã quy trình không được trùng!");
+      toast.error("Mã đề thi không được trùng!");
       return;
     }
     if (!folderName) {
-      toast.error("Tên quy trình không được bỏ trống!");
+      toast.error("Tên đề thi không được bỏ trống!");
       return;
     }
     if (!categorySelect) {
@@ -86,16 +89,20 @@ const ModalAddNewFolderForAllFolder = (props) => {
         setShow(false);
         setFolderName("");
         setFolderId("");
-        toast.success("Thêm mới quy trình thành công!");
+        toast.success("Thêm mới đề thi thành công!");
         fetchFolders(sortOption);
       } else {
         toast.error(`${res.data}`);
       }
       setIsShowLoading(false);
     } catch (error) {
-      toast.error("Thêm mới quy trình thất bại!");
+      toast.error("Thêm mới đề thi thất bại!");
       setIsShowLoading(false);
     }
+  };
+  const addNewQuestion = () => {
+    const newQuestion = { id: uuidv4(), mainQuestion: "" };
+    setQuestionArr([...questionArr, newQuestion]);
   };
   return (
     <>
@@ -103,7 +110,7 @@ const ModalAddNewFolderForAllFolder = (props) => {
         variant="primary"
         className="mb-3"
         onClick={handleShow}
-        title="Thêm mới quy trình"
+        title="Thêm mới đề thi"
       >
         <span>
           <i className="fa-solid fa-plus me-1"></i>
@@ -111,34 +118,27 @@ const ModalAddNewFolderForAllFolder = (props) => {
         Thêm mới
       </Button>
 
-      <Modal backdrop="static" centered show={show} onHide={handleClose}>
+      <Modal
+        backdrop="static"
+        centered
+        show={show}
+        size="lg"
+        onHide={handleClose}
+      >
         <Modal.Header closeButton>
           <Modal.Title className="fs-6 text-uppercase text-primary">
-            Thêm mới quy trình
+            Thêm mới đề thi
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="input-group mb-3">
             <span className="input-group-text" id="inputGroup-sizing-default">
-              Mã quy trình&nbsp; <span className="text-danger">(*)</span>
+              Tên đề thi&nbsp; <span className="text-danger">(*)</span>
             </span>
             <input
               type="text"
               className="form-control"
-              placeholder="Nhập mã quy trình"
-              value={folderId}
-              ref={(ref) => addInputRef(ref, 0)}
-              onChange={(e) => handleInputChange(e, 0)}
-            />
-          </div>
-          <div className="input-group mb-3">
-            <span className="input-group-text" id="inputGroup-sizing-default">
-              Tên quy trình&nbsp; <span className="text-danger">(*)</span>
-            </span>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Nhập tên quy trình"
+              placeholder="Nhập tên đề thi"
               value={folderName}
               ref={(ref) => addInputRef(ref, 1)}
               onChange={(e) => handleInputChange(e, 1)}
@@ -146,7 +146,7 @@ const ModalAddNewFolderForAllFolder = (props) => {
             />
           </div>
           <Autocomplete
-            sx={{ gridColumn: "span 12", minWidth: 120, marginTop: 3 }}
+            sx={{ gridColumn: "span 12", minWidth: 120, marginY: 2 }}
             value={value}
             onChange={(event, newValue) => {
               setValue(newValue);
@@ -173,13 +173,39 @@ const ModalAddNewFolderForAllFolder = (props) => {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Khoa/ phòng"
+                label="Môn học"
                 inputProps={{
                   ...params.inputProps,
                 }}
               />
             )}
           />
+          <div className="border border-primary rounded">
+            <div className="column pt-2">
+              <p className="px-3 fs-5 fw-normal">Câu hỏi:</p>
+            </div>
+            {questionArr.map((questionIndex, index) => (
+              <div key={`question-${index}`}>
+                <SingleQuestion
+                  questionIndex={index}
+                  setQuestionArr={setQuestionArr}
+                  questionArr={questionArr}
+                  questionItem={questionIndex}
+                />
+              </div>
+            ))}
+
+            <div className="m-3">
+              <div className="text-center">
+                <Button
+                  variant="outline-primary"
+                  onClick={() => addNewQuestion()}
+                >
+                  Tạo thêm câu hỏi
+                </Button>
+              </div>
+            </div>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

@@ -21,7 +21,7 @@ const ModalAddNewCategory = (props) => {
   const handleShow = () => setShow(true);
   const handleOnClickAdd = async () => {
     if (!categoryName) {
-      toast.error("Tên thư mục không được bỏ trống!");
+      toast.error("Tên môn học không được bỏ trống!");
       return;
     }
     let res = await createNewCategory(categoryName, defaultFilePermission);
@@ -30,7 +30,7 @@ const ModalAddNewCategory = (props) => {
       //success
       setShow(false);
       setCategoryName("");
-      toast.success("Thêm mới thư mục thành công!");
+      toast.success("Thêm mới môn học thành công!");
       fetchCategories();
     }
     setIsShowLoading(false);
@@ -41,29 +41,29 @@ const ModalAddNewCategory = (props) => {
         variant="primary"
         className="mb-3"
         onClick={handleShow}
-        title="Thêm mới thư mục"
+        title="Thêm mới môn học"
       >
         <span>
           <i className="fa-solid fa-plus me-1"></i>
         </span>
-        Thêm mới thư mục
+        Thêm mới môn học
       </Button>
 
       <Modal backdrop="static" centered show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title className="fs-6 text-uppercase text-primary">
-            Thêm mới thư mục
+            Thêm mới môn học
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="input-group mb-3">
             <span className="input-group-text" id="inputGroup-sizing-default">
-              Tên thư mục&nbsp; <span className="text-danger">(*)</span>
+              Tên môn học&nbsp; <span className="text-danger">(*)</span>
             </span>
             <input
               type="text"
               className="form-control"
-              placeholder="Nhập tên thư mục"
+              placeholder="Nhập tên môn học"
               value={categoryName}
               onChange={(event) => setCategoryName(event.target.value)}
               onKeyDown={(event) => handlePressEnter(event)}

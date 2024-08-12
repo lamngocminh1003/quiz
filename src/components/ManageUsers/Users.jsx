@@ -5,7 +5,7 @@ import ModalEditUser from "./ModalEditUser";
 import ModalAddNewUser from "./ModalAddNewUser";
 import ModalDeleteUser from "./ModalDeleteUser";
 import { useHistory } from "react-router-dom";
-import { Oval } from "react-loader-spinner";
+import { columnsIndex, columnUser } from "../input/Column";
 import ScrollToTopButton from "../input/ScrollToTopButton";
 import {
   DataGrid,
@@ -27,40 +27,25 @@ const Users = (props) => {
   const [showEdit, setShowEdit] = useState(false);
   const [dataUsers, setDataUser] = useState({});
   const [showDelete, setShowDelete] = useState(false);
-  const [categoryId, setCategoryId] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [categoryId, setCategoryId] = useState("1");
   let history = useHistory();
   const userName = localStorage.getItem("username");
-  const categoryIdLocal = localStorage.getItem("categoryId");
-  const handleBack = () => {
-    history.push(`/categories`);
-  };
   useEffect(() => {
     fetchUsers(categoryId);
     getCategoryByCategoryId(categoryId);
   }, [categoryId]);
-  useEffect(() => {
-    if (props.match && props.match.params && props.match.params.id) {
-      let id = props.match.params.id;
-      setCategoryId(id);
-    }
-  }, []);
   const fetchUsers = async (categoryId) => {
-    setIsLoading(true);
     let res = await fetchAllUsers(categoryId);
     if (res && res.data.users) {
       setListUsers(res.data.users);
-      setIsLoading(false);
     }
   };
   const [dynamicHeight, setDynamicHeight] = useState(600); // Chiều cao động được tính toán
 
   const getCategoryByCategoryId = async (categoryId) => {
-    setIsLoading(true);
     let res = await getCategoryById(categoryId);
     if (res && res.data) {
       setCategoryData(res.data);
-      setIsLoading(false);
     }
   };
   const handleEditTable = (user) => {
@@ -81,22 +66,18 @@ const Users = (props) => {
     fetchUsers(categoryId);
   };
   const columns = [
+    ...columnsIndex,
+    ...columnUser,
     {
-      field: "stt",
-      headerName: "STT",
-      width: 50,
-      valueGetter: (params) => params.row.stt,
-    },
-    {
-      field: "username",
-      headerName: "Tài khoản",
-      flex: 1,
+      field: "role",
+      headerName: "Vai trò",
       cellClassName: "name-column--cell",
     },
     {
       field: "description",
       headerName: "Giới thiệu",
       cellClassName: "name-column--cell",
+      flex: 1,
     },
   ];
   const columns2 = [
@@ -197,14 +178,6 @@ const Users = (props) => {
                 categoryId={categoryId}
               />
             </span>
-            <span>
-              <button className="btn btn-info" onClick={() => handleBack()}>
-                <span>
-                  <i className="fa-solid fa-rotate-left me-1"></i>
-                </span>
-                <span>Trở về</span>
-              </button>
-            </span>
           </div>
           <Box
             style={{
@@ -227,7 +200,7 @@ const Users = (props) => {
                   ...row,
                   stt: index + 1,
                 }))}
-                columns={categoryIdLocal == 1 ? columns2 : columns}
+                columns={columns2}
                 components={{ Toolbar: CustomToolbar }}
               />
             ) : (

@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import { fetchAllCategories } from "../../services/categoryService";
 import ModalEditCategory from "./ModalEditCategory";
 import ModalAddNewCategory from "./ModalAddNewCategory";
-import SearchOther from "../SearchOther/SearchOther";
 import ModalDeleteCategory from "./ModalDeleteCategory";
 import { useHistory } from "react-router-dom";
-import SearchByName from "./SearchByName";
 import ScrollToTopButton from "../input/ScrollToTopButton";
 import { columnsIndex } from "../input/Column";
 import {
@@ -18,7 +16,7 @@ import {
   GridToolbarExport,
 } from "@mui/x-data-grid";
 import { Box } from "@mui/material";
-import { Edit, Delete, ManageAccounts, Folder } from "@mui/icons-material";
+import { Edit, Delete, Folder } from "@mui/icons-material";
 const Categories = () => {
   const [pageSize, setPageSize] = useState(10);
   const [listCategories, setListCategories] = useState([]);
@@ -26,24 +24,19 @@ const Categories = () => {
   const [dataCategories, setDataCategories] = useState({});
   const [showDelete, setShowDelete] = useState(false);
   const categoryId = localStorage.getItem("categoryId");
-  const [isLoading, setIsLoading] = useState(false);
   let history = useHistory();
   useEffect(() => {
     fetchCategories();
   }, []);
   const fetchCategories = async () => {
     try {
-      setIsLoading(true);
       let res = await fetchAllCategories();
       if (res.data.categories) {
         let categoryData = res.data.categories;
         categoryData.sort((a, b) => a.id - b.id);
         setListCategories(categoryData);
-        setIsLoading(false);
       }
-    } catch (error) {
-      setIsLoading(false);
-    }
+    } catch (error) {}
   };
   const handleEditCategory = (category) => {
     setShowEdit(true);
@@ -62,14 +55,11 @@ const Categories = () => {
   const handleViewFolderCategory = (category) => {
     history.push(`/category-folder/${category.id}`);
   };
-  const handleViewUserCategory = (category) => {
-    const categoryId = category.id;
-    history.push(`/category-user/${categoryId}`);
-  };
+
   const columnCategoryName = [
     {
       field: "categoryName",
-      headerName: "Thư mục",
+      headerName: "Môn học",
       cellClassName: "name-column--cell",
       minWidth: 250,
       flex: 1,
@@ -77,8 +67,8 @@ const Categories = () => {
   ];
   const columnViewCategory = [
     {
-      field: "Quy trình",
-      headerName: "Quy trình",
+      field: "Đề thi",
+      headerName: "Đề thi",
       disableExport: true,
       sortable: false, // Tắt sắp xếp cho cột "Thao tác"
       filterable: false, // Tắt lọc cho cột "Thao tác"
@@ -88,7 +78,7 @@ const Categories = () => {
             <button
               onClick={() => handleViewFolderCategory(params.row)}
               variant="contained"
-              title="Quy trình"
+              title="Đề thi"
               className="btn btn-primary"
             >
               <Folder />
@@ -98,41 +88,11 @@ const Categories = () => {
       },
     },
   ];
-  const columns = [
-    ...columnsIndex,
-    ...columnCategoryName,
-    ...columnViewCategory,
-  ];
+
   const columns2 = [
     ...columnsIndex,
     ...columnCategoryName,
-    {
-      field: "folderCount",
-      headerName: "Số quy trình",
-      cellClassName: "name-column--cell",
-    },
     ...columnViewCategory,
-    {
-      field: "Người dùng",
-      headerName: "Người dùng",
-      disableExport: true,
-      sortable: false, // Tắt sắp xếp cho cột "Thao tác"
-      filterable: false, // Tắt lọc cho cột "Thao tác"
-      renderCell: (params) => {
-        return (
-          <>
-            <button
-              onClick={() => handleViewUserCategory(params.row)}
-              variant="contained"
-              title="Người dùng"
-              className="btn btn-success"
-            >
-              <ManageAccounts /> {params.row.usersCount}
-            </button>
-          </>
-        );
-      },
-    },
     {
       field: "Sửa",
       headerName: "Sửa",
@@ -161,9 +121,6 @@ const Categories = () => {
       sortable: false, // Tắt sắp xếp cho cột "Thao tác"
       filterable: false, // Tắt lọc cho cột "Thao tác"
       renderCell: (params) => {
-        if (categoryId == params.row?.id) {
-          return null; // Trả về null để ẩn nút xóa cho dòng của người dùng đăng nhập
-        }
         return (
           <>
             <button
@@ -212,40 +169,18 @@ const Categories = () => {
       />
       {!false && (
         <div className="category-header">
-          {categoryId == 1 ? (
-            <div className="h1 text-center text-primary m-3 px-md-5 px-3">
-              Quản lý thư mục
-            </div>
-          ) : (
-            <div className="h1 text-center text-primary m-3 px-md-5 px-3">
-              Danh sách thư mục
-            </div>
-          )}
+          <div className="h1 text-center text-primary m-3 px-md-5 px-3">
+            Quản lý môn học
+          </div>
           <div className="container mb-4">
-            {categoryId == 1 ? (
-              <div className="d-flex gap-3">
-                <span>
-                  <ModalAddNewCategory
-                    handleUpdateTable={handleUpdateTable}
-                    fetchCategories={fetchCategories}
-                    listCategories={listCategories}
-                  />
-                </span>
-              </div>
-            ) : (
-              <div></div>
-            )}
-            <div className="row">
-              <div className="col-s-12 col-md-8">
-                <SearchByName
+            <div className="d-flex gap-3">
+              <span>
+                <ModalAddNewCategory
+                  handleUpdateTable={handleUpdateTable}
                   fetchCategories={fetchCategories}
                   listCategories={listCategories}
-                  setListCategories={setListCategories}
                 />
-              </div>
-              <div className="col-12 col-md-4">
-                <SearchOther />
-              </div>
+              </span>
             </div>
             <Box style={{ height: 600 }}>
               {listCategories.length > 0 ? (
@@ -263,7 +198,7 @@ const Categories = () => {
                     ...row,
                     stt: index + 1,
                   }))}
-                  columns={categoryId == 1 ? columns2 : columns}
+                  columns={columns2}
                   components={{ Toolbar: CustomToolbar }}
                 />
               ) : (

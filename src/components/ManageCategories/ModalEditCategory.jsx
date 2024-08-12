@@ -15,7 +15,7 @@ const ModalEditCategory = (props) => {
   const [isShowLoading, setIsShowLoading] = useState(false);
   const handleOnClickEdit = async () => {
     if (!categoryName) {
-      toast.error("Trường tên thư mục không được để trống!");
+      toast.error("Trường tên môn học không được để trống!");
       return;
     }
     try {
@@ -24,13 +24,13 @@ const ModalEditCategory = (props) => {
       if (res) {
         //success
         setShowEdit(false);
-        toast.success("Cập nhật thông tin thư mục thành công");
+        toast.success("Cập nhật thông tin môn học thành công");
         setCategoryName("");
         fetchCategories();
       }
       setIsShowLoading(false);
     } catch (error) {
-      toast.error("Sửa thư mục thất bại");
+      toast.error("Sửa môn học thất bại");
       setIsShowLoading(false);
     }
   };
@@ -50,19 +50,19 @@ const ModalEditCategory = (props) => {
       <Modal backdrop="static" centered show={showEdit} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title className="fs-6 text-uppercase text-primary">
-            Cập nhật thư mục
+            Cập nhật môn học
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <input type="text" className="form-control" value={id} hidden />
           <div className="input-group mb-3">
             <span className="input-group-text" id="inputGroup-sizing-default">
-              Tên thư mục&nbsp; <span className="text-danger">(*)</span>
+              Tên môn học&nbsp; <span className="text-danger">(*)</span>
             </span>
             <input
               type="text"
               className="form-control"
-              placeholder="Nhập tên thư mục"
+              placeholder="Nhập tên môn học"
               value={categoryName}
               onChange={(event) => setCategoryName(event.target.value)}
               onKeyDown={(event) => handlePressEnter(event)}

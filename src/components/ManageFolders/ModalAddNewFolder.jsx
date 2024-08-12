@@ -58,16 +58,16 @@ const ModalAddNewFolders = (props) => {
   };
   const handleOnClickAdd = async () => {
     if (!folderId) {
-      toast.error("Mã quy trình không được bỏ trống!");
+      toast.error("Mã đề thi không được bỏ trống!");
       return;
     }
     let check = checkFolderId(folderId);
     if (check === true) {
-      toast.error("Mã quy trình không được trùng!");
+      toast.error("Mã đề thi không được trùng!");
       return;
     }
     if (!folderName) {
-      toast.error("Tên quy trình không được bỏ trống!");
+      toast.error("Tên đề thi không được bỏ trống!");
       return;
     }
     try {
@@ -78,14 +78,14 @@ const ModalAddNewFolders = (props) => {
         setShow(false);
         setFolderName("");
         setFolderId("");
-        toast.success("Thêm mới quy trình thành công!");
+        toast.success("Thêm mới đề thi thành công!");
         fetchFoldersByCategoryId(idCategory, sortOption);
       } else {
         toast.error(`${res.data}`);
       }
       setIsShowLoading(false);
     } catch (error) {
-      toast.error("Thêm mới quy trình thất bại!");
+      toast.error("Thêm mới đề thi thất bại!");
       setIsShowLoading(false);
     }
   };
@@ -95,7 +95,7 @@ const ModalAddNewFolders = (props) => {
         variant="primary"
         className="mb-3"
         onClick={handleShow}
-        title="Thêm mới quy trình"
+        title="Thêm mới đề thi"
       >
         <span>
           <i className="fa-solid fa-plus me-1"></i>
@@ -103,10 +103,16 @@ const ModalAddNewFolders = (props) => {
         Thêm mới
       </Button>
 
-      <Modal backdrop="static" centered show={show} onHide={handleClose}>
+      <Modal
+        backdrop="static"
+        centered
+        show={show}
+        onHide={handleClose}
+        size="lg"
+      >
         <Modal.Header closeButton>
           <Modal.Title className="fs-6 text-uppercase text-primary">
-            Thêm mới quy trình
+            Thêm mới đề thi
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -118,12 +124,12 @@ const ModalAddNewFolders = (props) => {
           />
           <div className="input-group mb-3">
             <span className="input-group-text" id="inputGroup-sizing-default">
-              Mã quy trình&nbsp; <span className="text-danger">(*)</span>
+              Mã đề thi&nbsp; <span className="text-danger">(*)</span>
             </span>
             <input
               type="text"
               className="form-control"
-              placeholder="Nhập mã quy trình"
+              placeholder="Nhập mã đề thi"
               value={folderId}
               ref={(ref) => addInputRef(ref, 0)}
               onChange={(e) => handleInputChange(e, 0)}
@@ -132,12 +138,12 @@ const ModalAddNewFolders = (props) => {
 
           <div className="input-group mb-3">
             <span className="input-group-text" id="inputGroup-sizing-default">
-              Tên quy trình&nbsp; <span className="text-danger">(*)</span>
+              Tên đề thi&nbsp; <span className="text-danger">(*)</span>
             </span>
             <input
               type="text"
               className="form-control"
-              placeholder="Nhập tên quy trình"
+              placeholder="Nhập tên đề thi"
               value={folderName}
               ref={(ref) => addInputRef(ref, 1)}
               onChange={(e) => handleInputChange(e, 1)}

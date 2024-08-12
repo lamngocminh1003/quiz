@@ -10,10 +10,10 @@ export const columnsIndex = [
     valueGetter: (params) => params.row.stt,
   },
 ];
-export const columnStatName = [
+export const columnComment = [
   {
     field: "statName",
-    headerName: "Chỉ số bệnh viện",
+    headerName: "Nội dung bình luận",
     flex: 1,
     minWidth: 250,
     cellClassName: "name-column--cell",
@@ -30,10 +30,17 @@ export const columnDepartmentName = [
     renderCell: renderCellExpand,
   },
 ];
-export const columnUnit = [
+export const columnUser = [
+  {
+    field: "username",
+    headerName: "Tài khoản",
+    cellClassName: "name-column--cell",
+  },
+];
+export const columnTimeCreate = [
   {
     field: "unit",
-    headerName: "Đơn vị tính",
+    headerName: "Thời gian",
     cellClassName: "name-column--cell",
     align: "center",
     headerAlign: "center",
@@ -179,14 +186,14 @@ export const columnFileInfo = [
 export const columnInfoFolder = [
   {
     field: "id",
-    headerName: "Mã quy trình",
+    headerName: "Mã đề thi",
     cellClassName: "name-column--cell",
     renderCell: renderCellExpand,
     minWidth: 110,
   },
   {
     field: "folderName",
-    headerName: "Quy trình",
+    headerName: "Đề thi",
     cellClassName: "name-column--cell",
     flex: 1,
     renderCell: renderCellExpand,
@@ -195,10 +202,9 @@ export const columnInfoFolder = [
 export const columnCategoryName = [
   {
     field: "categoryName",
-    headerName: "Thư mục",
+    headerName: "Môn học",
     cellClassName: "name-column--cell",
     renderCell: renderCellExpand,
-    flex: 1,
     minWidth: 120,
   },
 ];

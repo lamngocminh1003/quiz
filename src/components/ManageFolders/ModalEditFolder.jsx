@@ -20,7 +20,7 @@ const ModalEditFolder = (props) => {
   };
   const handleOnClickEdit = async () => {
     if (!folderName) {
-      toast.error("Trường tên quy trình không được để trống!");
+      toast.error("Trường tên đề thi không được để trống!");
       return;
     }
     try {
@@ -29,7 +29,7 @@ const ModalEditFolder = (props) => {
       if (res) {
         //success
         setShowEdit(false);
-        toast.success("Cập nhật thông tin quy trình thành công");
+        toast.success("Cập nhật thông tin đề thi thành công");
         handleEditTable({
           folderName: dataFolders.folderName,
           id: dataFolders.id,
@@ -37,7 +37,7 @@ const ModalEditFolder = (props) => {
       }
       setIsShowLoading(false);
     } catch (error) {
-      toast.error("Cập nhật thông tin quy trình thất bại");
+      toast.error("Cập nhật thông tin đề thi thất bại");
     }
   };
   useEffect(() => {
@@ -52,14 +52,14 @@ const ModalEditFolder = (props) => {
       <Modal backdrop="static" centered show={showEdit} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title className="fs-6 text-uppercase text-primary">
-            Chỉnh sửa quy trình
+            Chỉnh sửa đề thi
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <input type="text" className="form-control" value={id} hidden />
           <div className="input-group mb-3">
             <span className="input-group-text" id="inputGroup-sizing-default">
-              Tên quy trình&nbsp; <span className="text-danger">(*)</span>
+              Tên đề thi&nbsp; <span className="text-danger">(*)</span>
             </span>
             <input
               type="text"

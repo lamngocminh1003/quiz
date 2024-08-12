@@ -2,50 +2,49 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
-import { deleteCategory } from "../../services/categoryService";
-const ModalDeleteCategory = (props) => {
-  const [categoryName, setCategoryName] = useState("");
-  let { handleDeleteFromModal, setShowDelete, showDelete, dataCategories } =
+import { deleteMajorStat } from "../../services/index/MajorStatService";
+const ModalDeleteComment = (props) => {
+  const [statName, setStatName] = useState("");
+  let { setShowDelete, showDelete, dataIndex, fetchListMajorStatsAndManifest } =
     props;
   const handleClose = () => setShowDelete(false);
   const [id, setId] = useState("");
   const handleOnClickDelete = async () => {
     try {
-      let res = await deleteCategory(id);
+      let res = await deleteMajorStat(id);
       if (res) {
         //success
         setShowDelete(false);
-        toast.success("Xóa môn học thành công");
-        handleDeleteFromModal(dataCategories);
+        toast.success("Xóa bình luận thành công");
+        fetchListMajorStatsAndManifest();
       } else {
-        toast.error("Xóa môn học không thành công");
+        toast.error("Xóa bình luận không thành công");
       }
     } catch (error) {
-      toast.error("Xóa môn học không thành công");
+      toast.error("Xóa bình luận không thành công");
     }
   };
   useEffect(() => {
     if (showDelete) {
-      setCategoryName(dataCategories.categoryName);
-      setId(dataCategories.id);
+      setStatName(dataIndex.statName);
+      setId(dataIndex.id);
     }
-  }, [dataCategories]);
+  }, [dataIndex]);
   return (
     <>
       <Modal show={showDelete} onHide={handleClose} backdrop="static" centered>
         <Modal.Header closeButton>
           <Modal.Title className="fs-6 text-uppercase text-primary">
-            Xóa môn học
+            Xóa bình luận
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <input type="text" className="form-control" value={id} hidden />
           <p className="input-group mb-3 text-primary">
-            <h6>Lưu ý:</h6>&nbsp; Môn học&nbsp;
+            Xác nhận xóa bình luận&nbsp;
             <span className="text-lowercase font-weight-bold text-danger">
-              {categoryName}
+              {statName}
             </span>
-            chỉ được xóa khi không có đề thi liên quan!
           </p>
         </Modal.Body>
         <Modal.Footer>
@@ -60,4 +59,4 @@ const ModalDeleteCategory = (props) => {
     </>
   );
 };
-export default ModalDeleteCategory;
+export default ModalDeleteComment;

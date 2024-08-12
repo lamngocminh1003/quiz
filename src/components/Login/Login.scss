@@ -1,0 +1,68 @@
+.login-container {
+  background-color: #fdfad8;
+  .container {
+    min-height: 100vh;
+    .row {
+      flex-wrap: wrap;
+      .content-left {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        flex-direction: column;
+        .brand {
+          font-size: 2rem;
+          font-weight: 650;
+          color: rgb(236, 201, 43);
+        }
+        .detail {
+          font-size: 1.5rem;
+        }
+      }
+      .content-right {
+        display: flex;
+        justify-content: center;
+        .login-form {
+          background-color: white;
+          padding: 1.3rem;
+          border: 2px solid rgb(220, 219, 219);
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1),
+            0 8px 16px rgba(0, 0, 0, 0.1);
+          width: 21rem;
+          .btn-primary {
+            width: 100%;
+            font-weight: 700;
+            padding: 0.4rem;
+          }
+          .input-password {
+            position: relative;
+            .fa-eye-slash,
+            .fa-eye {
+              position: absolute;
+              bottom: 15%;
+              left: 90%;
+            }
+          }
+          .forgotten {
+            text-align: center;
+            .forgotten-password {
+              text-decoration: none;
+              font-size: 1rem;
+              &:hover {
+                cursor: pointer;
+                text-decoration: underline;
+              }
+            }
+          }
+          .create {
+            text-align: center;
+            .btn-success {
+              font-weight: 700;
+              font-size: 1rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}

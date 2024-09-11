@@ -1,98 +1,211 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, createRef } from "react";
 import { Button, Modal } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { createNewFolder } from "../../services/folderService";
-import { TextField, Box, Autocomplete } from "@mui/material";
-import { uuid } from "uuidv4";
-
+import { createNewExam, fetchAllExams } from "../../redux/slices/examsSlice";
+import { fetchAllSubjects } from "../../redux/slices/subjectsSlice";
+import {
+  TextField,
+  Box,
+  Autocomplete,
+  NativeSelect,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
 import SingleQuestion from "../GlobalComponent/SingleQuestion";
 const ModalAddNewFolderForAllFolder = (props) => {
-  let { fetchFolders, sortOption, listFolders, categoryData } = props;
+  let { descending, orderBy } = props;
+
+  const dispatch = useDispatch();
+  const listSubjects = useSelector((state) => state.subjects.listSubjects);
+  useEffect(() => {
+    dispatch(fetchAllSubjects({ orderBy, descending }));
+  }, []);
   const [isShowLoading, setIsShowLoading] = useState(false);
   const [show, setShow] = useState(false);
-  const [folderId, setFolderId] = useState("");
-  const [folderName, setFolderName] = useState("");
-  const [value, setValue] = useState(categoryData[0]);
   const [inputValue, setInputValue] = useState("");
-  const [categorySelect, setCategorySelect] = useState(categoryData[0]?.id);
+  const prefixes = ["A", "B", "C", "D"];
+  const unit = [15, 30, 45, 60, 90, 120];
+  const handleShow = () => {
+    dispatch(fetchAllSubjects({ orderBy, descending }));
+    setShow(true);
+  };
+  const [questionArr, setQuestionArr] = useState([
+    {
+      id: uuidv4(),
+      description: "",
+      answers: prefixes.slice(0, 2).map((prefix) => prefix + ". "),
+      correctAnswer: "",
+    },
+  ]);
+  const [newExam, setNewExam] = useState({
+    categoryId: 1,
+    name: "",
+    description: "",
+    defaultTime: unit[0],
+    questions: questionArr,
+    links: [""],
+  });
+
   const handleClose = () => {
     setShow(false);
-    setFolderId("");
-    setFolderName("");
+    setQuestionArr([
+      {
+        id: uuidv4(),
+        description: "",
+        answers: prefixes.slice(0, 2).map((prefix) => prefix + ". "),
+        correctAnswer: "",
+      },
+    ]);
+    setNewExam({
+      categoryId: 1,
+      name: "",
+      description: "",
+      defaultTime: unit[0],
+      questions: [
+        {
+          id: uuidv4(), // Tạo UUID mới cho câu hỏi
+          description: "", // Đặt lại description về rỗng
+          answers: prefixes.slice(0, 2).map((prefix) => prefix + ". "),
+          correctAnswer: "", // Đặt lại câu trả lời đúng về rỗng
+        },
+      ],
+      links: [""],
+    });
   };
-  const [questionArr, setQuestionArr] = useState([{ id: 1, mainQuestion: "" }]);
-  const handleShow = () => setShow(true);
-  const inputRefs = useRef([]);
-  const handleKeyDown = (e, index) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const nextIndex = index + 1;
-      if (nextIndex < inputRefs.current.length) {
-        inputRefs.current[nextIndex].focus();
-      } else {
-        inputRefs.current[0].focus(); // Focus on the first input field
+  useEffect(() => {
+    setNewExam((preExam) => ({
+      ...preExam,
+      questions: questionArr,
+    }));
+  }, [questionArr]);
+
+  const textAreaRefs = useRef(questionArr.map(() => createRef()));
+  const addNewQuestion = () => {
+    const lastIndexQuestion = questionArr.length - 1;
+    if (questionArr[lastIndexQuestion].description.trim(" ").length === 0) {
+      toast.error(`Câu hỏi số ${lastIndexQuestion + 1} không được để trống!`);
+      textAreaRefs.current[lastIndexQuestion].current.focus();
+      return;
+    }
+    if (questionArr[lastIndexQuestion].correctAnswer.length === 0) {
+      toast.error(`Vui lòng nhập câu trả lời!`);
+      return;
+    }
+    for (const choice of questionArr[lastIndexQuestion].answers) {
+      const singleChoice = choice.substring(2);
+      if (singleChoice.trim(" ").length === 0) {
+        return toast.error("Vui lòng nhập đủ tất cả lựa chọn trước");
       }
     }
+
+    const newQuestion = {
+      id: uuidv4(),
+      description: "",
+      answers: prefixes.slice(0, 2).map((prefix) => prefix + ". "),
+      correctAnswer: "",
+    };
+    setQuestionArr([...questionArr, newQuestion]);
+    textAreaRefs.current = [...textAreaRefs.current, createRef()];
   };
-  const handleInputChange = (e, index) => {
-    if (index === 0) {
-      setFolderId(e.target.value);
+
+  const endOfListRef = useRef(null);
+  useEffect(() => {
+    if (endOfListRef.current) {
+      setTimeout(() => {
+        endOfListRef.current.scrollIntoView({ behavior: "smooth" });
+      }, 100);
     }
-    if (index === 1) {
-      setFolderName(e.target.value);
-    }
-  };
-  const addInputRef = (ref, index) => {
-    if (ref && !inputRefs.current.includes(ref)) {
-      inputRefs.current.push(ref);
-      if (index === inputRefs.current.length - 1) {
-        ref.onkeydown = (e) => handleKeyDown(e, index);
+    const lastTextAreaIndex = questionArr.length - 1;
+    if (lastTextAreaIndex >= 0) {
+      const lastTextArea = textAreaRefs.current[lastTextAreaIndex].current;
+      if (lastTextArea) {
+        lastTextArea.focus();
       }
     }
+  }, [questionArr.length]);
+  const handleInputChangeQuestion = (index, text) => {
+    const updatedQuestions = questionArr.map((question, i) => {
+      if (index === i) {
+        return { ...question, description: text };
+      }
+      return question;
+    });
+    setQuestionArr(updatedQuestions);
   };
-  const handlePressEnter = (event) => {
-    if (event && event.keyCode === 13) {
-      handleOnClickAdd();
-    }
-  };
-  const checkFolderId = (folderId) => {
-    for (let i = 0; i < listFolders.length; i++) {
-      if (listFolders[i].id === folderId) {
-        return true; // Tìm thấy ID trong mảng
+
+  const validateExamQuestions = (examQuestions) => {
+    for (let question of examQuestions) {
+      if (!question.description.trim()) {
+        return { valid: false, message: "Vui lòng nhập câu hỏi" };
+      }
+      if (question.answers.some((choice) => !choice.trim().substring(2))) {
+        return { valid: false, message: "Vui lòng nhập đủ các lựa chọn" };
+      }
+      if (question.correctAnswer.length === 0) {
+        return { valid: false, message: "Vui lòng nhập đáp án" };
       }
     }
-    return false; // Không tìm thấy ID trong mảng
+    return { valid: true };
   };
   const handleOnClickAdd = async () => {
-    if (!folderId) {
-      toast.error("Mã đề thi không được bỏ trống!");
-      return;
-    }
-    let check = checkFolderId(folderId);
-    if (check === true) {
-      toast.error("Mã đề thi không được trùng!");
-      return;
-    }
-    if (!folderName) {
+    if (!newExam.name.trim(" ").length === 0) {
       toast.error("Tên đề thi không được bỏ trống!");
       return;
     }
-    if (!categorySelect) {
-      toast.error("Khoa/ phòng không được bỏ trống!");
+    if (!newExam.categoryId) {
+      toast.error("Môn học không được bỏ trống!");
+      return;
+    }
+    const isValid = validateExamQuestions(newExam.questions);
+    if (isValid === false) {
+      toast.error(isValid.message);
       return;
     }
     try {
       setIsShowLoading(true);
-      const res = await createNewFolder(folderId, folderName, categorySelect);
-      if (res.id) {
+      const res = await dispatch(
+        createNewExam({
+          categoryId: newExam.categoryId,
+          name: newExam.name,
+          description: newExam.description,
+          defaultTime: newExam.defaultTime,
+          questions: newExam.questions,
+          links: null,
+        })
+      );
+
+      if (res.payload.data.id) {
         //success
         setShow(false);
-        setFolderName("");
-        setFolderId("");
+        setNewExam({
+          categoryId: 1,
+          name: "",
+          description: "",
+          defaultTime: unit[0],
+          questions: [
+            {
+              id: uuidv4(),
+              description: "",
+              answers: prefixes.slice(0, 2).map((prefix) => prefix + ". "),
+              correctAnswer: "",
+            },
+          ],
+          links: [""],
+        });
+        setQuestionArr([
+          {
+            id: uuidv4(),
+            description: "",
+            answers: prefixes.slice(0, 2).map((prefix) => prefix + ". "),
+            correctAnswer: "",
+          },
+        ]);
         toast.success("Thêm mới đề thi thành công!");
-        fetchFolders(sortOption);
+        dispatch(fetchAllExams({ orderBy, descending }));
       } else {
-        toast.error(`${res.data}`);
+        toast.error(`${res.payload.data}`);
       }
       setIsShowLoading(false);
     } catch (error) {
@@ -100,10 +213,7 @@ const ModalAddNewFolderForAllFolder = (props) => {
       setIsShowLoading(false);
     }
   };
-  const addNewQuestion = () => {
-    const newQuestion = { id: uuidv4(), mainQuestion: "" };
-    setQuestionArr([...questionArr, newQuestion]);
-  };
+
   return (
     <>
       <Button
@@ -139,23 +249,36 @@ const ModalAddNewFolderForAllFolder = (props) => {
               type="text"
               className="form-control"
               placeholder="Nhập tên đề thi"
-              value={folderName}
-              ref={(ref) => addInputRef(ref, 1)}
-              onChange={(e) => handleInputChange(e, 1)}
-              onKeyDown={(event) => handlePressEnter(event)}
+              value={newExam.name}
+              onChange={(e) => setNewExam({ ...newExam, name: e.target.value })}
+            />
+          </div>
+          <div className="input-group mb-3">
+            <span className="input-group-text" id="inputGroup-sizing-default">
+              Giới thiệu về đề thi
+            </span>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Nhập giới thiệu"
+              value={newExam.description}
+              onChange={(e) =>
+                setNewExam({ ...newExam, description: e.target.value })
+              }
             />
           </div>
           <Autocomplete
             sx={{ gridColumn: "span 12", minWidth: 120, marginY: 2 }}
-            value={value}
+            value={
+              listSubjects?.categories?.length > 0
+                ? listSubjects.categories.find(
+                    (option) => option.id === newExam.categoryId
+                  ) || null
+                : null
+            }
             onChange={(event, newValue) => {
-              setValue(newValue);
-              const selectedCategory = categoryData.find(
-                (option) => option?.categoryName === newValue?.categoryName
-              );
-              if (selectedCategory) {
-                const categoryId = selectedCategory?.id;
-                setCategorySelect(categoryId);
+              if (newValue) {
+                setNewExam({ ...newExam, categoryId: newValue.id });
               }
             }}
             inputValue={inputValue}
@@ -163,11 +286,11 @@ const ModalAddNewFolderForAllFolder = (props) => {
               setInputValue(newInputValue);
             }}
             id="controllable-states-demo"
-            options={categoryData}
-            getOptionLabel={(option) => option.categoryName}
+            options={listSubjects?.categories}
+            getOptionLabel={(option) => option?.name}
             renderOption={(props, option) => (
               <Box component="li" {...props}>
-                {option.categoryName}
+                {option?.name}
               </Box>
             )}
             renderInput={(params) => (
@@ -180,17 +303,48 @@ const ModalAddNewFolderForAllFolder = (props) => {
               />
             )}
           />
+          <FormControl variant="filled" className="input-group mb-3">
+            <InputLabel variant="standard" htmlFor="uncontrolled-native">
+              Thời gian làm bài
+            </InputLabel>
+            <NativeSelect
+              value={newExam.defaultTime}
+              onChange={(e) =>
+                setNewExam({ ...newExam, defaultTime: e.target.value })
+              }
+              inputProps={{
+                name: "defaultTime",
+                id: "uncontrolled-native",
+              }}
+            >
+              {unit.map((item, index) => (
+                <option key={`option${index}`} value={item}>
+                  {item}
+                </option>
+              ))}
+            </NativeSelect>
+          </FormControl>
           <div className="border border-primary rounded">
             <div className="column pt-2">
               <p className="px-3 fs-5 fw-normal">Câu hỏi:</p>
             </div>
             {questionArr.map((questionIndex, index) => (
-              <div key={`question-${index}`}>
+              <div
+                key={`question-${index}`}
+                ref={questionArr.length - 1 === index ? endOfListRef : null}
+              >
                 <SingleQuestion
+                  onChange={(e) => {
+                    handleInputChangeQuestion(index, e.target.value);
+                  }}
+                  value={questionIndex.description}
                   questionIndex={index}
                   setQuestionArr={setQuestionArr}
                   questionArr={questionArr}
                   questionItem={questionIndex}
+                  ref={textAreaRefs.current[index]}
+                  textAreaRefs={textAreaRefs}
+                  prefixes={prefixes}
                 />
               </div>
             ))}

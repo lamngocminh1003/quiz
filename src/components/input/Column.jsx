@@ -184,19 +184,18 @@ export const columnFileInfo = [
   },
 ];
 export const columnInfoFolder = [
+  ...columnsIndex,
   {
-    field: "id",
-    headerName: "Mã đề thi",
-    cellClassName: "name-column--cell",
-    renderCell: renderCellExpand,
-    minWidth: 110,
-  },
-  {
-    field: "folderName",
+    field: "name",
     headerName: "Đề thi",
     cellClassName: "name-column--cell",
+    minWidth: 120,
+  },
+  {
+    field: "description",
+    headerName: "Giới thiệu",
+    cellClassName: "name-column--cell",
     flex: 1,
-    renderCell: renderCellExpand,
   },
 ];
 export const columnCategoryName = [
@@ -204,7 +203,6 @@ export const columnCategoryName = [
     field: "categoryName",
     headerName: "Môn học",
     cellClassName: "name-column--cell",
-    renderCell: renderCellExpand,
-    minWidth: 120,
+    minWidth: 200,
   },
 ];

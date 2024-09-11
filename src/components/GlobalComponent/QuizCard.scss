@@ -1,17 +1,3 @@
-.section_our_solution .row {
-  align-items: center;
-}
-
-.our_solution_category {
-  display: flex;
-  flex-direction: row-reverse;
-  flex-wrap: wrap;
-}
-.our_solution_category .solution_cards_box {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: center;
-}
 .solution_cards_box .solution_card {
   background: #fff;
   box-shadow: 0 2px 4px 0 rgba(136, 144, 195, 0.2),
@@ -70,6 +56,7 @@
 .solution_card .solu_description p {
   font-size: 15px;
   margin-bottom: 15px;
+  height: 70px;
 }
 
 .solution_card .solu_description button {

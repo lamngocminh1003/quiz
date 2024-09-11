@@ -2,21 +2,31 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
-import { deleteCategory } from "../../services/categoryService";
+
+import {
+  fetchAllSubjects,
+  deleteSubject,
+} from "../../redux/slices/subjectsSlice";
+import { useDispatch, useSelector } from "react-redux";
 const ModalDeleteCategory = (props) => {
   const [categoryName, setCategoryName] = useState("");
-  let { handleDeleteFromModal, setShowDelete, showDelete, dataCategories } =
+  let { setShowDelete, showDelete, dataCategories, orderBy, descending } =
     props;
   const handleClose = () => setShowDelete(false);
   const [id, setId] = useState("");
+  const dispatch = useDispatch();
+  const isLoadingDelete = useSelector(
+    (state) => state.subjects.isLoadingDelete
+  );
+  const isErrorDelete = useSelector((state) => state.subjects.isErrorDelete);
   const handleOnClickDelete = async () => {
     try {
-      let res = await deleteCategory(id);
-      if (res) {
+      let res = await dispatch(deleteSubject({ id }));
+      if (res.payload.status === 200) {
         //success
         setShowDelete(false);
         toast.success("Xóa môn học thành công");
-        handleDeleteFromModal(dataCategories);
+        dispatch(fetchAllSubjects({ orderBy, descending }));
       } else {
         toast.error("Xóa môn học không thành công");
       }
@@ -26,7 +36,7 @@ const ModalDeleteCategory = (props) => {
   };
   useEffect(() => {
     if (showDelete) {
-      setCategoryName(dataCategories.categoryName);
+      setCategoryName(dataCategories.name);
       setId(dataCategories.id);
     }
   }, [dataCategories]);
@@ -53,6 +63,9 @@ const ModalDeleteCategory = (props) => {
             Hủy
           </Button>
           <Button variant="primary" onClick={() => handleOnClickDelete()}>
+            {isErrorDelete === false && isLoadingDelete === true && (
+              <i className="fas fa-spinner fa-pulse me-2 text-white"></i>
+            )}
             Có
           </Button>
         </Modal.Footer>

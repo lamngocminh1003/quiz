@@ -69,15 +69,15 @@ const Users = (props) => {
     ...columnsIndex,
     ...columnUser,
     {
+      field: "fullName",
+      headerName: "Họ tên",
+      cellClassName: "name-column--cell",
+      flex: 1,
+    },
+    {
       field: "role",
       headerName: "Vai trò",
       cellClassName: "name-column--cell",
-    },
-    {
-      field: "description",
-      headerName: "Giới thiệu",
-      cellClassName: "name-column--cell",
-      flex: 1,
     },
   ];
   const columns2 = [
@@ -162,7 +162,7 @@ const Users = (props) => {
       <div className="user-header">
         <div className="h1 text-center text-primary m-3 px-md-5 px-3">
           Quản lý người dùng
-          <span className="text-lowercase text-warning">
+          <span className="text-lowercase text-warning mx-1">
             {categoryData.categoryName}
           </span>
         </div>

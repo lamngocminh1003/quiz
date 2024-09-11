@@ -1,63 +1,41 @@
 import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import {
-  deleteFolder,
-  deleteFolderReference,
-} from "../../services/folderService";
+import { deleteExam, fetchAllExams } from "../../redux/slices/examsSlice";
 import { Box } from "@mui/material";
 const ModalDeleteFolder = (props) => {
   const [folderName, setFolderName] = useState("");
-  let { handleDeleteFromModal, setShowDelete, showDelete, dataFolders } = props;
+  const dispatch = useDispatch();
+  let { setShowDelete, showDelete, dataFolders, orderBy, descending } = props;
   const handleClose = () => {
     setShowDelete(false);
-    setIsShowLoadingDelete(false);
   };
-  const [isShowLoadingDelete, setIsShowLoadingDelete] = useState(false);
   const [id, setId] = useState("");
-  const [categoryId, setCategoryId] = useState("");
   const handleOnClickDelete = async () => {
     try {
-      setIsShowLoadingDelete(true);
-      let res = await deleteFolder(id, categoryId);
+      let res = await dispatch(deleteExam(id));
       if (res) {
         //success
         setShowDelete(false);
         toast.success("Xóa đề thi thành công");
-        handleDeleteFromModal(dataFolders);
-        setIsShowLoadingDelete(false);
+        dispatch(fetchAllExams({ orderBy, descending }));
       } else {
         toast.error("Xóa đề thi không thành công");
-        setIsShowLoadingDelete(false);
       }
     } catch (error) {
       toast.error("Xóa đề thi không thành công");
-      setIsShowLoadingDelete(false);
     }
   };
-  const handDeleteReference = async () => {
-    try {
-      let res = await deleteFolderReference(dataFolders.categoryId, id);
-      if (res) {
-        //success
-        setShowDelete(false);
-        toast.success("Xóa đề thi liên kết thành công");
-        handleDeleteFromModal(dataFolders);
-      } else {
-        toast.error("Xóa đề thi liên kết không thành công");
-      }
-    } catch (error) {
-      toast.error("Xóa đề thi liên kết không thành công");
-    }
-  };
+
   useEffect(() => {
     if (showDelete) {
-      setFolderName(dataFolders.folderName);
+      setFolderName(dataFolders.description);
       setId(dataFolders.id);
-      setCategoryId(dataFolders.categoryId);
     }
   }, [dataFolders]);
+
   return (
     <>
       <Modal show={showDelete} onHide={handleClose} backdrop="static" centered>

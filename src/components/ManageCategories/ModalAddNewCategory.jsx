@@ -2,13 +2,20 @@ import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
-import { createNewCategory } from "../../services/categoryService";
+import {
+  fetchAllSubjects,
+  createNewSubject,
+} from "../../redux/slices/subjectsSlice";
+import { useDispatch, useSelector } from "react-redux";
 const ModalAddNewCategory = (props) => {
+  const { orderBy, descending } = props;
   const [show, setShow] = useState(false);
   const [categoryName, setCategoryName] = useState("");
-  const defaultFilePermission = 3;
-  const [isShowLoading, setIsShowLoading] = useState(false);
-  let { fetchCategories, handleUpdateTable } = props;
+  const dispatch = useDispatch();
+  const isLoadingCreate = useSelector(
+    (state) => state.subjects.isLoadingCreate
+  );
+  const isErrorCreate = useSelector((state) => state.subjects.isErrorCreate);
   const handlePressEnter = (event) => {
     if (event && event.keyCode === 13) {
       handleOnClickAdd();
@@ -24,16 +31,14 @@ const ModalAddNewCategory = (props) => {
       toast.error("Tên môn học không được bỏ trống!");
       return;
     }
-    let res = await createNewCategory(categoryName, defaultFilePermission);
-    setIsShowLoading(true);
-    if (res && res.data.id) {
+    let res = await dispatch(createNewSubject(categoryName));
+    if (res.payload.status === 200) {
       //success
       setShow(false);
       setCategoryName("");
       toast.success("Thêm mới môn học thành công!");
-      fetchCategories();
+      dispatch(fetchAllSubjects({ orderBy, descending }));
     }
-    setIsShowLoading(false);
   };
   return (
     <>
@@ -75,7 +80,7 @@ const ModalAddNewCategory = (props) => {
             Hủy
           </Button>
           <Button variant="primary" onClick={() => handleOnClickAdd()}>
-            {isShowLoading && (
+            {isLoadingCreate === true && isErrorCreate === false && (
               <i className="fas fa-spinner fa-pulse me-2 text-white"></i>
             )}
             Lưu

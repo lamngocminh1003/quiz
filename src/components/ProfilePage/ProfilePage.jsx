@@ -1,6 +1,23 @@
 import React from "react";
 import AvtComponent from "./AvtComponent";
+import CommentComponent from "./CommentComponent";
+import DataGridTable from "./DataGridTable";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getUserByUsernameRedux } from "../../redux/slices/usersSlice";
+import { useDispatch, useSelector } from "react-redux";
 const ProfilePage = () => {
+  let role = localStorage.getItem("role");
+  let uniqueName = localStorage.getItem("uniqueName");
+  const { username } = useParams();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (username !== undefined) {
+      dispatch(getUserByUsernameRedux(username));
+    }
+  }, [username]);
+  const dataUser = useSelector((state) => state.users.dataUser);
+
   return (
     <>
       <section style={{ backgroundColor: "#eee" }}>
@@ -8,281 +25,39 @@ const ProfilePage = () => {
           <div className="row">
             <div className="col-lg-4">
               <div className="card mb-4">
-                <AvtComponent />
+                <AvtComponent
+                  username={dataUser?.username}
+                  uniqueName={dataUser?.name}
+                  role={dataUser?.roles?.length > 0 ? dataUser?.roles[0] : null}
+                />
               </div>
-              <div className="card mb-4 mb-lg-0">
-                <div className="card-body p-0">
-                  <ul className="list-group list-group-flush rounded-3">
-                    <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                      <i className="fas fa-globe fa-lg text-warning"></i>
-                      <p className="mb-0">https://mdbootstrap.com</p>
-                    </li>
-                    <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                      <i className="fab fa-github fa-lg text-body"></i>
-                      <p className="mb-0">mdbootstrap</p>
-                    </li>
-                    <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                      <i
-                        className="fab fa-twitter fa-lg"
-                        style={{ color: "#55acee" }}
-                      ></i>
-                      <p className="mb-0">@mdbootstrap</p>
-                    </li>
-                    <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                      <i
-                        className="fab fa-instagram fa-lg"
-                        style={{ color: "#ac2bac" }}
-                      ></i>
-                      <p className="mb-0">mdbootstrap</p>
-                    </li>
-                    <li className="list-group-item d-flex justify-content-between align-items-center p-3">
-                      <i
-                        className="fab fa-facebook-f fa-lg"
-                        style={{ color: "#3b5998" }}
-                      ></i>
-                      <p className="mb-0">mdbootstrap</p>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+              {role === "Teacher" || role === "Admin" ? (
+                <CommentComponent title="Bình luận về đề thi" />
+              ) : role === "Student" ? (
+                <CommentComponent title="Bình luận đề thi trước đó" />
+              ) : (
+                !role || role === null(<></>)
+              )}
             </div>
             <div className="col-lg-8">
-              <div className="card mb-4">
-                <div className="card-body">
-                  <div className="row">
-                    <div className="col-sm-3">
-                      <p className="mb-0">Full Name</p>
-                    </div>
-                    <div className="col-sm-9">
-                      <p className="text-muted mb-0">Johnatan Smith</p>
-                    </div>
-                  </div>
-                  <hr />
-                  <div className="row">
-                    <div className="col-sm-3">
-                      <p className="mb-0">Email</p>
-                    </div>
-                    <div className="col-sm-9">
-                      <p className="text-muted mb-0">example@example.com</p>
-                    </div>
-                  </div>
-                  <hr />
-                  <div className="row">
-                    <div className="col-sm-3">
-                      <p className="mb-0">Phone</p>
-                    </div>
-                    <div className="col-sm-9">
-                      <p className="text-muted mb-0">(097) 234-5678</p>
-                    </div>
-                  </div>
-                  <hr />
-                  <div className="row">
-                    <div className="col-sm-3">
-                      <p className="mb-0">Mobile</p>
-                    </div>
-                    <div className="col-sm-9">
-                      <p className="text-muted mb-0">(098) 765-4321</p>
-                    </div>
-                  </div>
-                  <hr />
-                  <div className="row">
-                    <div className="col-sm-3">
-                      <p className="mb-0">Address</p>
-                    </div>
-                    <div className="col-sm-9">
-                      <p className="text-muted mb-0">
-                        Bay Area, San Francisco, CA
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <div className="card mb-4 mb-md-0">
-                    <div className="card-body">
-                      <p className="mb-4">
-                        <span className="text-primary font-italic me-1">
-                          assigment
-                        </span>{" "}
-                        Project Status
-                      </p>
-                      <p className="mb-1" style={{ fontSize: ".77rem" }}>
-                        Web Design
-                      </p>
-                      <div
-                        className="progress rounded"
-                        style={{ height: "5px" }}
-                      >
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: "80%" }}
-                          aria-valuenow="80"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                      <p className="mt-4 mb-1" style={{ fontSize: ".77rem" }}>
-                        Website Markup
-                      </p>
-                      <div
-                        className="progress rounded"
-                        style={{ height: "5px" }}
-                      >
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: "72%" }}
-                          aria-valuenow="72"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                      <p className="mt-4 mb-1" style={{ fontSize: ".77rem" }}>
-                        One Page
-                      </p>
-                      <div
-                        className="progress rounded"
-                        style={{ height: "5px" }}
-                      >
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: "89%" }}
-                          aria-valuenow="89"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                      <p className="mt-4 mb-1" style={{ fontSize: ".77rem" }}>
-                        Mobile Template
-                      </p>
-                      <div
-                        className="progress rounded"
-                        style={{ height: "5px" }}
-                      >
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: "55%" }}
-                          aria-valuenow="55"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                      <p className="mt-4 mb-1" style={{ fontSize: ".77rem" }}>
-                        Backend API
-                      </p>
-                      <div
-                        className="progress rounded mb-2"
-                        style={{ height: "5px" }}
-                      >
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: "66%" }}
-                          aria-valuenow="66"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="card mb-4 mb-md-0">
-                    <div className="card-body">
-                      <p className="mb-4">
-                        <span className="text-primary font-italic me-1">
-                          assigment
-                        </span>{" "}
-                        Project Status
-                      </p>
-                      <p className="mb-1" style={{ fontSize: ".77rem" }}>
-                        Web Design
-                      </p>
-                      <div
-                        className="progress rounded"
-                        style={{ height: "5px" }}
-                      >
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: "80%" }}
-                          aria-valuenow="80"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                      <p className="mt-4 mb-1" style={{ fontSize: ".77rem" }}>
-                        Website Markup
-                      </p>
-                      <div
-                        className="progress rounded"
-                        style={{ height: "5px" }}
-                      >
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: "72%" }}
-                          aria-valuenow="72"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                      <p className="mt-4 mb-1" style={{ fontSize: ".77rem" }}>
-                        One Page
-                      </p>
-                      <div
-                        className="progress rounded"
-                        style={{ height: "5px" }}
-                      >
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: "89%" }}
-                          aria-valuenow="89"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                      <p className="mt-4 mb-1" style={{ fontSize: ".77rem" }}>
-                        Mobile Template
-                      </p>
-                      <div
-                        className="progress rounded"
-                        style={{ height: "5px" }}
-                      >
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: "55%" }}
-                          aria-valuenow="55"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                      <p className="mt-4 mb-1" style={{ fontSize: ".77rem" }}>
-                        Backend API
-                      </p>
-                      <div
-                        className="progress rounded mb-2"
-                        style={{ height: "5px" }}
-                      >
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: "66%" }}
-                          aria-valuenow="66"
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {role === "Teacher" || role === "Admin" ? (
+                <DataGridTable
+                  title="Danh sách đề thi"
+                  titleButton="Tạo mới đề thi"
+                  role={role}
+                  username={username}
+                />
+              ) : role === "Student" ? (
+                <DataGridTable
+                  title="Đáp án các bài thi"
+                  titleButton="Làm bài thi mới"
+                  link="all-exams"
+                  role={role}
+                  username={username}
+                />
+              ) : (
+                !role || role === null(<></>)
+              )}
             </div>
           </div>
         </div>

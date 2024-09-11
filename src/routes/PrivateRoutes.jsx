@@ -6,7 +6,6 @@ import jwt_decode from "jwt-decode";
 const PrivateRoutes = (props) => {
   const { logout } = useContext(UserContext);
   const auth = localStorage.getItem("auth");
-  const categoryId = localStorage.getItem("categoryId");
   const history = useHistory();
   const token = localStorage.getItem("token");
   useEffect(() => {
@@ -27,7 +26,8 @@ const PrivateRoutes = (props) => {
     localStorage.removeItem("token");
     localStorage.removeItem("auth");
     localStorage.removeItem("username");
-    localStorage.removeItem("categoryId");
+    localStorage.removeItem("uniqueName");
+    localStorage.removeItem("role");
     localStorage.removeItem("year");
     localStorage.removeItem("yearStart");
     localStorage.removeItem("yearEnd");
@@ -37,7 +37,8 @@ const PrivateRoutes = (props) => {
     localStorage.removeItem("token");
     localStorage.removeItem("auth");
     localStorage.removeItem("username");
-    localStorage.removeItem("categoryId");
+    localStorage.removeItem("uniqueName");
+    localStorage.removeItem("role");
     localStorage.removeItem("year");
     localStorage.removeItem("yearStart");
     localStorage.removeItem("yearEnd");
@@ -45,7 +46,7 @@ const PrivateRoutes = (props) => {
     logout();
     history.push("/login");
   };
-  if (auth && categoryId) {
+  if (auth) {
     return (
       <>
         <Route path={props.path} component={props.component}></Route>

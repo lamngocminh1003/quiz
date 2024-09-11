@@ -12,16 +12,48 @@ const createConfig = () => {
   return config;
 };
 const userLogin = (data) => {
-  let config = createConfig();
   let { username, password } = data;
-  return axios.post(
-    `${backendURL}/api/v1/User`,
-    {
+  return axios
+    .post(`${backendURL}/api/Account/login`, {
       username,
       password,
-    },
-    config
-  );
+    })
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      return error.response;
+    });
+};
+const userStudentRegister = (data) => {
+  let { username, name, password } = data;
+  return axios
+    .put(`${backendURL}/api/Account/student`, {
+      username,
+      name,
+      password,
+    })
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      return error.response;
+    });
+};
+const userTeacherRegister = (data) => {
+  let { username, name, password } = data;
+  return axios
+    .put(`${backendURL}/api/Account/teacher`, {
+      username,
+      name,
+      password,
+    })
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      return error.response;
+    });
 };
 const fetchAllUsers = (id) => {
   let config = createConfig();
@@ -32,7 +64,6 @@ const fetchAllUsers = (id) => {
 };
 const updateUser = (username, description, categoryId) => {
   let config = createConfig();
-
   return axios.patch(
     `${backendURL}/api/v1/User`,
     {
@@ -62,11 +93,12 @@ const deleteUser = (id) => {
 
   return axios.delete(`${backendURL}/api/v1/User?id=${id}`, config);
 };
-const getUserById = (data) => {
+const getUserByUsername = (username) => {
   let config = createConfig();
-
-  let { id } = data;
-  return axios.get(`${backendURL}/api/v1/User/other?id=${id}`, config);
+  return axios.get(
+    `${backendURL}/api/Account/get-by-username?name=${username}`,
+    config
+  );
 };
 export {
   userLogin,
@@ -74,5 +106,7 @@ export {
   updateUser,
   createNewUser,
   deleteUser,
-  getUserById,
+  getUserByUsername,
+  userStudentRegister,
+  userTeacherRegister,
 };

@@ -1,17 +1,7 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Popper from "@mui/material/Popper";
+import React, { useRef, useState, useEffect } from "react";
+import { Button, Typography, Popper, Paper, Box, Tooltip } from "@mui/material";
 
-function isOverflown(element) {
-  return (
-    element.scrollHeight > element.clientHeight ||
-    element.scrollWidth > element.clientWidth
-  );
-}
-
-const GridCellExpand = React.memo(function GridCellExpand(props) {
+export const GridCellExpand = React.memo(function GridCellExpand(props) {
   const { width, value } = props;
   const wrapper = React.useRef(null);
   const cellDiv = React.useRef(null);
@@ -80,6 +70,7 @@ const GridCellExpand = React.memo(function GridCellExpand(props) {
           whiteSpace: "nowrap",
           overflow: "hidden",
           textOverflow: "ellipsis",
+          textTransform: "none", // Giữ nguyên kiểu chữ thường
         }}
       >
         {value}
@@ -112,12 +103,69 @@ export function renderCellExpand(params) {
     />
   );
 }
+function isOverflown(element) {
+  return (
+    element.scrollHeight > element.clientHeight ||
+    element.scrollWidth > element.clientWidth
+  );
+}
+
+export const TruncatedButton = ({
+  content,
+  cellStyle,
+  cellBackgroundColor,
+  cellTextColor,
+  textStyle,
+  handleEdit,
+  row,
+  field,
+}) => {
+  return (
+    <Tooltip title={content}>
+      <Button
+        size="small"
+        style={{ ...cellStyle, backgroundColor: cellBackgroundColor }}
+        onClick={() => handleEdit({ row, field })}
+      >
+        <Typography
+          color={cellTextColor}
+          style={{
+            ...textStyle,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            textTransform: "none", // Giữ nguyên kiểu chữ thường
+          }}
+        >
+          {content}
+        </Typography>
+      </Button>
+    </Tooltip>
+  );
+};
+export const TruncatedTypo = ({ content, cellTextColor, textStyle }) => {
+  return (
+    <Tooltip title={content}>
+      <Typography
+        color={cellTextColor}
+        style={{
+          ...textStyle,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          textTransform: "none", // Giữ nguyên kiểu chữ thường
+        }}
+      >
+        {content}
+      </Typography>
+    </Tooltip>
+  );
+};
 export const cellStyle = {
   width: "100%",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  padding: "5px",
   borderRadius: "4px",
 };
 export const iconStyle = {

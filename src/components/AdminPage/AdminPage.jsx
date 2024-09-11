@@ -1,11 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./AdminPage.scss";
 import CardComponent from "./CardComponent";
 import AreaChartComponent from "./AreaChartComponent";
 import PieChartComponent from "./PieChartComponent";
 import ProgressBarComponent from "./ProgressBarComponent";
 import LargeCardComponent from "./LargeCardComponent";
+import { fetchAllSubjects } from "../../redux/slices/subjectsSlice";
+import { fetchAllExams } from "../../redux/slices/examsSlice";
+import { useDispatch, useSelector } from "react-redux";
 function AdminPage() {
+  const dispatch = useDispatch();
+  const listSubjects = useSelector((state) => state.subjects.listSubjects);
+  const listSubjectsLength = listSubjects?.categories?.length;
+  const listExams = useSelector((state) => state.exams.listExams);
+  const listExamsLength = listExams?.length;
+  useEffect(() => {
+    dispatch(fetchAllSubjects({}));
+    dispatch(fetchAllExams({}));
+  }, []);
   return (
     <div className="container my-3">
       <body id="page-top">
@@ -19,7 +31,7 @@ function AdminPage() {
                     href="#"
                     className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
                   >
-                    <i className="fas fa-download fa-sm text-white-50"></i>{" "}
+                    <i className="fas fa-download fa-sm text-white-50"></i>
                     Generate Report
                   </button>
                 </div>
@@ -27,10 +39,12 @@ function AdminPage() {
                 <div className="row">
                   <CardComponent
                     title="Đề thi"
-                    content="Số lượng đề thi"
+                    content={`Số lượng: ${listExamsLength}`}
                     icon="fa-solid fa-file-circle-question"
-                    link="/exams"
+                    link="/admin/exams"
                     color="primary"
+                    sizeXl="3"
+                    sizeMd="6"
                   />
                   <CardComponent
                     title="Người dùng"
@@ -38,13 +52,17 @@ function AdminPage() {
                     icon="fa-solid fa-users"
                     link="/user"
                     color="success"
+                    sizeXl="3"
+                    sizeMd="6"
                   />
                   <CardComponent
                     title="Môn học"
-                    content="Số lượng môn học"
                     icon="fa-solid fa-swatchbook"
                     link="/subject"
                     color="info"
+                    sizeXl="3"
+                    sizeMd="6"
+                    content={`Số lượng: ${listSubjectsLength}`}
                   />
                   <CardComponent
                     title="Phản hồi"
@@ -52,6 +70,8 @@ function AdminPage() {
                     icon="fa-solid fa-comments"
                     link="/comment"
                     color="warning"
+                    sizeXl="3"
+                    sizeMd="6"
                   />
                 </div>
                 <div className="row">

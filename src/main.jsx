@@ -5,14 +5,19 @@ import App from "./App";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
 import "@fortawesome/fontawesome-free/css/all.css";
-
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { store } from "./redux/store";
+import { Provider } from "react-redux";
 const container = document.getElementById("root");
 const root = createRoot(container);
 
 root.render(
-  <Router>
-    <UserProvider>
-      <App />
-    </UserProvider>
-  </Router>
+  <Provider store={store}>
+    <Router>
+      <UserProvider>
+        <App />
+      </UserProvider>
+    </Router>
+  </Provider>
 );

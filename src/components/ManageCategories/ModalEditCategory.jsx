@@ -2,36 +2,41 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
-import { updateCategory } from "../../services/categoryService";
+import {
+  fetchAllSubjects,
+  updateSubject,
+} from "../../redux/slices/subjectsSlice";
+import { useDispatch, useSelector } from "react-redux";
 const ModalEditCategory = (props) => {
   const [id, setId] = useState("");
   const [categoryName, setCategoryName] = useState("");
-  let { dataCategories, showEdit, setShowEdit, fetchCategories } = props;
+  let { dataCategories, showEdit, setShowEdit, orderBy, descending } = props;
+  const dispatch = useDispatch();
+  const isLoadingUpdate = useSelector(
+    (state) => state.subjects.isLoadingUpdate
+  );
+  const isErrorUpdate = useSelector((state) => state.subjects.isErrorUpdate);
   const handleClose = () => {
     setShowEdit(false);
-    setCategoryName(dataCategories.categoryName);
+    setCategoryName(dataCategories.name);
   };
-  const defaultFilePermission = 3;
-  const [isShowLoading, setIsShowLoading] = useState(false);
+
   const handleOnClickEdit = async () => {
     if (!categoryName) {
       toast.error("Trường tên môn học không được để trống!");
       return;
     }
     try {
-      setIsShowLoading(true);
-      let res = await updateCategory(id, categoryName, defaultFilePermission);
-      if (res) {
+      let res = await dispatch(updateSubject({ id, categoryName }));
+      if (res.payload.status === 200) {
         //success
         setShowEdit(false);
         toast.success("Cập nhật thông tin môn học thành công");
         setCategoryName("");
-        fetchCategories();
+        dispatch(fetchAllSubjects({ orderBy, descending }));
       }
-      setIsShowLoading(false);
     } catch (error) {
       toast.error("Sửa môn học thất bại");
-      setIsShowLoading(false);
     }
   };
   const handlePressEnter = (event) => {
@@ -41,7 +46,7 @@ const ModalEditCategory = (props) => {
   };
   useEffect(() => {
     if (showEdit) {
-      setCategoryName(dataCategories.categoryName);
+      setCategoryName(dataCategories.name);
       setId(dataCategories.id);
     }
   }, [dataCategories]);
@@ -75,7 +80,7 @@ const ModalEditCategory = (props) => {
           </Button>
 
           <Button variant="primary" onClick={() => handleOnClickEdit()}>
-            {isShowLoading && (
+            {isErrorUpdate === false && isLoadingUpdate === true && (
               <i className="fas fa-spinner fa-pulse me-2 text-white"></i>
             )}
             Lưu thay đổi

@@ -11,7 +11,6 @@ import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import ModalDeleteComment from "./ModalDeleteComment";
-import { useHistory } from "react-router-dom";
 import ScrollToTopButton from "../input/ScrollToTopButton";
 import { fetchAllMajorStat } from "../../services/index/MajorStatService";
 import {
@@ -25,7 +24,6 @@ const IndexHospital = () => {
   const [listMajorStats, setListMajorStats] = useState([]);
   const [dataIndex, setDataIndex] = useState({});
   const [showDelete, setShowDelete] = useState(false);
-  let history = useHistory();
   useEffect(() => {
     fetchListMajorStatsAndManifest();
   }, []);
@@ -90,9 +88,6 @@ const IndexHospital = () => {
   const handleDelete = (params) => {
     setShowDelete(true);
     setDataIndex(params.row);
-  };
-  const handleRevision = (id) => {
-    history.push(`/hospital-index/${id}`);
   };
 
   const columns2 = [

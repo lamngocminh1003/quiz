@@ -3,7 +3,6 @@ import { useHistory } from "react-router-dom";
 import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import { userLogin } from "../../services/userService";
-import { UserContext } from "../../context/UserContext";
 import logo from "../../assets/image/logo.png";
 import Button from "@mui/material/Button";
 
@@ -14,6 +13,9 @@ const Login = (props) => {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const inputRefs = useRef([]);
   const [isShowLoading, setIsShowLoading] = useState(false);
+
+  const readJwt = (jwt) => JSON.parse(atob(jwt.split(".")[1]));
+
   useEffect(() => {
     // Kiểm tra trạng thái đăng nhập khi component được render
     let session = localStorage.getItem("auth");
@@ -76,6 +78,7 @@ const Login = (props) => {
       handleLogin();
     }
   };
+
   const handleLogin = async () => {
     let data = { username, password };
     let check = isValidInputs();
@@ -83,20 +86,27 @@ const Login = (props) => {
       try {
         setIsShowLoading(true);
         let res = await userLogin(data);
-        if (res) {
+        console.log("res", res);
+        if (res.token) {
           toast.success("Đăng nhập thành công");
-          let token = res.data.token;
+          let token = res.token;
+          let dataFromToken = readJwt(token);
           localStorage.setItem("auth", true);
           localStorage.setItem("token", token);
-          localStorage.setItem("username", res.data.username);
-          localStorage.setItem("categoryId", res.data.categoryId);
+          localStorage.setItem("username", dataFromToken.nameid);
+          localStorage.setItem("uniqueName", dataFromToken.unique_name);
+          localStorage.setItem("role", dataFromToken.role);
           localStorage.setItem("year", new Date().getFullYear());
           localStorage.setItem("yearStart", new Date().getFullYear() - 1);
           localStorage.setItem("yearEnd", new Date().getFullYear());
           history.push("/");
+        } else {
+          setIsShowLoading(false);
+          toast.error(`${res.data.title}`);
         }
         setIsShowLoading(false);
       } catch (error) {
+        console.log("error", error);
         setIsShowLoading(false);
         toast.error(
           "Đăng nhập thất bại. Vui lòng kiểm tra lại mật khẩu hoặc tài khoản"

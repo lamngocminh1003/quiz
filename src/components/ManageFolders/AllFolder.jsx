@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { fetchAllFolders } from "../../services/folderService";
+import { fetchAllSubjects } from "../../redux/slices/subjectsSlice";
+import { fetchAllExams } from "../../redux/slices/examsSlice";
+import { useDispatch, useSelector } from "react-redux";
 import ModalEditFolder from "./ModalEditFolder";
 import {
   DataGrid,
@@ -14,7 +17,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModalAddNewFolderForAllFolder from "./ModalAddNewFolderForAllFolder";
 import ModalDeleteFolder from "./ModalDeleteFolder";
-import { fetchAllCategories } from "../../services/categoryService";
 import _ from "lodash";
 import ScrollToTopButton from "../input/ScrollToTopButton";
 import { Box } from "@mui/material";
@@ -23,27 +25,23 @@ import {
   columnCategoryName,
   columnUser,
 } from "../input/Column";
+import ModalAddNewExamRandomQues from "./ModalAddNewExamRandomQues";
 const AllFolder = () => {
-  const [listFolders, setListFolders] = useState([]);
-  const [categoryData, setCategoryData] = useState([]);
   const [showEdit, setShowEdit] = useState(false);
   const [dataFolders, setDataFolders] = useState({});
   const [showDelete, setShowDelete] = useState(false);
   const [sortOption, setSortOption] = useState(5);
   const [pageSize, setPageSize] = useState(10);
-
+  const listSubjects = useSelector((state) => state.subjects.listSubjects);
+  const listExams = useSelector((state) => state.exams.listExams);
+  const descending = true;
+  const orderBy = "Id";
+  const dispatch = useDispatch();
   useEffect(() => {
-    fetchFolders(sortOption);
-  }, [sortOption]);
-  useEffect(() => {
-    getCategoryByCategoryId();
+    dispatch(fetchAllSubjects({ orderBy, descending }));
+    dispatch(fetchAllExams({ orderBy, descending }));
   }, []);
-  const getCategoryByCategoryId = async () => {
-    let res = await fetchAllCategories();
-    if (res && res.data.categories) {
-      setCategoryData(res.data.categories);
-    }
-  }; // Hàm để ánh xạ categoryId sang categoryName
+
   const fetchFolders = async (sortOption) => {
     let res = await fetchAllFolders(sortOption);
     if (res && res.data.folders) {
@@ -65,7 +63,6 @@ const AllFolder = () => {
           .map((ref) => ref.categoryName)
           .join(", "),
       }));
-      setListFolders(newData);
     }
   };
   const handleEditTable = (folder) => {
@@ -78,9 +75,6 @@ const AllFolder = () => {
   const handleDeleteFile = (user) => {
     setShowDelete(true);
     setDataFolders(user);
-  };
-  const handleDeleteFromModal = (user) => {
-    fetchFolders(sortOption);
   };
 
   const columns2 = [
@@ -131,7 +125,38 @@ const AllFolder = () => {
   const columnAdmin = [
     ...columnInfoFolder,
     ...columnCategoryName,
+    {
+      field: "defaultTime",
+      headerName: "Thời gian kiểm tra",
+      cellClassName: "name-column--cell",
+    },
     ...columnUser,
+    {
+      field: "modifiedAt",
+      headerName: "Thời gian cập nhật",
+      cellClassName: "name-column--cell",
+      minWidth: 170,
+      valueGetter: (params) => {
+        const originalDate = params.value; // Lấy giá trị ngày từ dữ liệu
+
+        if (originalDate) {
+          // Chuyển đổi ngày giờ từ định dạng gốc sang đối tượng Date và sau đó chuyển đổi sang múi giờ Việt Nam
+          const localDate = new Date(originalDate).toLocaleString("vi-VN", {
+            timeZone: "Asia/Ho_Chi_Minh",
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
+
+          return localDate; // Trả về ngày và giờ đã định dạng theo múi giờ Việt Nam
+        }
+        return ""; // Hoặc giá trị mặc định khi không có ngày
+      },
+    },
+
     ...columns2,
   ];
 
@@ -158,12 +183,15 @@ const AllFolder = () => {
         showEdit={showEdit}
         dataFolders={dataFolders}
         handleEditTable={handleEditTable}
+        descending={descending}
+        orderBy={orderBy}
       />
       <ModalDeleteFolder
         setShowDelete={setShowDelete}
         showDelete={showDelete}
         dataFolders={dataFolders}
-        handleDeleteFromModal={handleDeleteFromModal}
+        descending={descending}
+        orderBy={orderBy}
       />
       <div className="user-header">
         <div className="h1 text-center text-primary m-3 px-md-5 px-3">
@@ -174,17 +202,21 @@ const AllFolder = () => {
           <div className="d-flex gap-3">
             <span>
               <ModalAddNewFolderForAllFolder
-                fetchFolders={fetchFolders}
-                listFolders={listFolders}
-                sortOption={sortOption}
-                categoryData={categoryData}
+                descending={descending}
+                orderBy={orderBy}
+              />
+            </span>
+            <span>
+              <ModalAddNewExamRandomQues
+                descending={descending}
+                orderBy={orderBy}
               />
             </span>
           </div>
           <Box style={{ height: 600, width: "100%" }}>
-            {listFolders?.length > 0 ? (
+            {listExams?.length > 0 ? (
               <DataGrid
-                rows={listFolders?.map((row, index) => ({
+                rows={listExams?.map((row, index) => ({
                   ...row,
                   stt: index + 1,
                 }))}

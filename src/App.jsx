@@ -26,23 +26,23 @@ function App() {
           <div className="text">Loading....</div>
         </div>
       ) : (
-        <>
-          <div className="app-container">
-            <AppRoutes />
-          </div>
-          <ToastContainer
-            position="top-right"
-            autoClose={4000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-        </>
+      <>
+        <div className="app-container">
+          <AppRoutes />
+        </div>
+        <ToastContainer
+          position="top-right"
+          autoClose={4000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+      </>
       )}
     </>
   );

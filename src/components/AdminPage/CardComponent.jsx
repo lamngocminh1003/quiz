@@ -3,7 +3,7 @@ import "./AdminPage.scss";
 import { useHistory } from "react-router-dom";
 
 const CardComponent = (props) => {
-  const { title, link, content, icon, color } = props;
+  const { title, link, content, icon, color, sizeXl, sizeMd } = props;
   let history = useHistory();
 
   const handleNextView = (link) => {
@@ -11,7 +11,7 @@ const CardComponent = (props) => {
   };
   return (
     <>
-      <div className="col-xl-3 col-md-6 mb-4">
+      <div className={`col-xl-${sizeXl} col-md-${sizeMd} mb-4`}>
         <div className={`card border-left-${color} shadow h-100 py-2`}>
           <button
             className="card-body btn"
@@ -20,11 +20,11 @@ const CardComponent = (props) => {
             <div className="row no-gutters align-items-center">
               <div className="col mr-2 ">
                 <div
-                  className={`text-xs font-weight-bold text-${color} text-uppercase mb-1`}
+                  className={`h6 text-xs font-weight-bold text-${color} text-uppercase mb-1`}
                 >
                   {title}
                 </div>
-                <div className="h5 mb-0 font-weight-bold text-gray-800">
+                <div className="h6 mb-0 font-weight-bold text-secondary">
                   {content}
                 </div>
               </div>

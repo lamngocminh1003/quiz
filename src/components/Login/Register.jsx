@@ -2,18 +2,36 @@ import "../Login/Login.scss";
 import { useHistory } from "react-router-dom";
 import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
-import { userLogin } from "../../services/userService";
+import {
+  userStudentRegister,
+  userTeacherRegister,
+} from "../../services/userService";
 import logo from "../../assets/image/logo.png";
 import Button from "@mui/material/Button";
+import {
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+  FormLabel,
+} from "@mui/material";
 
 const Register = (props) => {
   let history = useHistory();
   const [username, setUserName] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isShowPassword, setIsShowPassword] = useState(false);
   const inputRefs = useRef([]);
   const [isShowLoading, setIsShowLoading] = useState(false);
+  const [selectedRole, setSelectedRole] = useState("");
+
+  const handleChangeRole = (event) => {
+    const value = event.target.value;
+    setSelectedRole(value);
+    console.log(value); // Log the selected value to the console
+  };
   useEffect(() => {
     // Kiểm tra trạng thái đăng nhập khi component được render
     let session = localStorage.getItem("auth");
@@ -37,12 +55,15 @@ const Register = (props) => {
   };
   const handleInputChange = (e, index) => {
     if (index === 0) {
-      setUserName(e.target.value);
+      setName(e.target.value);
     }
     if (index === 1) {
-      setPassword(e.target.value);
+      setUserName(e.target.value);
     }
     if (index === 2) {
+      setPassword(e.target.value);
+    }
+    if (index === 3) {
       setConfirmPassword(e.target.value);
     }
   };
@@ -55,13 +76,20 @@ const Register = (props) => {
     }
   };
   const defaultValidInput = {
+    isValidName: true,
     isValidUserName: true,
     isValidPassword: true,
     isValidConfirmPassword: true,
+    isValidSelectedRole: true,
   };
   const [objCheckInput, setObjCheckInput] = useState(defaultValidInput);
   const isValidInputs = () => {
     setObjCheckInput(defaultValidInput);
+    if (!name) {
+      toast.error("Vui lòng nhập họ tên");
+      setObjCheckInput({ ...defaultValidInput, isValidUserName: false });
+      return false;
+    }
     if (!username) {
       toast.error("Vui lòng nhập tài khoản");
       setObjCheckInput({ ...defaultValidInput, isValidUserName: false });
@@ -78,7 +106,6 @@ const Register = (props) => {
       return false;
     }
     if (password !== confirmPassword) {
-      setError("Mật khẩu và mật khẩu lần 2 không chính xác");
       setObjCheckInput({
         ...defaultValidInput,
         isValidConfirmPassword: false,
@@ -86,34 +113,56 @@ const Register = (props) => {
       });
       return false;
     }
+    if (!selectedRole) {
+      toast.error("Vui lòng đăng ký tài khoản Giáo viên hoặc sinh viên");
+      setObjCheckInput({ ...defaultValidInput, isValidSelectedRole: false });
+      return false;
+    }
     return true;
   };
   const handlePressEnter = (event) => {
     if (event && event.keyCode === 13) {
-      //   handleLogin();
+      handleRegister();
     }
   };
-  const handleLogin = async () => {
-    let data = { username, password };
+  const readJwt = (jwt) => JSON.parse(atob(jwt.split(".")[1]));
+  const handleRegister = async () => {
+    let data = { username, name, password };
     let check = isValidInputs();
     if (check === true) {
       try {
         setIsShowLoading(true);
-        let res = await userLogin(data);
-        if (res) {
+        let res; // Declare `res` outside the conditional blocks
+
+        if (selectedRole === "Student") {
+          res = await userStudentRegister(data);
+          console.log("Student register response:", res);
+        } else if (selectedRole === "Teacher") {
+          res = await userTeacherRegister(data);
+          console.log("Teacher register response:", res);
+        }
+
+        if (res && res.token) {
           toast.success("Đăng ký thành công");
-          let token = res.data.token;
+          let token = res.token;
+          let dataFromToken = readJwt(token);
           localStorage.setItem("auth", true);
           localStorage.setItem("token", token);
-          localStorage.setItem("username", res.data.username);
-          localStorage.setItem("categoryId", res.data.categoryId);
+          localStorage.setItem("username", dataFromToken.nameid);
+          localStorage.setItem("uniqueName", dataFromToken.unique_name);
+          localStorage.setItem("role", dataFromToken.role);
           localStorage.setItem("year", new Date().getFullYear());
           localStorage.setItem("yearStart", new Date().getFullYear() - 1);
           localStorage.setItem("yearEnd", new Date().getFullYear());
           history.push("/");
+        } else {
+          console.log("Error response:", res);
+          toast.error(`${res.data?.title || "Error during registration"}`);
+          setIsShowLoading(false);
         }
         setIsShowLoading(false);
       } catch (error) {
+        console.error("Error during registration:", error);
         setIsShowLoading(false);
         toast.error(
           "Đăng ký thất bại. Vui lòng kiểm tra lại mật khẩu hoặc tên tài khoản"
@@ -121,6 +170,7 @@ const Register = (props) => {
       }
     }
   };
+
   return (
     <div className="login-container ">
       <div className="container ">
@@ -137,6 +187,22 @@ const Register = (props) => {
                 <div className="detail">Đăng ký</div>
               </div>
               <div className="mb-3">
+                <label className="mb-1">Họ tên</label>
+                <input
+                  type="text"
+                  className={
+                    objCheckInput.isValidName
+                      ? "form-control"
+                      : "form-control is-invalid"
+                  }
+                  placeholder="Họ tên"
+                  required
+                  value={name}
+                  ref={(ref) => addInputRef(ref, 0)}
+                  onChange={(e) => handleInputChange(e, 0)}
+                />
+              </div>
+              <div className="mb-3">
                 <label className="mb-1">Tên tài khoản</label>
 
                 <input
@@ -149,8 +215,8 @@ const Register = (props) => {
                   placeholder="Tên tài khoản"
                   required
                   value={username}
-                  ref={(ref) => addInputRef(ref, 0)}
-                  onChange={(e) => handleInputChange(e, 0)}
+                  ref={(ref) => addInputRef(ref, 1)}
+                  onChange={(e) => handleInputChange(e, 1)}
                 />
               </div>
               <div className="mb-3 input-password">
@@ -160,8 +226,8 @@ const Register = (props) => {
                   placeholder="Mật khẩu"
                   required
                   value={password}
-                  ref={(ref) => addInputRef(ref, 1)}
-                  onChange={(e) => handleInputChange(e, 1)}
+                  ref={(ref) => addInputRef(ref, 2)}
+                  onChange={(e) => handleInputChange(e, 2)}
                   className={
                     objCheckInput.isValidPassword
                       ? "form-control"
@@ -180,12 +246,12 @@ const Register = (props) => {
               <div className="mb-3 input-password">
                 <label className="mb-1">Xác nhận mật khẩu</label>
                 <input
-                  type={isShowPassword === true ? "text" : "password"}
+                  type="password"
                   placeholder="Xác nhận mật khẩu"
                   required
-                  value={password}
-                  ref={(ref) => addInputRef(ref, 2)}
-                  onChange={(e) => handleInputChange(e, 2)}
+                  value={confirmPassword}
+                  ref={(ref) => addInputRef(ref, 3)}
+                  onChange={(e) => handleInputChange(e, 3)}
                   onKeyDown={(event) => handlePressEnter(event)}
                   className={
                     objCheckInput.isValidConfirmPassword
@@ -194,6 +260,26 @@ const Register = (props) => {
                   }
                 />
               </div>
+              <FormControl className="mb-3">
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                  value={selectedRole}
+                  onChange={handleChangeRole} // Attach the onChange event handler
+                >
+                  <FormControlLabel
+                    value="Teacher"
+                    control={<Radio />}
+                    label="Giáo viên"
+                  />
+                  <FormControlLabel
+                    value="Student"
+                    control={<Radio />}
+                    label="Sinh viên"
+                  />
+                </RadioGroup>
+              </FormControl>
               {isShowLoading && (
                 <div className="fa-2x d-flex justify-content-center m-3 text-warning">
                   <i className="fas fa-spinner fa-pulse "></i>
@@ -203,7 +289,7 @@ const Register = (props) => {
                 <button
                   className="btn btn-primary btn-warning"
                   onClick={() => {
-                    handleLogin();
+                    handleRegister();
                   }}
                 >
                   Đăng ký

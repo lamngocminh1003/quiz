@@ -2,13 +2,28 @@ import React from "react";
 import user from "../../assets/image/user.png";
 import admin from "../../assets/image/admin.png";
 import teacher from "../../assets/image/teacher.png";
+import ModalEditUser from "../ManageUsers/ModalEditUser";
+import { useState } from "react";
+
 import DriveFileRenameOutlineSharpIcon from "@mui/icons-material/DriveFileRenameOutlineSharp";
 const AvtComponent = (props) => {
   const { username, role, uniqueName } = props;
   let usernameLocal = localStorage.getItem("username");
 
+  const [showEdit, setShowEdit] = useState(false);
+  const [dataUsers, setDataUser] = useState({});
+  const handleEditUser = () => {
+    setShowEdit(true);
+    setDataUser({ uniqueName, username });
+  };
+
   return (
     <>
+      <ModalEditUser
+        setShowEdit={setShowEdit}
+        showEdit={showEdit}
+        dataUsers={dataUsers}
+      />
       <div className="card-body text-center">
         <img
           src={role === "Admin" ? admin : role === "Teacher" ? teacher : user}
@@ -25,6 +40,7 @@ const AvtComponent = (props) => {
             type="button"
             className="btn btn-link"
             style={{ fontSize: "14px" }}
+            onClick={handleEditUser}
           >
             Cập nhật thông tin các nhân
             <DriveFileRenameOutlineSharpIcon fontSize="small" />

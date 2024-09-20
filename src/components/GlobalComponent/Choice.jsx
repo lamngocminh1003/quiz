@@ -1,5 +1,5 @@
 import { Col, Form, Row } from "react-bootstrap";
-import React, { forwardRef, useImperativeHandle } from "react";
+import React from "react";
 import Button from "@mui/material/Button";
 import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 import { toast } from "react-toastify";
@@ -10,10 +10,17 @@ const Choice = (props) => {
   const alphabets = ["A", "B", "C", "D"];
   const positions = ["đầu tiên", "thứ 2", "thứ 3", "thứ 4"];
   const addANewChoice = () => {
+    // Tạo bản sao sâu cho questionArr và answers
     const questionArrCopy = [...questionArr];
+    questionArrCopy[questionIndex].answers = [
+      ...questionArr[questionIndex].answers,
+    ];
+
     const lastChoicesPosition = questionArrCopy[questionIndex].answers.length;
+
     for (let i = lastChoicesPosition - 1; i >= 0; i--) {
       const eachInput = questionArrCopy[questionIndex].answers[i].substring(2);
+
       if (eachInput.trim(" ").length === 0) {
         toast.error("Vui lòng nhập đủ các lựa chọn trước!");
         return;
@@ -22,12 +29,18 @@ const Choice = (props) => {
 
     if (lastChoicesPosition < 4) {
       const newChoice = `${alphabets[lastChoicesPosition]}. `;
+
+      // Thêm phần tử mới vào mảng answers
       questionArrCopy[questionIndex].answers.push(newChoice);
+
+      // Cập nhật lại state
       setQuestionArr(questionArrCopy);
     }
   };
+
   const deleteChoice = (choiceIndex) => {
-    const questionArrCopy = [...questionArr];
+    // Sao chép sâu cho questionArr và answers
+    const questionArrCopy = JSON.parse(JSON.stringify(questionArr));
 
     // Xóa phần tử tại vị trí choiceIndex
     questionArrCopy[questionIndex].answers.splice(choiceIndex, 1);
@@ -37,11 +50,15 @@ const Choice = (props) => {
       questionIndex
     ].answers.map((choice, index) => {
       const choiceLabel = String.fromCharCode(65 + index); // Tạo ký tự từ A, B, C, ...
-      return `${choiceLabel}. ${answers.slice(3)}`; // Ghép ký tự mới với phần còn lại của chuỗi lựa chọn
+
+      // Ghép ký tự mới với phần còn lại của chuỗi lựa chọn
+      return `${choiceLabel}. ${choice.slice(3)}`; // Sử dụng choice thay vì answers
     });
 
+    // Cập nhật lại state
     setQuestionArr(questionArrCopy);
   };
+
   const handleChoiceChangeInput = (text, choiceIndex, questionIndex) => {
     onChangeChoice(text, choiceIndex, questionIndex);
   };
@@ -92,7 +109,6 @@ const Choice = (props) => {
                       questionIndex
                     );
                   }}
-                  // ref={ref}
                 />
               </Col>
               {+choiceIndex >= 2 ? (

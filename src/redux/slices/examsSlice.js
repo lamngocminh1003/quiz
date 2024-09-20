@@ -3,17 +3,19 @@ import {
   fetchAllExamsApi,
   createNewTest,
   deleteTest,
+  updateTest,
   createNewTestRandom,
 } from "../../services/examService";
 
 export const fetchAllExams = createAsyncThunk(
   "exams/fetchAllExams",
-  async ({ orderBy, descending, itemPerPage, page }, thunkAPI) => {
+  async ({ orderBy, descending, itemPerPage, page, creator }, thunkAPI) => {
     const res = await fetchAllExamsApi({
       orderBy,
       descending,
       itemPerPage,
       page,
+      creator,
     });
     if (res?.tests) {
       const transformedData = res?.tests?.map((item) => {
@@ -37,7 +39,7 @@ export const fetchAllExams = createAsyncThunk(
   }
 );
 export const createNewExam = createAsyncThunk(
-  "subjects/createNewExam",
+  "exams/createNewExam",
   async (
     { categoryId, name, description, defaultTime, questions, links },
     thunkAPI
@@ -53,8 +55,25 @@ export const createNewExam = createAsyncThunk(
     return res;
   }
 );
+export const editExam = createAsyncThunk(
+  "exams/editExam",
+  async (
+    { id, name, description, defaultTimeMin, links, questions },
+    thunkAPI
+  ) => {
+    const res = await updateTest(
+      id,
+      name,
+      description,
+      defaultTimeMin,
+      links,
+      questions
+    );
+    return res;
+  }
+);
 export const createNewExamRandom = createAsyncThunk(
-  "subjects/createNewExamRandom",
+  "exams/createNewExamRandom",
   async ({ categoryId, numberOfQuestions, minutes }, thunkAPI) => {
     const res = await createNewTestRandom(
       categoryId,
@@ -65,7 +84,7 @@ export const createNewExamRandom = createAsyncThunk(
   }
 );
 export const deleteExam = createAsyncThunk(
-  "subjects/deleteExam",
+  "exams/deleteExam",
   async (id, thunkAPI) => {
     const res = await deleteTest(id);
     return res;
@@ -81,6 +100,8 @@ const initialState = {
   isErrorDelete: false,
   isLoadingCreateRadom: false,
   isErrorCreateRandom: false,
+  isLoadingUpdate: false,
+  isErrorUpdate: false,
 };
 
 export const examsSlice = createSlice({
@@ -150,6 +171,21 @@ export const examsSlice = createSlice({
         // Add user to the state array
         state.isLoadingCreateRadom = false;
         state.isErrorCreateRandom = true;
+      })
+      .addCase(editExam.pending, (state, action) => {
+        // Add user to the state array
+        state.isLoadingUpdate = true;
+        state.isErrorUpdate = false;
+      })
+      .addCase(editExam.fulfilled, (state, action) => {
+        // Add user to the state array
+        state.isLoadingUpdate = false;
+        state.isErrorUpdate = false;
+      })
+      .addCase(editExam.rejected, (state, action) => {
+        // Add user to the state array
+        state.isLoadingUpdate = false;
+        state.isErrorUpdate = true;
       });
   },
 });

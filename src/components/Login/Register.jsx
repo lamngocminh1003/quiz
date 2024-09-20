@@ -1,4 +1,3 @@
-import "../Login/Login.scss";
 import { useHistory } from "react-router-dom";
 import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
@@ -7,13 +6,12 @@ import {
   userTeacherRegister,
 } from "../../services/userService";
 import logo from "../../assets/image/logo.png";
-import Button from "@mui/material/Button";
 import {
   Radio,
   RadioGroup,
   FormControlLabel,
   FormControl,
-  FormLabel,
+  Button,
 } from "@mui/material";
 
 const Register = (props) => {
@@ -30,7 +28,6 @@ const Register = (props) => {
   const handleChangeRole = (event) => {
     const value = event.target.value;
     setSelectedRole(value);
-    console.log(value); // Log the selected value to the console
   };
   useEffect(() => {
     // Kiểm tra trạng thái đăng nhập khi component được render

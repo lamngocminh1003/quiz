@@ -6,7 +6,6 @@ import { useHistory } from "react-router-dom";
 const ContentUp = () => {
   let history = useHistory();
   const handleDoingExam = () => {
-    console.log("hello");
 
     history.push("/doing-exam");
   };

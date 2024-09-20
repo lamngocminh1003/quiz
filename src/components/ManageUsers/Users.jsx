@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import { fetchAllUsers } from "../../services/userService";
-import { getCategoryById } from "../../services/categoryService";
-import ModalEditUser from "./ModalEditUser";
+import { fetchAllUsersRedux } from "../../redux/slices/usersSlice";
 import ModalAddNewUser from "./ModalAddNewUser";
 import ModalDeleteUser from "./ModalDeleteUser";
-import { useHistory } from "react-router-dom";
 import { columnsIndex, columnUser } from "../input/Column";
 import ScrollToTopButton from "../input/ScrollToTopButton";
 import {
@@ -17,92 +14,60 @@ import {
   GridToolbarExport,
 } from "@mui/x-data-grid";
 import { Box } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-const Users = (props) => {
+import { useDispatch, useSelector } from "react-redux";
+const Users = () => {
+  const dispatch = useDispatch();
   const [pageSize, setPageSize] = useState(10);
-  const [listUsers, setListUsers] = useState([]);
-  const [listCategories, setListCategories] = useState([]);
+  const listUsers = useSelector((state) => state.users.listUsers);
   const [categoryData, setCategoryData] = useState([]);
-  const [showEdit, setShowEdit] = useState(false);
   const [dataUsers, setDataUser] = useState({});
   const [showDelete, setShowDelete] = useState(false);
-  const [categoryId, setCategoryId] = useState("1");
-  let history = useHistory();
   const userName = localStorage.getItem("username");
   useEffect(() => {
-    fetchUsers(categoryId);
-    getCategoryByCategoryId(categoryId);
-  }, [categoryId]);
-  const fetchUsers = async (categoryId) => {
-    let res = await fetchAllUsers(categoryId);
-    if (res && res.data.users) {
-      setListUsers(res.data.users);
-    }
-  };
+    dispatch(fetchAllUsersRedux());
+  }, [dispatch]);
   const [dynamicHeight, setDynamicHeight] = useState(600); // Chiều cao động được tính toán
 
-  const getCategoryByCategoryId = async (categoryId) => {
-    let res = await getCategoryById(categoryId);
-    if (res && res.data) {
-      setCategoryData(res.data);
-    }
-  };
-  const handleEditTable = (user) => {
-    fetchUsers(categoryId);
-  };
-  const handleEditUser = (user) => {
-    setShowEdit(true);
-    setDataUser(user);
-  };
-  const handleUpdateTable = (user) => {
-    setListUsers([user, ...listUsers]);
-  };
   const handleDeleteUser = (user) => {
     setShowDelete(true);
     setDataUser(user);
   };
   const handleDeleteFromModal = (user) => {
-    fetchUsers(categoryId);
+    dispatch(fetchAllUsersRedux());
   };
   const columns = [
     ...columnsIndex,
     ...columnUser,
     {
-      field: "fullName",
+      field: "name",
       headerName: "Họ tên",
       cellClassName: "name-column--cell",
       flex: 1,
     },
     {
-      field: "role",
+      field: "roles",
       headerName: "Vai trò",
       cellClassName: "name-column--cell",
+      flex: 1,
+
+      valueGetter: (params) => {
+        if (params?.value?.length > 0) {
+          if (params?.value[0] === "Admin") {
+            return "Quản trị viên";
+          } else if (params?.value[0] === "Teacher") {
+            return "Giáo viên";
+          } else if (params?.value[0] === "Student") {
+            return "Sinh viên";
+          }
+          return params?.value[0]; // Giữ nguyên giá trị nếu không trùng khớp
+        }
+      },
     },
   ];
   const columns2 = [
     ...columns,
-    {
-      field: "Sửa",
-      headerName: "Sửa",
-      disableExport: true,
-      sortable: false, // Tắt sắp xếp cho cột "Thao tác"
-      filterable: false, // Tắt lọc cho cột "Thao tác"
-      renderCell: (params) => {
-        return (
-          <>
-            <button
-              onClick={() => handleEditUser(params.row)}
-              variant="contained"
-              title="Sửa người dùng"
-              className="btn btn-warning"
-            >
-              <EditIcon />
-            </button>
-          </>
-        );
-      },
-    },
+
     {
       field: "Xóa",
       headerName: "Xóa",
@@ -147,12 +112,6 @@ const Users = (props) => {
   }
   return (
     <>
-      <ModalEditUser
-        setShowEdit={setShowEdit}
-        showEdit={showEdit}
-        dataUsers={dataUsers}
-        handleEditTable={handleEditTable}
-      />
       <ModalDeleteUser
         setShowDelete={setShowDelete}
         showDelete={showDelete}
@@ -169,14 +128,7 @@ const Users = (props) => {
         <div className="container">
           <div className="d-flex gap-3">
             <span>
-              <ModalAddNewUser
-                handleUpdateTable={handleUpdateTable}
-                setListCategories={setListCategories}
-                listCategories={listCategories}
-                fetchUsers={fetchUsers}
-                listUsers={listUsers}
-                categoryId={categoryId}
-              />
+              <ModalAddNewUser />
             </span>
           </div>
           <Box
@@ -205,8 +157,7 @@ const Users = (props) => {
               />
             ) : (
               <div className="h6 text-center text-secondary m-3">
-                Hiện tại chưa có người dùng trong danh mục này. Vui lòng tạo
-                mới!
+                Hiện tại chưa có người dùng trong danh mục. Vui lòng tạo mới!
               </div>
             )}
           </Box>

@@ -21,12 +21,16 @@ const fetchAllExamsApi = ({
   testName,
   itemPerPage,
   page,
+  creator,
 }) => {
   let config = createConfig();
   let url = `${backendURL}/api/Test`;
   let params = [];
   if (orderBy !== undefined) {
     params.push(`orderBy=${orderBy}`);
+  }
+  if (creator !== undefined) {
+    params.push(`creator=${creator}`);
   }
   if (descending !== undefined) {
     params.push(`descending=${descending}`);
@@ -98,6 +102,28 @@ const createNewTestRandom = (categoryId, numberOfQuestions, minutes) => {
     config
   );
 };
+const updateTest = (
+  id,
+  name,
+  description,
+  defaultTimeMin,
+  links,
+  questions
+) => {
+  let config = createConfig();
+  return axios.patch(
+    `${backendURL}/api/Test`,
+    {
+      id,
+      name,
+      description,
+      defaultTimeMin,
+      links,
+      questions,
+    },
+    config
+  );
+};
 const updateCategory = (id, categoryName, defaultFilePermission) => {
   let config = createConfig();
   return axios.patch(
@@ -135,4 +161,5 @@ export {
   getCategoryById,
   searchCategory,
   createNewTestRandom,
+  updateTest,
 };

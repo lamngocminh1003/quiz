@@ -66,3 +66,12 @@
     }
   }
 }
+.input-password-create {
+  position: relative;
+  .fa-eye-slash,
+  .fa-eye {
+    position: absolute;
+    bottom: 15%;
+    left: 93%;
+  }
+}

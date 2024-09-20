@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import "./AdminPage.scss";
 import CardComponent from "./CardComponent";
 import AreaChartComponent from "./AreaChartComponent";
@@ -7,17 +7,21 @@ import ProgressBarComponent from "./ProgressBarComponent";
 import LargeCardComponent from "./LargeCardComponent";
 import { fetchAllSubjects } from "../../redux/slices/subjectsSlice";
 import { fetchAllExams } from "../../redux/slices/examsSlice";
+import { fetchAllUsersRedux } from "../../redux/slices/usersSlice";
 import { useDispatch, useSelector } from "react-redux";
 function AdminPage() {
   const dispatch = useDispatch();
   const listSubjects = useSelector((state) => state.subjects.listSubjects);
   const listSubjectsLength = listSubjects?.categories?.length;
   const listExams = useSelector((state) => state.exams.listExams);
+  const listUsers = useSelector((state) => state.users.listUsers);
+  const listUsersLength = listUsers?.length;
   const listExamsLength = listExams?.length;
   useEffect(() => {
     dispatch(fetchAllSubjects({}));
     dispatch(fetchAllExams({}));
-  }, []);
+    dispatch(fetchAllUsersRedux());
+  }, [dispatch]);
   return (
     <div className="container my-3">
       <body id="page-top">
@@ -48,7 +52,7 @@ function AdminPage() {
                   />
                   <CardComponent
                     title="Người dùng"
-                    content="Số lượng người dùng"
+                    content={`Số lượng: ${listUsersLength}`}
                     icon="fa-solid fa-users"
                     link="/user"
                     color="success"

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getUserByUsername } from "../../services/userService";
+import { getUserByUsername, fetchAllUsers } from "../../services/userService";
 
 export const getUserByUsernameRedux = createAsyncThunk(
   "users/getUserByUsername",
@@ -8,8 +8,18 @@ export const getUserByUsernameRedux = createAsyncThunk(
     return res.data;
   }
 );
+export const fetchAllUsersRedux = createAsyncThunk(
+  "users/fetchAllUsers",
+  async (thunkAPI) => {
+    const res = await fetchAllUsers();
+    return res;
+  }
+);
 const initialState = {
   dataUser: "",
+  listUsers: [],
+  isLoadingFetchAll: false,
+  isErrorFetchAll: false,
   isLoadingGetUser: false,
   isErrorGetUser: false,
 };
@@ -36,6 +46,22 @@ export const usersSlice = createSlice({
         // Add user to the state array
         state.isLoadingGetUser = false;
         state.isErrorGetUser = true;
+      })
+      .addCase(fetchAllUsersRedux.pending, (state, action) => {
+        // Add user to the state array
+        state.isLoadingFetchAll = true;
+        state.isErrorFetchAll = false;
+      })
+      .addCase(fetchAllUsersRedux.fulfilled, (state, action) => {
+        // Add user to the state array
+        state.isLoadingFetchAll = false;
+        state.isErrorFetchAll = false;
+        state.listUsers = action.payload.data.users;
+      })
+      .addCase(fetchAllUsersRedux.rejected, (state, action) => {
+        // Add user to the state array
+        state.isLoadingFetchAll = false;
+        state.isErrorFetchAll = true;
       });
   },
 });

@@ -3,21 +3,19 @@ import AvtComponent from "./AvtComponent";
 import CommentComponent from "./CommentComponent";
 import DataGridTable from "./DataGridTable";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getUserByUsernameRedux } from "../../redux/slices/usersSlice";
 import { useDispatch, useSelector } from "react-redux";
 const ProfilePage = () => {
   let role = localStorage.getItem("role");
-  let uniqueName = localStorage.getItem("uniqueName");
   const { username } = useParams();
   const dispatch = useDispatch();
   useEffect(() => {
     if (username !== undefined) {
       dispatch(getUserByUsernameRedux(username));
     }
-  }, [username]);
+  }, [dispatch, username]);
   const dataUser = useSelector((state) => state.users.dataUser);
-
   return (
     <>
       <section style={{ backgroundColor: "#eee" }}>
@@ -52,7 +50,6 @@ const ProfilePage = () => {
                   title="Đáp án các bài thi"
                   titleButton="Làm bài thi mới"
                   link="all-exams"
-                  role={role}
                   username={username}
                 />
               ) : (

@@ -55,21 +55,16 @@ const userTeacherRegister = (data) => {
       return error.response;
     });
 };
-const fetchAllUsers = (id) => {
+const fetchAllUsers = () => {
   let config = createConfig();
-  return axios.get(
-    `${backendURL}/api/v1/User/from-category-id?id=${id}`,
-    config
-  );
+  return axios.get(`${backendURL}/api/Account/all`, config);
 };
-const updateUser = (username, description, categoryId) => {
+const updateUser = (name) => {
   let config = createConfig();
   return axios.patch(
-    `${backendURL}/api/v1/User`,
+    `${backendURL}/api/Account`,
     {
-      username,
-      description,
-      categoryId,
+      name,
     },
     config
   );
@@ -88,10 +83,9 @@ const createNewUser = (username, password, description, categoryId) => {
     config
   );
 };
-const deleteUser = (id) => {
+const deleteUser = (username) => {
   let config = createConfig();
-
-  return axios.delete(`${backendURL}/api/v1/User?id=${id}`, config);
+  return axios.delete(`${backendURL}/api/Account?username=${username}`, config);
 };
 const getUserByUsername = (username) => {
   let config = createConfig();

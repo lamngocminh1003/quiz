@@ -30,9 +30,17 @@ const ProfilePage = () => {
                 />
               </div>
               {role === "Teacher" || role === "Admin" ? (
-                <CommentComponent title="Bình luận về đề thi" />
+                <CommentComponent
+                  title="Bình luận về đề thi"
+                  username={username}
+                  role={role}
+                />
               ) : role === "Student" ? (
-                <CommentComponent title="Bình luận đề thi trước đó" />
+                <CommentComponent
+                  title="Bình luận đề thi trước đó"
+                  username={username}
+                  role={role}
+                />
               ) : (
                 !role || role === null(<></>)
               )}

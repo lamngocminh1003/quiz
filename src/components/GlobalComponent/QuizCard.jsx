@@ -6,8 +6,8 @@ import { useHistory } from "react-router-dom";
 const QuizCard = (props) => {
   const { data } = props;
   let history = useHistory();
-  const handleViewInfoExam = (id) => {
-    history.push(`/exam/${id}`);
+  const handleViewInfoExam = (item) => {
+    history.push(`/exam/${item.id}`);
   };
   return (
     <>
@@ -43,7 +43,7 @@ const QuizCard = (props) => {
                         <button
                           type="button"
                           className="read_more_btn"
-                          onClick={() => handleViewInfoExam(item.id)}
+                          onClick={() => handleViewInfoExam(item)}
                         >
                           Vào thi
                         </button>

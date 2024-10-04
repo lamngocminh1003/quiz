@@ -6,6 +6,8 @@ import ModalEditFolder from "./ModalEditFolder";
 import ModalAddNewFolderForAllFolder from "./ModalAddNewFolderForAllFolder";
 import ModalDeleteFolder from "./ModalDeleteFolder";
 import ModalAddNewExamRandomQues from "./ModalAddNewExamRandomQues";
+import ModalAddNewFolderByFile from "./ModalAddNewFolderByFile";
+
 import _ from "lodash";
 import ScrollToTopButton from "../input/ScrollToTopButton";
 import TableFolder from "./TableFolder";
@@ -59,6 +61,12 @@ const AllFolder = () => {
           <div className="d-flex gap-3">
             <span>
               <ModalAddNewFolderForAllFolder
+                descending={descending}
+                orderBy={orderBy}
+              />
+            </span>{" "}
+            <span>
+              <ModalAddNewFolderByFile
                 descending={descending}
                 orderBy={orderBy}
               />

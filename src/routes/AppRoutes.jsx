@@ -43,7 +43,10 @@ const AppRoutes = (props) => {
           <PrivateRoutes path="/user" component={Users} />
           <PrivateRoutes path="/admin-page" component={AdminPage} />
           <PrivateRoutes path="/comment" component={Comment} />
-          <PrivateRoutes path="/doing-exam" component={DoingExam} />
+          <PrivateRoutes
+            path="/doing-exam/:testId/:minutes"
+            component={DoingExam}
+          />
           <Route path="*">
             <Page404 />
           </Route>

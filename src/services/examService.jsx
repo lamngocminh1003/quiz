@@ -22,6 +22,7 @@ const fetchAllExamsApi = ({
   itemPerPage,
   page,
   creator,
+  testId,
 }) => {
   let config = createConfig();
   let url = `${backendURL}/api/Test`;
@@ -45,7 +46,9 @@ const fetchAllExamsApi = ({
   if (testName !== undefined) {
     params.push(`testName=${encodeURIComponent(testName)}`);
   }
-
+  if (testId !== undefined) {
+    params.push(`testId=${testId}`);
+  }
   if (itemPerPage !== undefined) {
     params.push(`itemPerPage=${itemPerPage}`);
   }
@@ -90,6 +93,29 @@ const createNewTest = (
     config
   );
 };
+const uploadFileExam = ({
+  categoryId,
+  testName,
+  description,
+  defaultTime,
+  links,
+  File,
+}) => {
+  let config = createConfig();
+  return axios
+    .put(
+      `${backendURL}/api/Test/upload?categoryId=${categoryId}&testName=${testName}&description=${description}&defaultTime=${defaultTime}&links=${links}`,
+      File,
+      config
+    )
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      return error.response;
+    });
+};
+//
 const createNewTestRandom = (categoryId, numberOfQuestions, minutes) => {
   let config = createConfig();
   return axios.post(
@@ -97,6 +123,28 @@ const createNewTestRandom = (categoryId, numberOfQuestions, minutes) => {
     {
       categoryId,
       numberOfQuestions,
+      minutes,
+    },
+    config
+  );
+};
+const testGrade = (token, answers) => {
+  let config = createConfig();
+  return axios.post(
+    `${backendURL}/api/Test/grade`,
+    {
+      token,
+      answers,
+    },
+    config
+  );
+};
+const doingTest = (testId, minutes) => {
+  let config = createConfig();
+  return axios.post(
+    `${backendURL}/api/Test/participate-test?testId=${testId}&minutes=${minutes}`,
+    {
+      testId,
       minutes,
     },
     config
@@ -162,4 +210,7 @@ export {
   searchCategory,
   createNewTestRandom,
   updateTest,
+  doingTest,
+  testGrade,
+  uploadFileExam,
 };

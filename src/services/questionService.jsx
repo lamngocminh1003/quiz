@@ -17,6 +17,7 @@ const fetchAllQuestionsApi = ({ orderBy, descending, categoryId }) => {
   let config = createConfig();
   let url = `${backendURL}/api/Question`;
   let params = [];
+  params.push(`isUnique=true`);
   if (orderBy !== undefined) {
     params.push(`orderBy=${orderBy}`);
   }

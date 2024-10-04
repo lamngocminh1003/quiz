@@ -10,7 +10,15 @@ const ModalEditFolder = (props) => {
   const [isShowLoading, setIsShowLoading] = useState(false);
   const dispatch = useDispatch();
 
-  let { setShowEdit, showEdit, dataFolders, descending, orderBy } = props;
+  let {
+    setShowEdit,
+    showEdit,
+    dataFolders,
+    descending,
+    orderBy,
+    from,
+    username,
+  } = props;
   const prefixes = ["A", "B", "C", "D"];
   const unit = [15, 30, 45, 60, 90, 120];
   const [examUpdates, setExamUpdate] = useState({});
@@ -169,7 +177,11 @@ const ModalEditFolder = (props) => {
         //success
         setShowEdit(false);
         toast.success("Cập nhật đề thi thành công!");
-        dispatch(fetchAllExams({ orderBy, descending }));
+        if ((from = "profilePage")) {
+          dispatch(fetchAllExams({ orderBy, descending, creator: username }));
+        } else {
+          dispatch(fetchAllExams({ orderBy, descending }));
+        }
       } else {
         toast.error(`${res.payload.data}`);
       }

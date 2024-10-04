@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 
 const ModalAddNewExamRandomQues = (props) => {
-  let { descending, orderBy } = props;
+  let { descending, orderBy, from, username } = props;
   const dispatch = useDispatch();
   const listSubjects = useSelector((state) => state.subjects.listSubjects);
   const listQuestions = useSelector((state) => state.questions.listQuestions);
@@ -28,7 +28,7 @@ const ModalAddNewExamRandomQues = (props) => {
   // Initial state
   const [newExam, setNewExam] = useState({
     categoryId: 1,
-    numberOfQuestions: listQuestions?.items?.length || 0,
+    numberOfQuestions: listQuestions?.length || 0,
     minutes: unit[0],
   });
 
@@ -62,7 +62,7 @@ const ModalAddNewExamRandomQues = (props) => {
   useEffect(() => {
     setNewExam((prev) => ({
       ...prev,
-      numberOfQuestions: listQuestions?.items?.length || 0,
+      numberOfQuestions: listQuestions?.length || 0,
     }));
   }, [listQuestions]);
 
@@ -70,7 +70,7 @@ const ModalAddNewExamRandomQues = (props) => {
     setShow(false);
     setNewExam({
       categoryId: 1,
-      numberOfQuestions: listQuestions?.items?.length || 0,
+      numberOfQuestions: listQuestions?.length || 0,
       minutes: unit[0],
     });
   };
@@ -84,7 +84,7 @@ const ModalAddNewExamRandomQues = (props) => {
       toast.error("Số lượng câu hỏi không được để trống không được bỏ trống!");
       return;
     }
-    if (newExam.numberOfQuestions > listQuestions?.items?.length) {
+    if (newExam.numberOfQuestions > listQuestions?.length) {
       toast.error("Vui lòng chọn số câu hỏi thấp hơn của môn học hiện có!");
       return;
     }
@@ -110,11 +110,15 @@ const ModalAddNewExamRandomQues = (props) => {
         setShow(false);
         setNewExam({
           categoryId: 1,
-          numberOfQuestions: listQuestions?.items?.length || 0,
+          numberOfQuestions: listQuestions?.length || 0,
           minutes: unit[0],
         });
         toast.success("Thêm mới đề thi tự động thành công!");
-        dispatch(fetchAllExams({ orderBy, descending }));
+        if ((from = "profilePage")) {
+          dispatch(fetchAllExams({ orderBy, descending, creator: username }));
+        } else {
+          dispatch(fetchAllExams({ orderBy, descending }));
+        }
       } else {
         toast.error(`${res.payload.data}`);
       }

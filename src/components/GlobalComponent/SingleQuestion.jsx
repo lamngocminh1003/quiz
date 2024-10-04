@@ -26,7 +26,7 @@ const SingleQuestion = forwardRef((props, ref) => {
     const index = correctAnswerArr.indexOf(text);
     if (index !== -1) {
       const questionArrCopy = [...questionArr];
-      questionArrCopy[questionIndex].correctAnswer = index;
+      questionArrCopy[questionIndex].correctAnswer = index + 1;
       setQuestionArr(questionArrCopy);
     }
   };
@@ -73,23 +73,21 @@ const SingleQuestion = forwardRef((props, ref) => {
   useEffect(() => {
     if (showEdit && questionArr[questionIndex]) {
       const correctAnswerIndex = questionArr[questionIndex]?.correctAnswer;
+      console.log(correctAnswerIndex);
+
       if (correctAnswerIndex !== undefined) {
         const correctAnswer =
-          correctAnswerIndex === 0
+          correctAnswerIndex === 1
             ? "A"
-            : correctAnswerIndex === 1
-            ? "B"
             : correctAnswerIndex === 2
-            ? "C"
+            ? "B"
             : correctAnswerIndex === 3
+            ? "C"
+            : correctAnswerIndex === 4
             ? "D"
             : "";
         setCorrectAnswerInput(correctAnswer); // Cập nhật input với ký tự A, B, C, D tương ứng
-      } else {
-        setCorrectAnswerInput(""); // Reset nếu không có dữ liệu
       }
-    } else {
-      setCorrectAnswerInput(""); // Reset nếu không có dữ liệu
     }
   }, [questionArr, showEdit]); // Lắng nghe thay đổi của showEdit, và questionIndex
 
@@ -134,7 +132,6 @@ const SingleQuestion = forwardRef((props, ref) => {
               value={questionItem.answers}
             />
           </div>
-
           <Form.Group as={Row} className="py-3 px-3">
             <Form.Label column sm="2">
               Đáp án:

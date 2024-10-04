@@ -55,6 +55,20 @@ const userTeacherRegister = (data) => {
       return error.response;
     });
 };
+const userAdminRegister = (data) => {
+  let config = createConfig();
+
+  let { username, name, password } = data;
+  return axios.put(
+    `${backendURL}/api/Account/admin`,
+    {
+      username,
+      name,
+      password,
+    },
+    config
+  );
+};
 const fetchAllUsers = () => {
   let config = createConfig();
   return axios.get(`${backendURL}/api/Account/all`, config);
@@ -103,4 +117,5 @@ export {
   getUserByUsername,
   userStudentRegister,
   userTeacherRegister,
+  userAdminRegister,
 };

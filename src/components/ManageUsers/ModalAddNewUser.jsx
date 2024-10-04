@@ -12,6 +12,7 @@ import {
 import {
   userStudentRegister,
   userTeacherRegister,
+  userAdminRegister,
 } from "../../services/userService";
 import { fetchAllUsersRedux } from "../../redux/slices/usersSlice";
 import { useDispatch } from "react-redux";
@@ -36,13 +37,15 @@ const ModalAddNewUser = (props) => {
   const handleClose = () => {
     setShow(false);
     setUserName("");
-    name("");
+    setName("");
     setPassword("");
     setConfirmPassword("");
     setIsShowPassword(false);
     setSelectedRole("");
   };
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    setShow(true);
+  };
 
   const handleKeyDown = (e, index) => {
     if (e.key === "Enter") {
@@ -116,7 +119,9 @@ const ModalAddNewUser = (props) => {
       return false;
     }
     if (!selectedRole) {
-      toast.error("Vui lòng đăng ký tài khoản Giáo viên hoặc sinh viên");
+      toast.error(
+        "Vui lòng đăng ký tài khoản giáo viên hoặc sinh viên hoặc quản trị viên"
+      );
       setObjCheckInput({ ...defaultValidInput, isValidSelectedRole: false });
       return false;
     }
@@ -139,20 +144,22 @@ const ModalAddNewUser = (props) => {
           res = await userStudentRegister(data);
         } else if (selectedRole === "Teacher") {
           res = await userTeacherRegister(data);
+        } else if (selectedRole === "Admin") {
+          res = await userAdminRegister(data);
         }
 
-        if (res && res.token) {
-          toast.success("Đăng ký thành công");
+        if ((res && res.token) || res.status === 200) {
+          toast.success("Tạo tài khảo thành công");
           dispatch(fetchAllUsersRedux());
-          setShow(false);
+          handleClose();
         } else {
           console.log("Error response:", res);
-          toast.error(`${res.data?.title || "Error during registration"}`);
+          toast.error(`${res.data?.title || "Tạo tài khảo thất bại"}`);
           setIsShowLoading(false);
         }
         setIsShowLoading(false);
       } catch (error) {
-        console.error("Error during registration:", error);
+        console.error("Tạo tài khảo thất bại", error);
         setIsShowLoading(false);
         toast.error(
           "Đăng ký thất bại. Vui lòng kiểm tra lại mật khẩu hoặc tên tài khoản"
@@ -263,6 +270,11 @@ const ModalAddNewUser = (props) => {
                 value="Student"
                 control={<Radio />}
                 label="Sinh viên"
+              />{" "}
+              <FormControlLabel
+                value="Admin"
+                control={<Radio />}
+                label="Quản trị viên"
               />
             </RadioGroup>
           </FormControl>

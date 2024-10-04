@@ -65,7 +65,7 @@ const ModalEditQuestion = (props) => {
   };
   const handleClose = () => {
     setShowEdit(false);
-    setId(dataQuestion.row.testId);
+    setId(dataQuestion.row.questionId);
     setCategoryName(dataQuestion.row.description);
     setOptionD(dataQuestion.row.optionD);
     setOptionC(dataQuestion.row.optionC);
@@ -98,14 +98,30 @@ const ModalEditQuestion = (props) => {
         toast.error("Trường lựa chọn D không được để trống!");
         return;
       }
-    }
+    } // Đảm bảo các lựa chọn có tiền tố "A. ", "B. ", "C. ", "D. " trước nội dung
+    const formatAnswer = (prefix, answer) => {
+      if (answer) {
+        return answer?.startsWith(`${prefix}.`)
+          ? answer
+          : `${prefix}. ${answer}`;
+      }
+    };
+    const formattedOptionA = formatAnswer("A", optionA) || "";
+    const formattedOptionB = formatAnswer("B", optionB) || "";
+    const formattedOptionC = formatAnswer("C", optionC) || "";
+    const formattedOptionD = formatAnswer("D", optionD) || "";
     try {
       let res = await dispatch(
         updateQuestionRedux({
           questionId,
           description,
           correctAnswer,
-          answers: [optionA || "", optionB || "", optionC || "", optionD || ""],
+          answers: [
+            formattedOptionA || "",
+            formattedOptionB || "",
+            formattedOptionC || "",
+            formattedOptionD || "",
+          ],
         })
       );
       if (res.payload.status === 200) {
@@ -126,7 +142,7 @@ const ModalEditQuestion = (props) => {
   };
   useEffect(() => {
     if (showEdit) {
-      setId(dataQuestion.row.testId);
+      setId(dataQuestion.row.questionId);
       setCategoryName(dataQuestion.row.description);
       setOptionD(dataQuestion.row.optionD);
       setOptionC(dataQuestion.row.optionC);
@@ -204,7 +220,6 @@ const ModalEditQuestion = (props) => {
                       >
                         {optionsArray.map((item, index) => {
                           const key = Object.keys(item)[0]; // Lấy tên key, ví dụ "optionA"
-                          const value = item[key]; // Lấy giá trị của key, ví dụ "A. categoryData,"
 
                           return (
                             <option key={`option${index}`} value={index}>
@@ -215,7 +230,7 @@ const ModalEditQuestion = (props) => {
                         })}
                       </NativeSelect>
                     </FormControl>
-                  </Grid>{" "}
+                  </Grid>
                 </Grid>
               </>
             )

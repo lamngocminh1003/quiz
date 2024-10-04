@@ -15,7 +15,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import SingleQuestion from "../GlobalComponent/SingleQuestion";
 const ModalAddNewFolderForAllFolder = (props) => {
-  let { descending, orderBy } = props;
+  let { descending, orderBy, from, username } = props;
 
   const dispatch = useDispatch();
   const listSubjects = useSelector((state) => state.subjects.listSubjects);
@@ -203,7 +203,11 @@ const ModalAddNewFolderForAllFolder = (props) => {
           },
         ]);
         toast.success("Thêm mới đề thi thành công!");
-        dispatch(fetchAllExams({ orderBy, descending }));
+        if ((from = "profilePage")) {
+          dispatch(fetchAllExams({ orderBy, descending, creator: username }));
+        } else {
+          dispatch(fetchAllExams({ orderBy, descending }));
+        }
       } else {
         toast.error(`${res.payload.data}`);
       }

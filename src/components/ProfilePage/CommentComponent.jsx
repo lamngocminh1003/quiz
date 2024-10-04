@@ -1,74 +1,42 @@
-import React from "react";
-import Box from "@mui/material/Box";
-import { DataGrid } from "@mui/x-data-grid";
-const CommentComponent = (props) => {
-  const { title } = props;
-  const columns = [
-    { field: "id", headerName: "ID", width: 90 },
-    {
-      field: "firstName",
-      headerName: "First name",
-      width: 150,
-      editable: true,
-    },
-    {
-      field: "lastName",
-      headerName: "Last name",
-      width: 150,
-      editable: true,
-    },
-    {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      width: 110,
-      editable: true,
-    },
-    {
-      field: "fullName",
-      headerName: "Full name",
-      description: "This column has a value getter and is not sortable.",
-      sortable: false,
-      width: 160,
-      valueGetter: (value, row) =>
-        `${row?.firstName || ""} ${row?.lastName || ""}`,
-    },
-  ];
+import { useEffect, useState } from "react";
+import { fetchAllComment } from "../../redux/slices/commentsSlice";
+import TableComment from "../ManageComment/TableComment";
+import ModalDeleteComment from "../ManageComment/ModalDeleteComment";
+import { useDispatch, useSelector } from "react-redux";
 
-  const rows = [
-    { id: 1, lastName: "Snow", firstName: "Jon", age: 14 },
-    { id: 2, lastName: "Lannister", firstName: "Cersei", age: 31 },
-    { id: 3, lastName: "Lannister", firstName: "Jaime", age: 31 },
-    { id: 4, lastName: "Stark", firstName: "Arya", age: 11 },
-    { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-    { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-    { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-    { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-    { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-  ];
+const CommentComponent = (props) => {
+  const { title, username, role } = props;
+  const dispatch = useDispatch();
+
+  const [dataComment, setDataComment] = useState({});
+  const [showDelete, setShowDelete] = useState(false);
+  const listComments = useSelector((state) => state.comments.listComments);
+
+  useEffect(() => {
+    dispatch(fetchAllComment({ orderBy: "Id", descending: true, username }));
+  }, [dispatch]);
   return (
     <>
+      <ModalDeleteComment
+        setShowDelete={setShowDelete}
+        showDelete={showDelete}
+        dataComment={dataComment}
+        from="profilePage"
+        username={username}
+      />
       <div className="card mb-4 mb-lg-0">
         <div className="card-body p-0">
           <div className="card-header py-3 d-flex flex-row align-items-center justify-content-between">
             <h6 className="m-0 font-weight-bold text-primary">{title}</h6>
           </div>
-          <Box sx={{ height: 400, width: "100%" }}>
-            <DataGrid
-              rows={rows}
-              columns={columns}
-              initialState={{
-                pagination: {
-                  paginationModel: {
-                    pageSize: 5,
-                  },
-                },
-              }}
-              pageSizeOptions={[5]}
-              checkboxSelection
-              disableRowSelectionOnClick
-            />
-          </Box>
+          <TableComment
+            listComments={listComments}
+            setDataComment={setDataComment}
+            setShowDelete={setShowDelete}
+            from="profilePage"
+            username={username}
+            role={role}
+          />
         </div>
       </div>
     </>

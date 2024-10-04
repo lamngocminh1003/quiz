@@ -14,7 +14,6 @@ import {
 } from "@mui/x-data-grid";
 import {
   TruncatedButton,
-  cellStyle,
   TruncatedTypo,
 } from "../input/DesignLongContentInColumn";
 
@@ -59,6 +58,12 @@ const TableQuestion = (props) => {
       return undefined;
     },
     renderCell: ({ row, field }) => {
+      // Check if field is "optionC" or "optionD" and handle condition for hiding "optionD" if "optionC" is null
+      if (field === "optionD" && row.optionC === null) {
+        // Hide "Option D" if "Option C" is null
+        return null;
+      }
+
       if (row[field] === null || row[field] === undefined) {
         if (
           (roleUser == "Teacher" && username === row.creator) ||
@@ -84,6 +89,7 @@ const TableQuestion = (props) => {
           );
         }
       }
+
       if (
         (roleUser == "Teacher" && username === row.creator) ||
         roleUser == "Admin"
@@ -111,6 +117,7 @@ const TableQuestion = (props) => {
       }
     },
   }));
+
   const columnEdit = [
     {
       field: "Sửa",
@@ -121,7 +128,7 @@ const TableQuestion = (props) => {
 
       renderCell: ({ row, field }) => {
         if (
-          (roleUser == "Teacher" && roleUser == row.creator) ||
+          (roleUser == "Teacher" && username == row.creator) ||
           roleUser == "Admin"
         ) {
           return (
@@ -152,6 +159,18 @@ const TableQuestion = (props) => {
       field: "correctAnswer",
       headerName: "Đáp án",
       cellClassName: "name-column--cell",
+      valueGetter: (params) => {
+        if (params.value === 0) {
+          return "A";
+        } else if (params.value === 1) {
+          return "B";
+        } else if (params.value === 2) {
+          return "C";
+        } else if (params.value === 3) {
+          return "D";
+        }
+        return params.value; // Giữ nguyên giá trị nếu không trùng khớp
+      },
       renderCell: ({ row, field }) => {
         if (
           (roleUser == "Teacher" && username === row.creator) ||
@@ -235,7 +254,7 @@ const TableQuestion = (props) => {
         <GridToolbarExport
           printOptions={{ disableToolbarButton: true }}
           csvOptions={{
-            fileName: `Danh sách phiên bản của chỉ số khoa/ phòng theo năm`,
+            fileName: `Danh sách câu hỏi`,
             utf8WithBom: true,
           }}
         />

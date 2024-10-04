@@ -6,6 +6,7 @@ import ModalAddNewFolderForAllFolder from "../ManageFolders/ModalAddNewFolderFor
 import ModalDeleteFolder from "../ManageFolders/ModalDeleteFolder";
 import ModalAddNewExamRandomQues from "../ManageFolders/ModalAddNewExamRandomQues";
 import { useDispatch, useSelector } from "react-redux";
+import ModalAddNewFolderByFile from "../ManageFolders/ModalAddNewFolderByFile";
 // import ModalAddNewFolderForAllFolder from "../ManageFolders/ModalAddNewFolderForAllFolder";
 const DataGridTable = (props) => {
   const { title, titleButton, link, role, username } = props;
@@ -47,6 +48,8 @@ const DataGridTable = (props) => {
         handleEditTable={handleEditTable}
         descending={descending}
         orderBy={orderBy}
+        from="profilePage"
+        username={username}
       />
       <ModalDeleteFolder
         setShowDelete={setShowDelete}
@@ -54,6 +57,8 @@ const DataGridTable = (props) => {
         dataFolders={dataFolders}
         descending={descending}
         orderBy={orderBy}
+        from="profilePage"
+        username={username}
       />
       <div className="card mb-4">
         <div className="card-body">
@@ -66,12 +71,24 @@ const DataGridTable = (props) => {
                   <ModalAddNewFolderForAllFolder
                     descending={descending}
                     orderBy={orderBy}
+                    from="profilePage"
+                    username={username}
+                  />
+                </span>{" "}
+                <span className="d-flex  ">
+                  <ModalAddNewFolderByFile
+                    descending={descending}
+                    orderBy={orderBy}
+                    from="profilePage"
+                    username={username}
                   />
                 </span>
                 <span className="d-flex  ">
                   <ModalAddNewExamRandomQues
                     descending={descending}
                     orderBy={orderBy}
+                    from="profilePage"
+                    username={username}
                   />
                 </span>
               </span>

@@ -8,7 +8,15 @@ import { Box } from "@mui/material";
 const ModalDeleteFolder = (props) => {
   const [folderName, setFolderName] = useState("");
   const dispatch = useDispatch();
-  let { setShowDelete, showDelete, dataFolders, orderBy, descending } = props;
+  let {
+    setShowDelete,
+    showDelete,
+    dataFolders,
+    orderBy,
+    descending,
+    from,
+    username,
+  } = props;
   const handleClose = () => {
     setShowDelete(false);
   };
@@ -20,7 +28,11 @@ const ModalDeleteFolder = (props) => {
         //success
         setShowDelete(false);
         toast.success("Xóa đề thi thành công");
-        dispatch(fetchAllExams({ orderBy, descending }));
+        if ((from = "profilePage")) {
+          dispatch(fetchAllExams({ orderBy, descending, creator: username }));
+        } else {
+          dispatch(fetchAllExams({ orderBy, descending }));
+        }
       } else {
         toast.error("Xóa đề thi không thành công");
       }

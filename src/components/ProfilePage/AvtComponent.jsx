@@ -34,7 +34,13 @@ const AvtComponent = (props) => {
         <h5 className="my-3">
           {username} - {uniqueName}
         </h5>
-        <p className="text-muted mb-1">{role}</p>
+        <p className="text-muted mb-1">
+          {role === "Admin"
+            ? "Quản trị viên"
+            : role === "Teacher"
+            ? "Giáo viên"
+            : "Sinh viên"}
+        </p>
         {usernameLocal === username ? (
           <button
             type="button"

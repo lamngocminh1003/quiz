@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { fetchAllQuestions } from "../../redux/slices/questionSlice";
 import { fetchAllSubjects } from "../../redux/slices/subjectsSlice";
 import { useDispatch, useSelector } from "react-redux";
-import ModalAddNewCategory from "../ManageCategories/ModalAddNewCategory";
 import ScrollToTopButton from "../input/ScrollToTopButton";
 import TableQuestion from "./TableQuestion";
 import { Box, Autocomplete, TextField } from "@mui/material";
@@ -12,6 +11,7 @@ const Question = () => {
   const [showEdit, setShowEdit] = useState(false);
   const [dataQuestion, setDataQuestion] = useState({});
   const [inputValue, setInputValue] = useState("");
+
   const [categoryIdSearch, setCategoryIdSearch] = useState({ id: 1 });
   const dispatch = useDispatch();
   const listQuestions = useSelector((state) => state.questions.listQuestions);
@@ -28,6 +28,7 @@ const Question = () => {
       })
     );
   }, [dispatch, orderBy, descending]); // Khi thay đổi categoryId, fetch lại câu hỏi và đặt lại số lượng câu hỏi
+
   useEffect(() => {
     if (categoryIdSearch?.id) {
       dispatch(
@@ -59,11 +60,6 @@ const Question = () => {
           Ngân hàng câu hỏi
         </div>
         <div className="container mb-4">
-          {/* <div className="d-flex gap-3">
-            <span>
-              <ModalAddNewCategory orderBy={orderBy} descending={descending} />
-            </span>
-          </div> */}
           <Autocomplete
             sx={{ gridColumn: "span 12", minWidth: 120, marginY: 2 }}
             value={

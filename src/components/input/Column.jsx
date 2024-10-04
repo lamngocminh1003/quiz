@@ -12,7 +12,7 @@ export const columnsIndex = [
 ];
 export const columnComment = [
   {
-    field: "statName",
+    field: "content",
     headerName: "Nội dung bình luận",
     flex: 1,
     minWidth: 250,
@@ -39,7 +39,7 @@ export const columnUser = [
 ];
 export const columnTimeCreate = [
   {
-    field: "unit",
+    field: "time",
     headerName: "Thời gian",
     cellClassName: "name-column--cell",
     align: "center",
@@ -183,20 +183,26 @@ export const columnFileInfo = [
     cellClassName: "name-column--cell",
   },
 ];
-export const columnInfoFolder = [
-  ...columnsIndex,
+export const columnInfoFolderName = [
   {
     field: "name",
     headerName: "Đề thi",
     cellClassName: "name-column--cell",
     minWidth: 120,
   },
+];
+export const columnInfoFolderDes = [
   {
     field: "description",
     headerName: "Giới thiệu",
     cellClassName: "name-column--cell",
     flex: 1,
   },
+];
+export const columnInfoFolder = [
+  ...columnsIndex,
+  ...columnInfoFolderName,
+  ...columnInfoFolderDes,
 ];
 export const columnCategoryName = [
   {

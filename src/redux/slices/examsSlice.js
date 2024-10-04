@@ -5,16 +5,23 @@ import {
   deleteTest,
   updateTest,
   createNewTestRandom,
+  doingTest,
+  testGrade,
 } from "../../services/examService";
 
 export const fetchAllExams = createAsyncThunk(
   "exams/fetchAllExams",
-  async ({ orderBy, descending, itemPerPage, page, creator }, thunkAPI) => {
+  async (
+    { orderBy, descending, itemPerPage, page, creator, testName, testId },
+    thunkAPI
+  ) => {
     const res = await fetchAllExamsApi({
       orderBy,
       descending,
       itemPerPage,
       page,
+      testName,
+      testId,
       creator,
     });
     if (res?.tests) {
@@ -83,6 +90,13 @@ export const createNewExamRandom = createAsyncThunk(
     return res;
   }
 );
+export const submitExam = createAsyncThunk(
+  "exams/submitExam",
+  async ({ token, answers }, thunkAPI) => {
+    const res = await testGrade(token, answers);
+    return res;
+  }
+);
 export const deleteExam = createAsyncThunk(
   "exams/deleteExam",
   async (id, thunkAPI) => {
@@ -90,8 +104,17 @@ export const deleteExam = createAsyncThunk(
     return res;
   }
 );
+export const doingExam = createAsyncThunk(
+  "exams/doingExam",
+  async ({ testId, minutes }, thunkAPI) => {
+    const res = await doingTest(testId, minutes);
+    return res;
+  }
+);
 const initialState = {
   listExams: [],
+  examData: [],
+  result: {},
   isLoadingFetchAll: false,
   isErrorFetchAll: false,
   isLoadingCreate: false,
@@ -102,6 +125,10 @@ const initialState = {
   isErrorCreateRandom: false,
   isLoadingUpdate: false,
   isErrorUpdate: false,
+  isLoadingDoing: false,
+  isErrorDoing: false,
+  isLoadingSubmit: false,
+  isErrorSubmit: false,
 };
 
 export const examsSlice = createSlice({
@@ -171,6 +198,38 @@ export const examsSlice = createSlice({
         // Add user to the state array
         state.isLoadingCreateRadom = false;
         state.isErrorCreateRandom = true;
+      })
+      .addCase(submitExam.pending, (state, action) => {
+        // Add user to the state array
+        state.isLoadingSubmit = true;
+        state.isErrorSubmit = false;
+      })
+      .addCase(submitExam.fulfilled, (state, action) => {
+        // Add user to the state array
+        state.isLoadingSubmit = false;
+        state.isErrorSubmit = false;
+        state.result = action.payload.data;
+      })
+      .addCase(submitExam.rejected, (state, action) => {
+        // Add user to the state array
+        state.isLoadingSubmit = false;
+        state.isErrorSubmit = true;
+      })
+      .addCase(doingExam.pending, (state, action) => {
+        // Add user to the state array
+        state.isLoadingDoing = true;
+        state.isErrorDoing = false;
+      })
+      .addCase(doingExam.fulfilled, (state, action) => {
+        // Add user to the state array
+        state.isLoadingDoing = false;
+        state.isErrorDoing = false;
+        state.examData = action.payload.data;
+      })
+      .addCase(doingExam.rejected, (state, action) => {
+        // Add user to the state array
+        state.isLoadingDoing = false;
+        state.isErrorDoing = true;
       })
       .addCase(editExam.pending, (state, action) => {
         // Add user to the state array

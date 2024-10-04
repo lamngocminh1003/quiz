@@ -72,17 +72,23 @@ const Header = (props) => {
                 <NavDropdown
                   title={`Xin chào ${auth ? username : ""}`}
                   id="basic-nav-dropdown"
+                  className="z-index-1"
                 >
                   {auth && (
                     <NavDropdown.Item
                       as={Link}
                       to={`/profile-page/${username}`}
+                      className="z-index-1"
                     >
                       Trang cá nhân
                     </NavDropdown.Item>
                   )}
                   {role == "Admin" && (
-                    <NavDropdown.Item as={Link} to="/admin-page">
+                    <NavDropdown.Item
+                      as={Link}
+                      to="/admin-page"
+                      className="z-index-1"
+                    >
                       Trang quản lý
                     </NavDropdown.Item>
                   )}
@@ -90,6 +96,7 @@ const Header = (props) => {
                   <NavDropdown.Item
                     as={Link}
                     to="/department-index"
+                    className="z-index-1"
                   ></NavDropdown.Item>
                   {auth === false ||
                     (!auth && (

@@ -86,7 +86,6 @@ const Login = (props) => {
       try {
         setIsShowLoading(true);
         let res = await userLogin(data);
-        console.log("res", res);
         if (res.token) {
           toast.success("Đăng nhập thành công");
           let token = res.token;

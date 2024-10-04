@@ -22,7 +22,7 @@ const Home = (props) => {
             className="container-xxl py-1 wow fadeInUp"
             data-wow-delay="0.1s"
           >
-            <div className="container">
+            {/* <div className="container">
               <div className="d-flex  justify-content-between ">
                 <h2 className="mb-5 text-warning">Giáo viên sôi nổi</h2>
                 <div>
@@ -119,7 +119,7 @@ const Home = (props) => {
                   />
                 </div>
               </Slider>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>

@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useState, useEffect } from "react";
 import SearchCategory from "./SearchCategory";
 import QuizCard from "../../GlobalComponent/QuizCard";
 import { fetchAllExams } from "../../../redux/slices/examsSlice";
 import Pagination from "@mui/material/Pagination";
 import { fetchAllExamsApi } from "../../../services/examService";
+
 import useDebounce from "../useDebounce";
 const AllCategory = () => {
   const [categoryIdSearch, setCategoryIdSearch] = useState({});

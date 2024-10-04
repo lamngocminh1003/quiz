@@ -8,6 +8,8 @@ import LargeCardComponent from "./LargeCardComponent";
 import { fetchAllSubjects } from "../../redux/slices/subjectsSlice";
 import { fetchAllExams } from "../../redux/slices/examsSlice";
 import { fetchAllUsersRedux } from "../../redux/slices/usersSlice";
+import { fetchAllComment } from "../../redux/slices/commentsSlice";
+
 import { useDispatch, useSelector } from "react-redux";
 function AdminPage() {
   const dispatch = useDispatch();
@@ -15,11 +17,15 @@ function AdminPage() {
   const listSubjectsLength = listSubjects?.categories?.length;
   const listExams = useSelector((state) => state.exams.listExams);
   const listUsers = useSelector((state) => state.users.listUsers);
+  const listComments = useSelector((state) => state.comments.listComments);
   const listUsersLength = listUsers?.length;
   const listExamsLength = listExams?.length;
+  const listCommentsLength = listComments?.length;
+
   useEffect(() => {
     dispatch(fetchAllSubjects({}));
     dispatch(fetchAllExams({}));
+    dispatch(fetchAllComment({}));
     dispatch(fetchAllUsersRedux());
   }, [dispatch]);
   return (
@@ -70,7 +76,7 @@ function AdminPage() {
                   />
                   <CardComponent
                     title="Phản hồi"
-                    content="Số lượng phản hồi"
+                    content={`Số lượng: ${listCommentsLength}`}
                     icon="fa-solid fa-comments"
                     link="/comment"
                     color="warning"

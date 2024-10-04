@@ -3,6 +3,7 @@ import subjectsSlice from "./slices/subjectsSlice";
 import usersSlice from "./slices/usersSlice";
 import examsSlice from "./slices/examsSlice";
 import questionSlice from "./slices/questionSlice";
+import commentsSlice from "./slices/commentsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,5 +11,6 @@ export const store = configureStore({
     users: usersSlice,
     exams: examsSlice,
     questions: questionSlice,
+    comments: commentsSlice,
   },
 });

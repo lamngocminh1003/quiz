@@ -2,48 +2,56 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
-import { deleteMajorStat } from "../../services/index/MajorStatService";
+import {
+  fetchAllComment,
+  deleteUserComment,
+} from "../../redux/slices/commentsSlice";
+import { useDispatch } from "react-redux";
 const ModalDeleteComment = (props) => {
-  const [statName, setStatName] = useState("");
-  let { setShowDelete, showDelete, dataIndex, fetchListMajorStatsAndManifest } =
-    props;
+  const dispatch = useDispatch();
+  const [content, setContent] = useState("");
+  let { setShowDelete, showDelete, dataComment, from, username } = props;
   const handleClose = () => setShowDelete(false);
   const [id, setId] = useState("");
   const handleOnClickDelete = async () => {
     try {
-      let res = await deleteMajorStat(id);
-      if (res) {
-        //success
+      let res = await dispatch(deleteUserComment({ commentId: id }));
+      if (res.payload.status === 200) {
+        if (from === "manageComment") {
+          await dispatch(fetchAllComment({ orderBy: "Id", descending: true }));
+        }
+        if (from === "profilePage")
+          await dispatch(
+            fetchAllComment({ orderBy: "Id", descending: true, username })
+          );
         setShowDelete(false);
-        toast.success("Xóa bình luận thành công");
-        fetchListMajorStatsAndManifest();
-      } else {
-        toast.error("Xóa bình luận không thành công");
+        toast.success("Xóa đánh giá thành công");
       }
     } catch (error) {
-      toast.error("Xóa bình luận không thành công");
+      console.log("error", error);
+      toast.error("Xóa đánh giá không thành công");
     }
   };
   useEffect(() => {
     if (showDelete) {
-      setStatName(dataIndex.statName);
-      setId(dataIndex.id);
+      setContent(dataComment.content);
+      setId(dataComment.id);
     }
-  }, [dataIndex]);
+  }, [dataComment]);
   return (
     <>
       <Modal show={showDelete} onHide={handleClose} backdrop="static" centered>
         <Modal.Header closeButton>
           <Modal.Title className="fs-6 text-uppercase text-primary">
-            Xóa bình luận
+            Xóa đánh giá
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <input type="text" className="form-control" value={id} hidden />
           <p className="input-group mb-3 text-primary">
-            Xác nhận xóa bình luận&nbsp;
+            Xác nhận xóa đánh giá:&nbsp;
             <span className="text-lowercase font-weight-bold text-danger">
-              {statName}
+              {content}
             </span>
           </p>
         </Modal.Body>

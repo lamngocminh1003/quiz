@@ -1,34 +1,17 @@
 import "./AdminPage.scss";
 import React from "react";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllExams } from "../../redux/slices/examsSlice";
+import AreaChartComponentGlobal from "../GlobalComponent/AreaChartComponentGlobal";
 const AreaChartComponent = () => {
-  const getLast7Days = () => {
-    const days = [];
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      const formattedDate = `${date.getDate()}/${date.getMonth() + 1}`;
-      days.push(formattedDate);
-    }
-    return days;
-  };
+  const dispatch = useDispatch();
+  const listExams = useSelector((state) => state.exams.listExams);
 
-  const generateRandomValue = (min, max) =>
-    Math.floor(Math.random() * (max - min + 1)) + min;
-
-  const data = getLast7Days().map((day) => ({
-    name: day,
-    value: generateRandomValue(30, 70),
-  }));
+  useEffect(() => {
+    dispatch(fetchAllExams({ orderBy: "createdAt", descending: true }));
+  }, [dispatch]);
 
   return (
     <>
@@ -41,33 +24,7 @@ const AreaChartComponent = () => {
         </div>
         {/* Card Body */}
         <div className="card-body">
-          <div
-            className="chart-area"
-            style={{ width: "100%", height: "300px" }}
-          >
-            <ResponsiveContainer>
-              <AreaChart
-                data={data}
-                margin={{
-                  top: 10,
-                  right: 30,
-                  left: 0,
-                  bottom: 0,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Area
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#8884d8"
-                  fill="#8884d8"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+          <AreaChartComponentGlobal lengthDate="10" listExams={listExams} />
         </div>
       </div>
     </>

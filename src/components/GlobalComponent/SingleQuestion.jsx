@@ -73,7 +73,6 @@ const SingleQuestion = forwardRef((props, ref) => {
   useEffect(() => {
     if (showEdit && questionArr[questionIndex]) {
       const correctAnswerIndex = questionArr[questionIndex]?.correctAnswer;
-      console.log(correctAnswerIndex);
 
       if (correctAnswerIndex !== undefined) {
         const correctAnswer =

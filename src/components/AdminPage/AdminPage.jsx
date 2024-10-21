@@ -2,8 +2,6 @@ import React, { useEffect } from "react";
 import "./AdminPage.scss";
 import CardComponent from "./CardComponent";
 import AreaChartComponent from "./AreaChartComponent";
-import PieChartComponent from "./PieChartComponent";
-import ProgressBarComponent from "./ProgressBarComponent";
 import LargeCardComponent from "./LargeCardComponent";
 import { fetchAllSubjects } from "../../redux/slices/subjectsSlice";
 import { fetchAllExams } from "../../redux/slices/examsSlice";
@@ -37,15 +35,7 @@ function AdminPage() {
               <div className="container-fluid">
                 <div className="d-sm-flex align-items-center justify-content-between mb-4">
                   <h1 className="h3 mb-0 text-gray-800">Trang quản lý</h1>
-                  <button
-                    href="#"
-                    className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-                  >
-                    <i className="fas fa-download fa-sm text-white-50"></i>
-                    Generate Report
-                  </button>
                 </div>
-
                 <div className="row">
                   <CardComponent
                     title="Đề thi"
@@ -89,15 +79,6 @@ function AdminPage() {
                     <AreaChartComponent />
                   </div>
                   <div className="col-xl-4 col-lg-5">
-                    <PieChartComponent />
-                  </div>
-                </div>
-                <div className="row">
-                  {/*   <!-- Content Column --> */}
-                  <div className="col-lg-6 mb-4">
-                    <ProgressBarComponent />
-                  </div>
-                  <div className="col-lg-6 mb-4">
                     <LargeCardComponent />
                   </div>
                 </div>

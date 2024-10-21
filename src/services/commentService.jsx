@@ -71,4 +71,5 @@ const fetchAllCommentApi = ({
       return error.response;
     });
 };
+
 export { createNewComment, fetchAllCommentApi, deleteComment };

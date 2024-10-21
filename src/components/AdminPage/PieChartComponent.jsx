@@ -1,6 +1,6 @@
 import React from "react";
-import { PieChart } from "@mui/x-charts/PieChart";
 import "./AdminPage.scss";
+import PieChartComponentGlobal from "../GlobalComponent/PieChartComponentGlobal";
 
 const PieChartComponent = () => {
   const data = [
@@ -21,20 +21,7 @@ const PieChartComponent = () => {
         {/*  <!-- Card Body --> */}
         <div className="card-body">
           <div className="chart-pie pt-4 pb-2">
-            <PieChart
-              series={[
-                {
-                  data,
-                  highlightScope: { faded: "global", highlighted: "item" },
-                  faded: {
-                    innerRadius: 30,
-                    additionalRadius: -30,
-                    color: "gray",
-                  },
-                },
-              ]}
-              height={200}
-            />
+            <PieChartComponentGlobal data={data} />
           </div>
         </div>
       </div>

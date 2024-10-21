@@ -13,8 +13,20 @@ const CommentComponent = (props) => {
   const listComments = useSelector((state) => state.comments.listComments);
 
   useEffect(() => {
-    dispatch(fetchAllComment({ orderBy: "Id", descending: true, username }));
-  }, [dispatch]);
+    if (role === "Student") {
+      dispatch(fetchAllComment({ orderBy: "Id", descending: true, username }));
+    }
+    if (role === "Teacher" || role === "Admin") {
+      dispatch(fetchAllComment({ orderBy: "Id", descending: true }));
+    }
+  }, [dispatch, role]);
+  const filterByUserCreatedTest = (data, userCreatedTest) => {
+    // Filter data based on the userCreatedTest value
+    return data.filter((item) => item.userCreatedTest === userCreatedTest);
+  };
+
+  // Example usage:
+  const newData = filterByUserCreatedTest(listComments, username);
   return (
     <>
       <ModalDeleteComment
@@ -30,7 +42,13 @@ const CommentComponent = (props) => {
             <h6 className="m-0 font-weight-bold text-primary">{title}</h6>
           </div>
           <TableComment
-            listComments={listComments}
+            listComments={
+              role === "Teacher" || role === "Admin"
+                ? newData
+                : role === "Student"
+                ? listComments
+                : []
+            }
             setDataComment={setDataComment}
             setShowDelete={setShowDelete}
             from="profilePage"

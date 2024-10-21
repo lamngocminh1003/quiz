@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
   columnsIndex,
@@ -55,46 +55,39 @@ const TableComment = (props) => {
       },
     },
   ];
-  const columns2 = [
+  const columnGlobal = [
     ...columnsIndex,
     ...columnComment,
     ...columnInfoFolderName,
     ...columnCategoryName,
-    ...columnUser,
-    {
-      field: "role",
-      headerName: "Chức vụ",
-      cellClassName: "name-column--cell",
-    },
-    ...columnTimeCreate,
-    ...columnDeleteComment,
   ];
-  const columns3 = [
-    ...columnsIndex,
-    ...columnComment,
-    ...columnInfoFolderName,
-    ...columnCategoryName,
-    ...columnTimeCreate,
-    ...columnDeleteComment,
-  ];
-  const columns4 = [
-    ...columnsIndex,
-    ...columnComment,
-    ...columnInfoFolderName,
-    ...columnCategoryName,
-    ...columnTimeCreate,
-  ];
-
+  const columnGlobal2 = [...columnTimeCreate, ...columnDeleteComment];
+  const columns2 = [...columnGlobal, ...columnUser, ...columnGlobal2];
+  const columns3 = [...columnGlobal, ...columnUser, ...columnGlobal2];
+  const columns7 = [...columnGlobal, ...columnGlobal2];
+  const columns6 = [...columnGlobal, ...columnGlobal2];
+  const columns4 = [...columnGlobal, ...columnUser, ...columnTimeCreate];
+  const columns5 = [...columnGlobal, ...columnTimeCreate];
   let selectedColumns;
 
   if (from === "manageComment" && roleLocal === "Admin") {
     selectedColumns = columns2;
   } else if (from === "profilePage") {
-    if (role === "Admin") {
+    if (roleLocal === "Admin" && role === "Student") {
+      selectedColumns = columns7;
+    } else if (roleLocal === "Admin") {
       selectedColumns = columns3;
+    } else if (username === usernameLocal && role === "Student") {
+      selectedColumns = columns6;
     } else if (username === usernameLocal) {
-      
-      selectedColumns = columns3;
+      selectedColumns = columns4;
+    } else if (
+      username !== usernameLocal &&
+      (role === "Teacher" || role === "Admin")
+    ) {
+      selectedColumns = columns4;
+    } else if (username !== usernameLocal) {
+      selectedColumns = columns5;
     } else {
       selectedColumns = columns4;
     }

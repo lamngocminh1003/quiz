@@ -1,5 +1,4 @@
 import React from "react";
-import "./AdminPage.scss";
 import { useHistory } from "react-router-dom";
 
 const CardComponent = (props) => {
@@ -7,7 +6,7 @@ const CardComponent = (props) => {
   let history = useHistory();
 
   const handleNextView = (link) => {
-    history.push(`${link}`);
+    if (link) history.push(link);
   };
   return (
     <>

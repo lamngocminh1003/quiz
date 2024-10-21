@@ -1,29 +1,37 @@
 import React from "react";
-import {
-  BarChart,
-  Bar,
-  Rectangle,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllUsersRedux } from "../../redux/slices/usersSlice";
+import { useEffect } from "react";
+import LargeCardComponentGlobal from "../GlobalComponent/LargeCardComponentGlobal";
 const LargeCardComponent = () => {
+  const dispatch = useDispatch();
+  const listUsers = useSelector((state) => state.users.listUsers);
+  useEffect(() => {
+    dispatch(fetchAllUsersRedux());
+  }, [dispatch]);
+  let roleCounts = {
+    "Sinh viên": 0,
+    "Giáo viên": 0,
+    "Quản trị viên": 0,
+  };
+
+  listUsers.forEach((user) => {
+    user.roles.forEach((role) => {
+      if (role === "Student") {
+        roleCounts["Sinh viên"]++;
+      } else if (role === "Teacher") {
+        roleCounts["Giáo viên"]++;
+      } else if (role === "Admin") {
+        roleCounts["Quản trị viên"]++;
+      }
+    });
+  });
+
+  // Tạo cấu trúc dữ liệu cuối cùng
   const data = [
-    {
-      name: "Sinh viên",
-      value: 200,
-    },
-    {
-      name: "Giáo viên",
-      value: 50,
-    },
-    {
-      name: "Quản trị viên",
-      value: 5,
-    },
+    { value: roleCounts["Sinh viên"], name: "Sinh viên" },
+    { value: roleCounts["Giáo viên"], name: "Giáo viên" },
+    { value: roleCounts["Quản trị viên"], name: "Quản trị viên" },
   ];
   return (
     <>
@@ -34,33 +42,12 @@ const LargeCardComponent = () => {
           </h6>
         </div>
         <div className="card-body">
-          <div
-            className="chart-area"
-            style={{ width: "100%", height: "300px" }}
-          >
-            <ResponsiveContainer>
-              <BarChart
-                data={data}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar
-                  dataKey="value"
-                  fill="#F4A261"
-                  activeBar={<Rectangle fill="pink" stroke="#F4A261" />}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <LargeCardComponentGlobal
+            data={data}
+            title="Số lượng"
+            height="300px"
+            width="100%"
+          />
         </div>
       </div>
     </>

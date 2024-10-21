@@ -222,7 +222,7 @@ const ModalEditQuestion = (props) => {
                           const key = Object.keys(item)[0]; // Lấy tên key, ví dụ "optionA"
 
                           return (
-                            <option key={`option${index}`} value={index}>
+                            <option key={`option${index}`} value={index + 1}>
                               {key.slice(-1)}{" "}
                               {/* Hiển thị ký tự cuối cùng của key như A, B, C, D */}
                             </option>

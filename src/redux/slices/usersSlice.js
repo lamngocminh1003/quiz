@@ -1,5 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getUserByUsername, fetchAllUsers } from "../../services/userService";
+import {
+  getUserByUsername,
+  fetchAllUsers,
+  fetchAllScoresUser,
+} from "../../services/userService";
 
 export const getUserByUsernameRedux = createAsyncThunk(
   "users/getUserByUsername",
@@ -15,11 +19,36 @@ export const fetchAllUsersRedux = createAsyncThunk(
     return res;
   }
 );
+export const fetchAllScoresUserRedux = createAsyncThunk(
+  "exams/fetchAllScoresUser",
+  async (thunkAPI) => {
+    const res = await fetchAllScoresUser();
+
+    if (res?.data.items) {
+      const transformedData = res?.data.items?.map((item, index) => {
+        return {
+          id: index,
+          categoryName: item.test.category.name,
+          username: item.test.creator.username,
+          name: item.test.name,
+          description: item.test.description,
+          timeTaken: item.timeTaken,
+          score: item.score,
+        };
+      });
+
+      return transformedData;
+    }
+  }
+);
 const initialState = {
   dataUser: "",
   listUsers: [],
+  listScoresUser: [],
   isLoadingFetchAll: false,
   isErrorFetchAll: false,
+  isLoadingFetchAllScores: false,
+  isErrorFetchAllScores: false,
   isLoadingGetUser: false,
   isErrorGetUser: false,
 };
@@ -46,6 +75,22 @@ export const usersSlice = createSlice({
         // Add user to the state array
         state.isLoadingGetUser = false;
         state.isErrorGetUser = true;
+      })
+      .addCase(fetchAllScoresUserRedux.pending, (state, action) => {
+        // Add user to the state array
+        state.isLoadingFetchAllScores = true;
+        state.isErrorFetchAllScores = false;
+      })
+      .addCase(fetchAllScoresUserRedux.fulfilled, (state, action) => {
+        // Add user to the state array
+        state.isLoadingFetchAllScores = false;
+        state.isErrorFetchAllScores = false;
+        state.listScoresUser = action.payload;
+      })
+      .addCase(fetchAllScoresUserRedux.rejected, (state, action) => {
+        // Add user to the state array
+        state.isLoadingFetchAllScores = false;
+        state.isErrorFetchAllScores = true;
       })
       .addCase(fetchAllUsersRedux.pending, (state, action) => {
         // Add user to the state array

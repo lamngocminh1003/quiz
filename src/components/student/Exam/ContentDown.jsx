@@ -10,7 +10,7 @@ import {
 import { useDispatch } from "react-redux";
 const ContentDown = (props) => {
   const dispatch = useDispatch();
-  const { id, page, orderBy, descending, itemPerPage } = props;
+  const { id, page, orderBy, descending, itemPerPage, dateFormat } = props;
   let usernameLocal = localStorage.getItem("username");
   const [listCommentsPage, setListCommentsPage] = useState([]);
   let role = localStorage.getItem("role");
@@ -31,6 +31,8 @@ const ContentDown = (props) => {
       });
       if (res?.items && res?.items.length > 0) {
         setListCommentsPage(res.items);
+      } else {
+        setListCommentsPage([]);
       }
     } catch (error) {
       console.log("error", error);
@@ -54,8 +56,7 @@ const ContentDown = (props) => {
   };
   return (
     <>
-      {listCommentsPage &&
-        listCommentsPage.length > 0 &&
+      {listCommentsPage && listCommentsPage.length > 0 ? (
         listCommentsPage.map((item, index) => {
           return (
             <section>
@@ -65,17 +66,10 @@ const ContentDown = (props) => {
                     <div className="card mb-3">
                       <div className="card-body">
                         <div className="d-flex flex-start">
-                          <img
-                            className="rounded-circle shadow-1-strong me-3"
-                            src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(21).webp"
-                            alt="avatar"
-                            width="40"
-                            height="40"
-                            style={{ cursor: "pointer" }}
-                            onClick={() =>
-                              handleViewProfilePage(item?.creator?.username)
-                            }
-                          />
+                          <i
+                            className="fa-regular fa-comments me-2"
+                            style={{ fontSize: "30px", color: "#77CDFF" }}
+                          ></i>
 
                           <div className="w-100">
                             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -91,7 +85,10 @@ const ContentDown = (props) => {
                                   {item?.content}
                                 </span>
                               </h6>
-                              <p className="mb-0">3 days ago</p>
+                              <p className="mb-0">
+                                {" "}
+                                {dateFormat(item?.createdAt)}
+                              </p>
                             </div>
                             <div className="d-flex justify-content-between align-items-center">
                               {usernameLocal === item?.creator?.username ||
@@ -124,7 +121,12 @@ const ContentDown = (props) => {
               </div>
             </section>
           );
-        })}
+        })
+      ) : (
+        <section>
+          <div className="container text-body">Bài thi chưa có đánh giá</div>
+        </section>
+      )}
     </>
   );
 };

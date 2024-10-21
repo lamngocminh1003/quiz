@@ -17,13 +17,15 @@ import {
   InputLabel,
   Grid,
 } from "@mui/material";
+import { useHistory } from "react-router-dom";
 
 const ModalAddNewExamRandomQues = (props) => {
-  let { descending, orderBy, from, username } = props;
+  let { descending, orderBy, from, username, role } = props;
   const dispatch = useDispatch();
   const listSubjects = useSelector((state) => state.subjects.listSubjects);
   const listQuestions = useSelector((state) => state.questions.listQuestions);
   const unit = [15, 30, 45, 60, 90, 120];
+  let history = useHistory();
 
   // Initial state
   const [newExam, setNewExam] = useState({
@@ -113,12 +115,16 @@ const ModalAddNewExamRandomQues = (props) => {
           numberOfQuestions: listQuestions?.length || 0,
           minutes: unit[0],
         });
-        toast.success("Thêm mới đề thi tự động thành công!");
-        if ((from = "profilePage")) {
+        if (from === "profilePage" && role === "Student") {
+          history.push(
+            `/doing-exam/${res.payload.data.test.id}/${newExam.minutes}`
+          );
+        } else if (from === "profilePage") {
           dispatch(fetchAllExams({ orderBy, descending, creator: username }));
         } else {
           dispatch(fetchAllExams({ orderBy, descending }));
         }
+        toast.success("Thêm mới đề thi tự động thành công!");
       } else {
         toast.error(`${res.payload.data}`);
       }
@@ -134,12 +140,18 @@ const ModalAddNewExamRandomQues = (props) => {
       <button
         className="mb-3 btn btn-outline-primary"
         onClick={handleShow}
-        title="Thêm mới đề thi"
+        title={
+          from === "profilePage" && role === "Student"
+            ? "Tạo đề ôn tập nhanh"
+            : "Thêm mới nhanh"
+        }
       >
         <span>
           <i className="fa-solid fa-plus me-1"></i>
-        </span>
-        Thêm mới nhanh
+        </span>{" "}
+        {from === "profilePage" && role === "Student"
+          ? "Tạo đề ôn tập nhanh"
+          : "Thêm mới nhanh"}
       </button>
 
       <Modal
@@ -151,7 +163,9 @@ const ModalAddNewExamRandomQues = (props) => {
       >
         <Modal.Header closeButton>
           <Modal.Title className="fs-6 text-uppercase text-primary">
-            Thêm mới đề thi
+            {from === "profilePage" && role === "Student"
+              ? "Tạo đề ôn tập nhanh"
+              : "Thêm mới nhanh"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -235,7 +249,7 @@ const ModalAddNewExamRandomQues = (props) => {
             {isShowLoading && (
               <i className="fas fa-spinner fa-pulse me-2 text-white"></i>
             )}
-            Lưu
+            {from === "profilePage" && role === "Student" ? "Thi ngay" : "Lưu"}
           </Button>
         </Modal.Footer>
       </Modal>

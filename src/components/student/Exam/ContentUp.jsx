@@ -8,22 +8,14 @@ const ContentUp = (props) => {
   const dispatch = useDispatch();
   const [timeEdit, setTimeEdit] = useState("");
   const dataExam = useSelector((state) => state?.exams?.listExams[0]);
-  const { id } = props;
+  const { id, dateFormat } = props;
   useEffect(() => {
     dispatch(fetchAllExams({ testId: id }));
   }, [id, dispatch]);
 
   useEffect(() => {
     if (dataExam?.modifiedAt) {
-      const localDate = new Date(dataExam.modifiedAt).toLocaleString("vi-VN", {
-        timeZone: "Asia/Ho_Chi_Minh",
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
+      const localDate = dateFormat(dataExam?.modifiedAt);
       setTimeEdit(localDate);
     }
   }, [dataExam]);

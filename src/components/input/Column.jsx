@@ -39,11 +39,19 @@ export const columnUser = [
 ];
 export const columnTimeCreate = [
   {
-    field: "time",
+    field: "createdAt",
     headerName: "Thời gian",
     cellClassName: "name-column--cell",
     align: "center",
-    headerAlign: "center",
+
+    valueGetter: (params) => {
+      const originalDate = params.value; // Lấy giá trị ngày từ dữ liệu
+      if (originalDate) {
+        const formattedDate = format(new Date(originalDate), "dd/MM/yyyy");
+        return formattedDate; // Trả về ngày đã định dạng
+      }
+      return ""; // Hoặc giá trị mặc định khi không có ngày
+    },
   },
 ];
 export const columnUnapprovedManifestCount = [

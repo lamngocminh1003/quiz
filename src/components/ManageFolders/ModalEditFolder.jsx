@@ -10,15 +10,9 @@ const ModalEditFolder = (props) => {
   const [isShowLoading, setIsShowLoading] = useState(false);
   const dispatch = useDispatch();
 
-  let {
-    setShowEdit,
-    showEdit,
-    dataFolders,
-    descending,
-    orderBy,
-    from,
-    username,
-  } = props;
+  let { setShowEdit, showEdit, dataFolders, descending, orderBy, username } =
+    props;
+
   const prefixes = ["A", "B", "C", "D"];
   const unit = [15, 30, 45, 60, 90, 120];
   const [examUpdates, setExamUpdate] = useState({});

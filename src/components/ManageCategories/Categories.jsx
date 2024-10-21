@@ -5,20 +5,11 @@ import ModalEditCategory from "./ModalEditCategory";
 import ModalAddNewCategory from "./ModalAddNewCategory";
 import ModalDeleteCategory from "./ModalDeleteCategory";
 import ScrollToTopButton from "../input/ScrollToTopButton";
-import { columnsIndex } from "../input/Column";
-import {
-  DataGrid,
-  viVN,
-  GridToolbarColumnsButton,
-  GridToolbarFilterButton,
-  GridToolbarDensitySelector,
-  GridToolbarContainer,
-  GridToolbarExport,
-} from "@mui/x-data-grid";
-import { Box } from "@mui/material";
-import { Edit, Delete } from "@mui/icons-material";
+import CardComponent from "../AdminPage/CardComponent";
+import AreaChartComponentGlobal from "../GlobalComponent/AreaChartComponentGlobal";
+
+import TableCategories from "./TableCategories";
 const Categories = () => {
-  const [pageSize, setPageSize] = useState(10);
   const [showEdit, setShowEdit] = useState(false);
   const [dataCategories, setDataCategories] = useState({});
   const [showDelete, setShowDelete] = useState(false);
@@ -40,79 +31,6 @@ const Categories = () => {
     setDataCategories(category.row);
   };
 
-  const columnCategoryName = [
-    {
-      field: "name",
-      headerName: "Môn học",
-      cellClassName: "name-column--cell",
-      minWidth: 250,
-      flex: 1,
-    },
-  ];
-
-  const columns2 = [
-    ...columnsIndex,
-    ...columnCategoryName,
-    {
-      field: "Sửa",
-      headerName: "Sửa",
-      disableExport: true,
-      sortable: false, // Tắt sắp xếp cho cột "Thao tác"
-      filterable: false, // Tắt lọc cho cột "Thao tác"
-      renderCell: (params) => {
-        return (
-          <>
-            <button
-              onClick={() => handleEditCategory(params)}
-              variant="contained"
-              title="Sửa thư mục"
-              className="btn btn-warning"
-            >
-              <Edit />
-            </button>
-          </>
-        );
-      },
-    },
-    {
-      field: "Xóa",
-      headerName: "Xóa",
-      disableExport: true,
-      sortable: false, // Tắt sắp xếp cho cột "Thao tác"
-      filterable: false, // Tắt lọc cho cột "Thao tác"
-      renderCell: (params) => {
-        return (
-          <>
-            <button
-              onClick={() => handleDeleteCategory(params)}
-              variant="contained"
-              title="Xóa thư mục"
-              className="btn btn-danger"
-            >
-              <Delete />
-            </button>
-          </>
-        );
-      },
-    },
-  ];
-
-  function CustomToolbar() {
-    return (
-      <GridToolbarContainer>
-        <GridToolbarColumnsButton />
-        <GridToolbarFilterButton />
-        <GridToolbarDensitySelector />
-        <GridToolbarExport
-          printOptions={{ disableToolbarButton: true }}
-          csvOptions={{
-            fileName: `Quản lý thư mục`,
-            utf8WithBom: true,
-          }}
-        />
-      </GridToolbarContainer>
-    );
-  }
   return (
     <>
       <ModalEditCategory
@@ -135,39 +53,36 @@ const Categories = () => {
             Quản lý môn học
           </div>
           <div className="container mb-4">
-            <div className="d-flex gap-3">
+            <div className="d-flex gap-3 justify-content-between  align-items-center">
               <span>
                 <ModalAddNewCategory
                   orderBy={orderBy}
                   descending={descending}
                 />
+              </span>{" "}
+              <span>
+                <AreaChartComponentGlobal
+                  lengthDate="5"
+                  listExams={listSubjects.categories}
+                  width="400px"
+                  height="150px"
+                />
+                <div className="text-center">Số lượng môn học mới được tạo</div>
+              </span>
+              <span>
+                <CardComponent
+                  title="Môn học"
+                  icon="fa-solid fa-swatchbook"
+                  color="info"
+                  content={`Số lượng: ${listSubjects?.categories?.length}`}
+                />
               </span>
             </div>
-            <Box style={{ height: 600 }}>
-              {listSubjects?.categories?.length > 0 ? (
-                <DataGrid
-                  localeText={
-                    viVN.components.MuiDataGrid.defaultProps.localeText
-                  }
-                  checkboxSelection
-                  disableRowSelectionOnClick
-                  pagination={true}
-                  pageSize={pageSize}
-                  onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                  rowsPerPageOptions={[5, 10, 15, 20, 30, 50, 100]}
-                  rows={listSubjects?.categories?.map((row, index) => ({
-                    ...row,
-                    stt: index + 1,
-                  }))}
-                  columns={columns2}
-                  components={{ Toolbar: CustomToolbar }}
-                />
-              ) : (
-                <div className="h6 text-center text-secondary m-3">
-                  Hiện tại chưa có thư mục vui lòng tạo mới!
-                </div>
-              )}
-            </Box>
+            <TableCategories
+              listSubjects={listSubjects}
+              handleDeleteCategory={handleDeleteCategory}
+              handleEditCategory={handleEditCategory}
+            />
             <ScrollToTopButton />
           </div>
         </div>

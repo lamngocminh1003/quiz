@@ -18,7 +18,15 @@ import { Box } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 const TableFolder = (props) => {
   const [pageSize, setPageSize] = useState(10);
-  const { listExams, handleDeleteFile, handleEditFile, from } = props;
+  const {
+    listExams,
+    handleDeleteFile,
+    handleEditFile,
+    from,
+    roleLocal,
+    usernameLocal,
+    username,
+  } = props;
 
   const columns2 = [
     {
@@ -114,8 +122,28 @@ const TableFolder = (props) => {
     ...modifiedAtColumn,
     ...columns2,
   ];
-  const selectedColumns =
-    from === "profilePage" ? columnTeacher : columnAdmin || [];
+  const columnOther = [
+    ...columnInfoFolder,
+    ...columnCategoryName,
+    ...defaultTimeColumn,
+    ...modifiedAtColumn,
+  ];
+  // const selectedColumns =
+  //   from === "profilePage" ? columnTeacher : columnAdmin || [];
+  let selectedColumns;
+  if (from === "profilePage") {
+    if (roleLocal === "Admin") {
+      selectedColumns = columnTeacher;
+    }
+    if (username === usernameLocal) {
+      selectedColumns = columnTeacher;
+    }
+    if (username !== usernameLocal) {
+      selectedColumns = columnOther;
+    }
+  } else {
+    selectedColumns = columnAdmin;
+  }
 
   function CustomToolbar() {
     return (

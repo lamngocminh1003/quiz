@@ -231,7 +231,7 @@ const DoingExam = () => {
                       </span>
                       <span className=" text-warning">
                         {formatTime(result?.timeTaken)}
-                        <span className="small">phút</span>
+                        <span className="small ms-1">s</span>
                       </span>
                     </p>
                   </div>

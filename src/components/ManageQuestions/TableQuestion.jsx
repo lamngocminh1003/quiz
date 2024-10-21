@@ -160,13 +160,13 @@ const TableQuestion = (props) => {
       headerName: "Đáp án",
       cellClassName: "name-column--cell",
       valueGetter: (params) => {
-        if (params.value === 0) {
+        if (params.value === 1) {
           return "A";
-        } else if (params.value === 1) {
-          return "B";
         } else if (params.value === 2) {
-          return "C";
+          return "B";
         } else if (params.value === 3) {
+          return "C";
+        } else if (params.value === 4) {
           return "D";
         }
         return params.value; // Giữ nguyên giá trị nếu không trùng khớp
@@ -177,13 +177,15 @@ const TableQuestion = (props) => {
           roleUser == "Admin"
         ) {
           const displayText =
-            row[field] === 0
+            row[field] === 1
               ? "A"
-              : row[field] === 1
-              ? "B"
               : row[field] === 2
+              ? "B"
+              : row[field] === 3
               ? "C"
-              : "D";
+              : row[field] === 4
+              ? "D"
+              : "";
           return (
             <TruncatedButton
               row={row}

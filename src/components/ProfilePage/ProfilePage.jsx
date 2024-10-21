@@ -7,8 +7,9 @@ import { useEffect } from "react";
 import { getUserByUsernameRedux } from "../../redux/slices/usersSlice";
 import { useDispatch, useSelector } from "react-redux";
 const ProfilePage = () => {
-  let role = localStorage.getItem("role");
   const { username } = useParams();
+  let usernameLocal = localStorage.getItem("username");
+
   const dispatch = useDispatch();
   useEffect(() => {
     if (username !== undefined) {
@@ -16,6 +17,7 @@ const ProfilePage = () => {
     }
   }, [dispatch, username]);
   const dataUser = useSelector((state) => state.users.dataUser);
+
   return (
     <>
       <section style={{ backgroundColor: "#eee" }}>
@@ -24,45 +26,59 @@ const ProfilePage = () => {
             <div className="col-lg-4">
               <div className="card mb-4">
                 <AvtComponent
-                  username={dataUser?.username}
+                  username={username}
                   uniqueName={dataUser?.name}
                   role={dataUser?.roles?.length > 0 ? dataUser?.roles[0] : null}
                 />
               </div>
-              {role === "Teacher" || role === "Admin" ? (
-                <CommentComponent
-                  title="Bình luận về đề thi"
-                  username={username}
-                  role={role}
-                />
-              ) : role === "Student" ? (
-                <CommentComponent
-                  title="Bình luận đề thi trước đó"
-                  username={username}
-                  role={role}
-                />
-              ) : (
-                !role || role === null(<></>)
-              )}
+              {dataUser?.roles?.length > 0 &&
+                dataUser?.roles[0] &&
+                (dataUser?.roles[0] === "Teacher" ||
+                dataUser?.roles[0] === "Admin" ? (
+                  <CommentComponent
+                    title="Bình luận về đề thi"
+                    username={username}
+                    role={dataUser?.roles[0]}
+                  />
+                ) : dataUser?.roles[0] === "Student" ? (
+                  <CommentComponent
+                    title="Bình luận đề thi trước đó"
+                    username={username}
+                    role={dataUser?.roles[0]}
+                  />
+                ) : (
+                  (!dataUser?.roles[0] || dataUser?.roles[0] === null) && <></> // Fixed this line
+                ))}
             </div>
             <div className="col-lg-8">
-              {role === "Teacher" || role === "Admin" ? (
-                <DataGridTable
-                  title="Danh sách đề thi"
-                  titleButton="Tạo mới đề thi"
-                  role={role}
-                  username={username}
-                />
-              ) : role === "Student" ? (
-                <DataGridTable
-                  title="Đáp án các bài thi"
-                  titleButton="Làm bài thi mới"
-                  link="all-exams"
-                  username={username}
-                />
-              ) : (
-                !role || role === null(<></>)
-              )}
+              {dataUser?.roles?.length > 0 &&
+                dataUser?.roles[0] &&
+                (dataUser?.roles[0] === "Teacher" ||
+                dataUser?.roles[0] === "Admin" ? (
+                  <>
+                    <DataGridTable
+                      title="Danh sách môn học"
+                      role={dataUser?.roles[0]}
+                      username={username}
+                    />
+                    <DataGridTable
+                      title="Danh sách đề thi"
+                      role={dataUser?.roles[0]}
+                      username={username}
+                    />
+                  </>
+                ) : dataUser?.roles[0] === "Student" &&
+                  username === usernameLocal ? (
+                  <DataGridTable
+                    title="Đáp án các bài thi"
+                    titleButton="Làm bài thi mới"
+                    link="all-exams"
+                    role={dataUser?.roles[0]}
+                    username={username}
+                  />
+                ) : (
+                  <></>
+                ))}
             </div>
           </div>
         </div>

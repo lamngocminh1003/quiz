@@ -21,25 +21,39 @@ const InfoExam = () => {
   const handleChangePage = async (event, value) => {
     setPage(value); // Cập nhật trạng thái của trang hiện tại
   };
+  const dateFormat = (time) => {
+    const localDate = new Date(time).toLocaleString("vi-VN", {
+      timeZone: "Asia/Ho_Chi_Minh",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    return localDate;
+  };
   useEffect(() => {
     dispatch(fetchAllComment({ testId: id, orderBy, descending }));
   }, [id, dispatch]);
   return (
     <>
       <div className="container-xxl py-5">
-        <ContentUp id={id} />
+        <ContentUp id={id} dateFormat={dateFormat} />
         <div className="d-flex justify-content-between my-4 align-items-center">
           <div className="d-flex align-items-center">
             <h4 className="section-title bg-white text-start text-secondary ">
               Đánh giá về đề thi
             </h4>
           </div>
-          <Pagination
-            count={totalPages}
-            color="warning"
-            page={page} // Thiết lập trang hiện tại
-            onChange={handleChangePage} // Sự kiện onChange để bắt trang mới
-          />
+          <div className="row">
+            <Pagination
+              count={totalPages}
+              color="warning"
+              page={page} // Thiết lập trang hiện tại
+              onChange={handleChangePage} // Sự kiện onChange để bắt trang mới
+            />
+          </div>
         </div>
         <ContentDown
           id={id}
@@ -47,6 +61,7 @@ const InfoExam = () => {
           orderBy={orderBy}
           descending={descending}
           itemPerPage={itemPerPage}
+          dateFormat={dateFormat}
         />
       </div>
     </>

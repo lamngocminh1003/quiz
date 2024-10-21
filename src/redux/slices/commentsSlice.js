@@ -33,6 +33,10 @@ export const fetchAllComment = createAsyncThunk(
           username: item.creator.username,
           fullName: item.creator.name,
           content: item.content,
+          name: item.test.name,
+          categoryName: item.test.category.name,
+          userCreatedTest: item.test.creator.username,
+          createdAt: item.createdAt,
         };
       });
 

@@ -73,6 +73,13 @@ const fetchAllUsers = () => {
   let config = createConfig();
   return axios.get(`${backendURL}/api/Account/all`, config);
 };
+const fetchAllScoresUser = () => {
+  let config = createConfig();
+  return axios.get(
+    `${backendURL}/api/Account/last-scores?orderBy=Id&descending=true`,
+    config
+  );
+};
 const updateUser = (name) => {
   let config = createConfig();
   return axios.patch(
@@ -118,4 +125,5 @@ export {
   userStudentRegister,
   userTeacherRegister,
   userAdminRegister,
+  fetchAllScoresUser,
 };

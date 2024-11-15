@@ -80,6 +80,13 @@ const fetchAllScoresUser = () => {
     config
   );
 };
+const fetchAllScoresByCreatorTest = (userId) => {
+  let config = createConfig();
+  return axios.get(
+    `${backendURL}/api/Account/get-all-last-scores-on-user-created-tests?userId=${userId}&orderBy=Id&descending=true`,
+    config
+  );
+};
 const updateUser = (name) => {
   let config = createConfig();
   return axios.patch(
@@ -126,4 +133,5 @@ export {
   userTeacherRegister,
   userAdminRegister,
   fetchAllScoresUser,
+  fetchAllScoresByCreatorTest,
 };

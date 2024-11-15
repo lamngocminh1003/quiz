@@ -299,7 +299,7 @@ const ModalAddNewFolderByFile = (props) => {
           <Box sx={{ gridColumn: "span 4" }}>
             <div className="mb-3" sx={{ gridColumn: "span 4" }}>
               <label for="formFile" className="form-label me-1">
-                Tải danh sách câu hỏi lên{" "}
+                Tải danh sách câu hỏi lên
                 <span className="text-danger me-2">(*)</span>
                 <ExportCSV />
               </label>

@@ -6,7 +6,10 @@ import ModalAddNewFolderForAllFolder from "../ManageFolders/ModalAddNewFolderFor
 import ModalDeleteFolder from "../ManageFolders/ModalDeleteFolder";
 import ModalAddNewExamRandomQues from "../ManageFolders/ModalAddNewExamRandomQues";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllScoresUserRedux } from "../../redux/slices/usersSlice";
+import {
+  fetchAllScoresUserRedux,
+  fetchAllScoresByCreatorTestRedux,
+} from "../../redux/slices/usersSlice";
 import { fetchAllSubjects } from "../../redux/slices/subjectsSlice";
 import CardComponent from "../AdminPage/CardComponent";
 import PieChartComponentGlobal from "../GlobalComponent/PieChartComponentGlobal";
@@ -65,6 +68,7 @@ const DataGridTable = (props) => {
       scoreCount["75-100"]++;
     }
   });
+
   const data = [
     { id: 0, value: scoreCount["0-25"], label: "0-25" },
     { id: 1, value: scoreCount["25-50"], label: "25-50" },
@@ -75,6 +79,7 @@ const DataGridTable = (props) => {
     if (role === "Admin" || role === "Teacher") {
       dispatch(fetchAllExams({ orderBy, descending, creator: username }));
       dispatch(fetchAllSubjects({ orderBy, descending }));
+      dispatch(fetchAllScoresByCreatorTestRedux(username));
     }
     if (role === "Student" && username === usernameLocal) {
       dispatch(fetchAllScoresUserRedux());
@@ -247,14 +252,24 @@ const DataGridTable = (props) => {
                 handleDeleteCategory={handleDeleteCategory}
                 handleEditCategory={handleEditCategory}
                 height="300"
+                from="profilePage"
+                roleLocal={roleLocal}
+                usernameLocal={usernameLocal}
+                username={username}
               />{" "}
+            </>
+          ) : (role === "Teacher" || role === "Admin") &&
+            title === "Kết quả các bài thi" &&
+            username === usernameLocal ? (
+            <>
+              <TableScore listScoresUser={listScoresUser} from="creatorTest" />
             </>
           ) : role === "Student" && username === usernameLocal ? (
             <>
               <TableScore listScoresUser={listScoresUser} />
             </>
           ) : (
-            !role || role === null(<></>)
+            <></>
           )}
         </div>
       </div>

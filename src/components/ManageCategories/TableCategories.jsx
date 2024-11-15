@@ -13,8 +13,17 @@ import { columnsIndex, columnTimeCreate, columnUser } from "../input/Column";
 import { Edit, Delete } from "@mui/icons-material";
 const TableCategories = (props) => {
   const [pageSize, setPageSize] = useState(10);
-  const { listSubjects, height, handleEditCategory, handleDeleteCategory } =
-    props;
+
+  const {
+    listSubjects,
+    height,
+    handleEditCategory,
+    handleDeleteCategory,
+    from,
+    roleLocal,
+    usernameLocal,
+    username,
+  } = props;
   const columnCategoryName = [
     {
       field: "name",
@@ -73,7 +82,26 @@ const TableCategories = (props) => {
       },
     },
   ];
-
+  const columnOther = [
+    ...columnsIndex,
+    ...columnCategoryName,
+    ...columnUser,
+    ...columnTimeCreate,
+  ];
+  let selectedColumns;
+  if (from === "profilePage") {
+    if (roleLocal === "Admin") {
+      selectedColumns = columns2;
+    }
+    if (username === usernameLocal) {
+      selectedColumns = columns2;
+    }
+    if (username !== usernameLocal) {
+      selectedColumns = columnOther;
+    }
+  } else {
+    selectedColumns = columns2;
+  }
   function CustomToolbar() {
     return (
       <GridToolbarContainer>
@@ -107,7 +135,7 @@ const TableCategories = (props) => {
               stt: index + 1,
               username: row.creator.username, // Extract the username from the creator field
             }))}
-            columns={columns2}
+            columns={selectedColumns}
             components={{ Toolbar: CustomToolbar }}
           />
         ) : (

@@ -11,11 +11,18 @@ import {
 import { useState } from "react";
 import { formatTime } from "../student/Exam/Loading";
 
-import { columnInfoFolder, columnCategoryName } from "../input/Column";
+import {
+  columnInfoFolder,
+  columnCategoryName,
+  columnUser,
+  columnInfoFolderName,
+  columnInfoFolderDes,
+  columnsIndex,
+} from "../input/Column";
 import { Box } from "@mui/material";
 const TableScore = (props) => {
   const [pageSize, setPageSize] = useState(10);
-  const { listScoresUser } = props;
+  const { listScoresUser, from } = props;
 
   const defaultTimeColumn = [
     {
@@ -33,9 +40,7 @@ const TableScore = (props) => {
       },
     },
   ];
-
-  const columnAdmin = [
-    ...columnInfoFolder,
+  const columnScore = [
     {
       field: "score",
       headerName: "Điểm",
@@ -45,12 +50,17 @@ const TableScore = (props) => {
 
         if (originalDate) {
           const formattedDate = originalDate * 10;
-          return formattedDate; // Trả về ngày đã định dạng
+          const formattedDateFix = formattedDate.toFixed(2);
+
+          return formattedDateFix; // Trả về ngày đã định dạng
         }
         return "0"; // Hoặc giá trị mặc định khi không có ngày
       },
     },
-
+  ];
+  const columnAdmin = [
+    ...columnInfoFolder,
+    ...columnScore,
     ...defaultTimeColumn,
     {
       field: "username",
@@ -59,7 +69,27 @@ const TableScore = (props) => {
     },
     ...columnCategoryName,
   ];
+  const columns2 = [
+    ...columnsIndex,
+    ...columnUser,
+    {
+      field: "fullName",
+      headerName: "Họ tên",
+      cellClassName: "name-column--cell",
+    },
+    ...columnScore,
+    ...defaultTimeColumn,
+    ...columnInfoFolderName,
+    ...columnInfoFolderDes,
+    ...columnCategoryName,
+  ];
 
+  let selectedColumns;
+  if (from === "creatorTest") {
+    selectedColumns = columns2;
+  } else {
+    selectedColumns = columnAdmin;
+  }
   function CustomToolbar() {
     return (
       <GridToolbarContainer>
@@ -85,7 +115,7 @@ const TableScore = (props) => {
               ...row,
               stt: index + 1,
             }))}
-            columns={columnAdmin}
+            columns={selectedColumns}
             components={{ Toolbar: CustomToolbar }}
             localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
             checkboxSelection

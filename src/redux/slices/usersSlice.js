@@ -3,8 +3,31 @@ import {
   getUserByUsername,
   fetchAllUsers,
   fetchAllScoresUser,
+  fetchAllScoresByCreatorTest,
 } from "../../services/userService";
+export const fetchAllScoresByCreatorTestRedux = createAsyncThunk(
+  "exams/fetchAllScoresByCreatorTest",
+  async (userId, thunkAPI) => {
+    const res = await fetchAllScoresByCreatorTest(userId);
 
+    if (res?.data.items) {
+      const transformedData = res?.data.items?.map((item, index) => {
+        return {
+          id: index,
+          categoryName: item.test.category.name,
+          name: item.test.name,
+          description: item.test.description,
+          username: item.participant.username,
+          fullName: item.participant.name,
+          timeTaken: item.timeTaken,
+          score: item.score,
+        };
+      });
+
+      return transformedData;
+    }
+  }
+);
 export const getUserByUsernameRedux = createAsyncThunk(
   "users/getUserByUsername",
   async (username, thunkAPI) => {
@@ -88,6 +111,22 @@ export const usersSlice = createSlice({
         state.listScoresUser = action.payload;
       })
       .addCase(fetchAllScoresUserRedux.rejected, (state, action) => {
+        // Add user to the state array
+        state.isLoadingFetchAllScores = false;
+        state.isErrorFetchAllScores = true;
+      })
+      .addCase(fetchAllScoresByCreatorTestRedux.pending, (state, action) => {
+        // Add user to the state array
+        state.isLoadingFetchAllScores = true;
+        state.isErrorFetchAllScores = false;
+      })
+      .addCase(fetchAllScoresByCreatorTestRedux.fulfilled, (state, action) => {
+        // Add user to the state array
+        state.isLoadingFetchAllScores = false;
+        state.isErrorFetchAllScores = false;
+        state.listScoresUser = action.payload;
+      })
+      .addCase(fetchAllScoresByCreatorTestRedux.rejected, (state, action) => {
         // Add user to the state array
         state.isLoadingFetchAllScores = false;
         state.isErrorFetchAllScores = true;

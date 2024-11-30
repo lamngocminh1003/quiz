@@ -7,8 +7,9 @@ import { fetchAllSubjects } from "../../redux/slices/subjectsSlice";
 import { fetchAllExams } from "../../redux/slices/examsSlice";
 import { fetchAllUsersRedux } from "../../redux/slices/usersSlice";
 import { fetchAllComment } from "../../redux/slices/commentsSlice";
-
+import ProgressBarComponent from "./ProgressBarComponent";
 import { useDispatch, useSelector } from "react-redux";
+import PieChartCorrectAnswer from "./PieChartCorrectAnswer";
 function AdminPage() {
   const dispatch = useDispatch();
   const listSubjects = useSelector((state) => state.subjects.listSubjects);
@@ -80,6 +81,12 @@ function AdminPage() {
                   </div>
                   <div className="col-xl-4 col-lg-5">
                     <LargeCardComponent />
+                  </div>{" "}
+                </div>
+                <div className="row">
+                  {/*   <!-- Content Column --> */}
+                  <div className="col-lg-6 mb-4">
+                    <ProgressBarComponent />
                   </div>
                 </div>
               </div>

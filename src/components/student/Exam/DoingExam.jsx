@@ -112,7 +112,9 @@ const DoingExam = () => {
         })
       );
       if (res.payload.status === 200) {
-        const newStatus = result?.completionPercent >= 0.5 ? "Đạt" : "Chưa đạt";
+
+        const newStatus =
+          res?.payload?.data?.completionPercent >= 0.5 ? "Đạt" : "Chưa đạt";
         setStatus(newStatus);
         setShowResult(true);
         setLoading(false);

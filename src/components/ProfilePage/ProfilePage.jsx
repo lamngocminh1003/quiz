@@ -38,7 +38,9 @@ const ProfilePage = () => {
                   role={dataUser?.roles?.length > 0 ? dataUser?.roles[0] : null}
                 />
               </div>
-              {dataUser?.roles?.length > 0 &&
+              {dataUser &&
+                dataUser.roles &&
+                dataUser?.roles?.length > 0 &&
                 dataUser?.roles[0] &&
                 (dataUser?.roles[0] === "Teacher" ||
                 dataUser?.roles[0] === "Admin" ? (
@@ -56,7 +58,7 @@ const ProfilePage = () => {
                 ) : (
                   (!dataUser?.roles[0] || dataUser?.roles[0] === null) && <></> // Fixed this line
                 ))}
-            </div>{" "}
+            </div>
             <div className="col-lg-8">
               <Box sx={{ width: "100%", bgcolor: "background.paper" }}>
                 <Tabs value={value} onChange={handleChange} centered>
@@ -69,9 +71,6 @@ const ProfilePage = () => {
                             <Tab key="monhoc" label="Danh sách môn học" />,
                           ]
                         : []),
-                    ...(username === usernameLocal
-                      ? [<Tab key="ketqua" label="Kết quả các bài thi" />]
-                      : []),
                   ]}
                 </Tabs>
 
@@ -98,17 +97,19 @@ const ProfilePage = () => {
                         )}
                       </>
                     )}
-                  {username === usernameLocal && value === 0 && (
-                    <>
-                      <DataGridTable
-                        title="Kết quả các bài thi"
-                        titleButton="Làm bài thi mới"
-                        link="all-exams"
-                        role={dataUser?.roles[0]}
-                        username={username}
-                      />
-                    </>
-                  )}
+                  {username === usernameLocal &&
+                    value === 0 &&
+                    dataUser?.roles?.length > 0 && (
+                      <>
+                        <DataGridTable
+                          title="Kết quả các bài thi"
+                          titleButton="Làm bài thi mới"
+                          link="all-exams"
+                          role={dataUser?.roles[0]}
+                          username={username}
+                        />
+                      </>
+                    )}
                 </Box>
               </Box>
             </div>

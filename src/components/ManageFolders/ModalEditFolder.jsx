@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, createRef } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { editExam, fetchAllExams } from "../../redux/slices/examsSlice";
 import { NativeSelect, FormControl, InputLabel } from "@mui/material";
@@ -171,9 +171,11 @@ const ModalEditFolder = (props) => {
         //success
         setShowEdit(false);
         toast.success("Cập nhật đề thi thành công!");
-        if ((from = "profilePage")) {
+        const from = typeof someValue !== "undefined" ? someValue : null; // Replace 'someValue' with your logic
+        if (from === "profilePage") {
           dispatch(fetchAllExams({ orderBy, descending, creator: username }));
-        } else {
+        }
+        if (!from) {
           dispatch(fetchAllExams({ orderBy, descending }));
         }
       } else {
@@ -183,6 +185,7 @@ const ModalEditFolder = (props) => {
     } catch (error) {
       toast.error("Cập nhật đề thi thất bại!");
       setIsShowLoading(false);
+      console.log(error);
     }
   };
   useEffect(() => {

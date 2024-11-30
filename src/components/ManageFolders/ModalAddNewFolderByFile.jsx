@@ -99,27 +99,33 @@ const ModalAddNewFolderByFile = (props) => {
               row;
 
             // Đảm bảo các lựa chọn bắt đầu bằng A., B., C., D. và kiểm tra nếu không có giá trị
-            const formattedOptionA = optionA
-              ? optionA.startsWith("A.")
-                ? optionA
-                : `A. ${optionA}`
-              : null;
-            const formattedOptionB = optionB
-              ? optionB.startsWith("B.")
-                ? optionB
-                : `B. ${optionB}`
-              : null;
-            const formattedOptionC = optionC
-              ? optionC.startsWith("C.")
-                ? optionC
-                : `C. ${optionC}`
-              : null;
-            const formattedOptionD = optionD
-              ? optionD.startsWith("D.")
-                ? optionD
-                : `D. ${optionD}`
-              : null;
+            const formattedOptionA =
+              typeof optionA === "string"
+                ? optionA.startsWith("A.")
+                  ? optionA
+                  : `A. ${optionA}`
+                : null;
 
+            const formattedOptionB =
+              typeof optionB === "string"
+                ? optionB.startsWith("B.")
+                  ? optionB
+                  : `B. ${optionB}`
+                : null;
+
+            const formattedOptionC =
+              typeof optionC === "string"
+                ? optionC.startsWith("C.")
+                  ? optionC
+                  : `C. ${optionC}`
+                : null;
+
+            const formattedOptionD =
+              typeof optionD === "string"
+                ? optionD.startsWith("D.")
+                  ? optionD
+                  : `D. ${optionD}`
+                : null;
             return [
               stt,
               question,

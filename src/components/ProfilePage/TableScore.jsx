@@ -10,7 +10,7 @@ import {
 } from "@mui/x-data-grid";
 import { useState } from "react";
 import { formatTime } from "../student/Exam/Loading";
-
+import { CheckCircle, Cancel } from "@mui/icons-material";
 import {
   columnInfoFolder,
   columnCategoryName,
@@ -19,7 +19,7 @@ import {
   columnInfoFolderDes,
   columnsIndex,
 } from "../input/Column";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 const TableScore = (props) => {
   const [pageSize, setPageSize] = useState(10);
   const { listScoresUser, from } = props;
@@ -58,9 +58,64 @@ const TableScore = (props) => {
       },
     },
   ];
+  const columnEvaluate = [
+    {
+      field: "evaluation",
+      headerName: "Đánh giá",
+      cellClassName: "name-column--cell",
+      valueGetter: (params) => {
+        const originalScore = params.row.score; // Lấy giá trị từ hàng (dòng dữ liệu)
+        if (originalScore !== undefined && originalScore !== null) {
+          const formattedScore = originalScore * 10;
+          const formattedScoreFix = formattedScore.toFixed(2);
+          // Logic đánh giá
+          return formattedScoreFix > 5 ? "Đạt" : "Chưa đạt";
+        }
+        return "0"; // Giá trị mặc định nếu không có dữ liệu
+      },
+      renderCell: ({ row }) => {
+        let displayText;
+        if (row?.score * 10 > 5) {
+          displayText = "Đạt";
+        } else if (row?.score * 10 < 5) {
+          displayText = "Không đạt";
+        }
+        const cellStyle = {
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "5px",
+          borderRadius: "4px",
+        };
+        const iconStyle = {
+          fontSize: "12px",
+          marginRight: "5px",
+        };
+        const textStyle = {
+          fontSize: "12px",
+        };
+        const resultColor = displayText === "Không đạt" ? "#ed5362" : "#21e04e";
+        return (
+          <Box style={{ ...cellStyle, backgroundColor: resultColor }}>
+            {displayText === "Không đạt" && (
+              <Cancel style={{ ...iconStyle, color: "#eeeded" }} />
+            )}
+            {displayText === "Đạt" && (
+              <CheckCircle style={{ ...iconStyle, color: "#eeeded" }} />
+            )}
+            <Typography color="#eeeded" style={textStyle}>
+              {displayText}
+            </Typography>
+          </Box>
+        );
+      },
+    },
+  ];
   const columnAdmin = [
     ...columnInfoFolder,
     ...columnScore,
+    ...columnEvaluate,
     ...defaultTimeColumn,
     {
       field: "username",
@@ -78,6 +133,8 @@ const TableScore = (props) => {
       cellClassName: "name-column--cell",
     },
     ...columnScore,
+    ...columnEvaluate,
+
     ...defaultTimeColumn,
     ...columnInfoFolderName,
     ...columnInfoFolderDes,

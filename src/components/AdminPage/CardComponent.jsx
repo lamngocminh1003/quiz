@@ -22,10 +22,9 @@ const CardComponent = (props) => {
                   className={`h6 text-xs font-weight-bold text-${color} text-uppercase mb-1`}
                 >
                   {title}
-                </div>
-                <div className="h6 mb-0 font-weight-bold text-secondary">
                   {content}
                 </div>
+                <div className="h6 mb-0 font-weight-bold text-secondary"></div>
               </div>
               <div className="col-auto">
                 <i className={`${icon} fa-2x text-${color}`}></i>

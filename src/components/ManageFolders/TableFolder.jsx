@@ -14,6 +14,8 @@ import {
   columnCategoryName,
   columnUser,
 } from "../input/Column";
+import TestFile from "./TestFile";
+
 import { Box } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 const TableFolder = (props) => {
@@ -29,6 +31,20 @@ const TableFolder = (props) => {
   } = props;
 
   const columns2 = [
+    {
+      field: "Tải",
+      headerName: "Tải đề thi",
+      disableExport: true,
+      sortable: false, // Tắt sắp xếp cho cột "Thao tác"
+      filterable: false, // Tắt lọc cho cột "Thao tác"
+      renderCell: (params) => {
+        return (
+          <>
+            <TestFile dataFolders={params.row} />
+          </>
+        );
+      },
+    },
     {
       field: "Sửa",
       headerName: "Sửa",

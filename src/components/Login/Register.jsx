@@ -110,6 +110,36 @@ const Register = (props) => {
       });
       return false;
     }
+
+    // Password validation for complexity
+    if (password.length < 6) {
+      toast.error("Mật khẩu phải có ít nhất 6 ký tự");
+      setObjCheckInput({ ...defaultValidInput, isValidPassword: false });
+      return false;
+    }
+
+    if (!/[A-Z]/.test(password)) {
+      toast.error("Mật khẩu phải có ít nhất một chữ cái in hoa");
+      setObjCheckInput({ ...defaultValidInput, isValidPassword: false });
+      return false;
+    }
+
+    if (!/[0-9]/.test(password)) {
+      toast.error("Mật khẩu phải có ít nhất một chữ số");
+      setObjCheckInput({ ...defaultValidInput, isValidPassword: false });
+      return false;
+    }
+
+    if (!/[^a-zA-Z0-9]/.test(password)) {
+      toast.error("Mật khẩu phải có ít nhất một ký tự đặc biệt");
+      setObjCheckInput({ ...defaultValidInput, isValidPassword: false });
+      return false;
+    }
+    if (!/[a-z]/.test(password)) {
+      toast.error("Mật khẩu phải có ít nhất một chữ cái thường");
+      setObjCheckInput({ ...defaultValidInput, isValidPassword: false });
+      return false;
+    }
     if (!selectedRole) {
       toast.error("Vui lòng đăng ký tài khoản Giáo viên hoặc sinh viên");
       setObjCheckInput({ ...defaultValidInput, isValidSelectedRole: false });

@@ -31,15 +31,12 @@ const AppRoutes = (props) => {
           <Route path="/register">
             <Register />
           </Route>
-          <PrivateRoutes path="/exam/:id" component={InfoExam} exact />
+          <Route path="/exam/:id" component={InfoExam} exact />
           <PrivateRoutes path="/subject" component={Categories} />
-          <PrivateRoutes
-            path="/profile-page/:username"
-            component={ProfilePage}
-          />
+          <Route path="/profile-page/:username" component={ProfilePage} />
           <PrivateRoutes path="/admin/exams" component={AllFolder} />
-          <PrivateRoutes path="/all-categories" component={AllCategory} />{" "}
-          <PrivateRoutes path="/all-questions" component={AllQuestion} />
+          <Route path="/all-categories" component={AllCategory} />{" "}
+          <Route path="/all-questions" component={AllQuestion} />
           <PrivateRoutes path="/user" component={Users} />
           <PrivateRoutes path="/admin-page" component={AdminPage} />
           <PrivateRoutes path="/comment" component={Comment} />

@@ -26,15 +26,14 @@ const AllFolder = () => {
   }, [dispatch]);
 
   const handleEditTable = (folder) => {};
-  const handleEditFile = (user) => {
+  const handleEditFile = (folder) => {
     setShowEdit(true);
-    setDataFolders(user);
+    setDataFolders(folder);
   };
-  const handleDeleteFile = (user) => {
+  const handleDeleteFile = (folder) => {
     setShowDelete(true);
-    setDataFolders(user);
+    setDataFolders(folder);
   };
-
   return (
     <>
       <ModalEditFolder
@@ -56,7 +55,6 @@ const AllFolder = () => {
         <div className="h1 text-center text-primary m-3 px-md-5 px-3">
           Quản lý đề thi
         </div>
-
         <div className="container">
           <div className="d-flex justify-content-between  align-items-center mb-3">
             <div className="d-flex gap-3">
@@ -90,7 +88,7 @@ const AllFolder = () => {
                 <div className="text-center">
                   Số lượng bài thi mới được thêm
                 </div>
-              </span>
+              </span>{" "}
               <span>
                 <CardComponent
                   title="Đề thi"

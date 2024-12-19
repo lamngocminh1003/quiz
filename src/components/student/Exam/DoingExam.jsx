@@ -9,6 +9,7 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { Loading, formatTime } from "./Loading";
 import ModalAddComment from "./ModalAddComment";
+import { toast } from "react-toastify";
 
 const DoingExam = () => {
   const { testId, minutes } = useParams();
@@ -101,26 +102,29 @@ const DoingExam = () => {
     history.push(`/profile-page/${usernameLocal}`);
   };
   const handleSubmit = async () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    setLoading(true);
-    clearInterval(timerIntervalId);
-    setTimeout(async () => {
-      const res = await dispatch(
-        submitExam({
-          token: examData?.token || userAnswers.token,
-          answers: userAnswers.answers,
-        })
-      );
-      if (res.payload.status === 200) {
-
-        const newStatus =
-          res?.payload?.data?.completionPercent >= 0.5 ? "Đạt" : "Chưa đạt";
-        setStatus(newStatus);
-        setShowResult(true);
+    if (examData?.test?.questions.length === userAnswers.answers.length) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setLoading(true);
+      clearInterval(timerIntervalId);
+      setTimeout(async () => {
+        const res = await dispatch(
+          submitExam({
+            token: examData?.token || userAnswers.token,
+            answers: userAnswers.answers,
+          })
+        );
+        if (res.payload.status === 200) {
+          const newStatus =
+            res?.payload?.data?.completionPercent >= 0.5 ? "Đạt" : "Chưa đạt";
+          setStatus(newStatus);
+          setShowResult(true);
+          setLoading(false);
+        }
         setLoading(false);
-      }
-      setLoading(false);
-    }, 1000);
+      }, 1000);
+    } else {
+      toast.error("Vui lòng chọn đủ đáp án cho các câu hỏi");
+    }
   };
 
   // Reset states and reload the page
@@ -132,6 +136,8 @@ const DoingExam = () => {
     history.push(`/doing-exam/${testId}/${minutes}`);
     dispatch(doingExam({ testId, minutes }));
   };
+  console.log(result);
+
   return (
     <>
       <ModalAddComment
@@ -150,54 +156,87 @@ const DoingExam = () => {
         <div className="container d-flex flex-column flex-md-row w-100 mx-auto">
           <div className="col-md-8 col-12">
             <div>
-              {examData?.test?.questions?.map((question, index) => (
-                <div
-                  key={question.number}
-                  className="m-3 py-3 px-4 shadow-sm border border-light-subtle rounded"
-                >
-                  <p className="d-flex align-items-center rounded text-xs p-2 cursor-pointer">
-                    <span
-                      className="d-inline-flex justify-content-center align-items-center bg-warning rounded-circle  text-secondary me-3"
-                      style={{
-                        height: "32px",
-                        width: "32px",
-                        fontSize: "13px",
-                      }}
-                    >
-                      {index + 1}
-                    </span>
-                    <span>{question.description}</span>
-                  </p>
-                  <div className="row mt-3 d-flex gap-3  justify-content-center">
-                    {question.answers
-                      .filter((option) => option) // Filter out empty or undefined answers
-                      .map((option, index) => (
-                        <div
-                          className={`col-5 border p-3 border-light-subtle rounded text-xs p-2 cursor-pointer ${
-                            answers[question.id] === option
-                              ? "bg-secondary-subtle"
-                              : ""
-                          }`}
-                          key={option}
-                          onClick={() =>
-                            handleAnswerSelect(
-                              question.id,
-                              option,
-                              question.number,
-                              index + 1
-                            )
-                          }
-                        >
-                          <p className="small mb-1">Đáp án {index + 1}</p>
-                          <p>{option}</p>
-                        </div>
-                      ))}
+              {examData?.test?.questions?.map((question, index) => {
+                const incorrectAnswer = result?.incorrectAnswers?.find(
+                  (item) => item.number === question.number
+                );
+                const isIncorrect = !!incorrectAnswer;
+                const optionLabels = ["A", "B", "C", "D"];
+                const correctAnswerLabel =
+                  incorrectAnswer?.correctAnswer &&
+                  optionLabels[incorrectAnswer.correctAnswer - 1]; // Chuyển đổi số sang chữ cái
+                return (
+                  <div
+                    key={question.number}
+                    className="m-3 py-3 px-4 shadow-sm border border-light-subtle rounded"
+                  >
+                    <p className="d-flex align-items-center rounded text-xs p-2 cursor-pointer">
+                      <span
+                        className="d-inline-flex justify-content-center align-items-center bg-warning rounded-circle  text-secondary me-3"
+                        style={{
+                          height: "32px",
+                          width: "32px",
+                          fontSize: "13px",
+                        }}
+                      >
+                        {index + 1}
+                      </span>
+                      <span>
+                        {question.description}{" "}
+                        {showResult && (
+                          <span
+                            className={`ms-2 ${
+                              isIncorrect ? "text-danger" : "text-success"
+                            }`}
+                            style={{ fontSize: "18px" }}
+                          >
+                            {isIncorrect ? (
+                              <>
+                                ✘
+                                <span
+                                  className="ms-2 text-secondary"
+                                  style={{ fontSize: "14px" }}
+                                >
+                                  (Đáp án đúng: {correctAnswerLabel})
+                                </span>
+                              </>
+                            ) : (
+                              "✔"
+                            )}
+                          </span>
+                        )}
+                      </span>{" "}
+                    </p>
+                    <div className="row mt-3 d-flex gap-3  justify-content-center">
+                      {question.answers
+                        .filter((option) => option) // Filter out empty or undefined answers
+                        .map((option, index) => (
+                          <div
+                            className={`col-5 border p-3 border-light-subtle rounded text-xs p-2 cursor-pointer ${
+                              answers[question.id] === option
+                                ? "bg-secondary-subtle"
+                                : ""
+                            }`}
+                            key={option}
+                            onClick={() =>
+                              handleAnswerSelect(
+                                question.id,
+                                option,
+                                question.number,
+                                index + 1
+                              )
+                            }
+                          >
+                            <p className="small mb-1">Đáp án {index + 1}</p>
+                            <p>{option}</p>{" "}
+                          </div>
+                        ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
-
           <div className="col-md-4 col-12 p-4">
             {showResult && (
               <div>
@@ -222,7 +261,16 @@ const DoingExam = () => {
                     </h3>
                     <h1 className="h2 font-weight-bold my-2">
                       {(result?.score / 10).toFixed(2)}/10
-                    </h1>
+                    </h1>{" "}
+                    <p>
+                      Số câu đúng:{" "}
+                      <span className="text-warning">
+                        {examData?.test?.questions.length -
+                          result?.incorrectAnswers.length}
+                      </span>
+                      /{examData?.test?.questions.length}{" "}
+                      <span className="text-success h6">✔</span>
+                    </p>
                     <p className="text-sm d-flex justify-content-center align-items-center gap-2">
                       <span
                         style={{

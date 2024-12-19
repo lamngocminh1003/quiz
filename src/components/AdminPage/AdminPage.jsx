@@ -9,7 +9,6 @@ import { fetchAllUsersRedux } from "../../redux/slices/usersSlice";
 import { fetchAllComment } from "../../redux/slices/commentsSlice";
 import ProgressBarComponent from "./ProgressBarComponent";
 import { useDispatch, useSelector } from "react-redux";
-import PieChartCorrectAnswer from "./PieChartCorrectAnswer";
 function AdminPage() {
   const dispatch = useDispatch();
   const listSubjects = useSelector((state) => state.subjects.listSubjects);

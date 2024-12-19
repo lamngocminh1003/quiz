@@ -97,6 +97,17 @@ const updateUser = (name) => {
     config
   );
 };
+const updateUserPassword = (oldPassword, newPassword) => {
+  let config = createConfig();
+  return axios.patch(
+    `${backendURL}/api/Account/password`,
+    {
+      oldPassword,
+      newPassword,
+    },
+    config
+  );
+};
 const createNewUser = (username, password, description, categoryId) => {
   let config = createConfig();
 
@@ -134,4 +145,5 @@ export {
   userAdminRegister,
   fetchAllScoresUser,
   fetchAllScoresByCreatorTest,
+  updateUserPassword,
 };

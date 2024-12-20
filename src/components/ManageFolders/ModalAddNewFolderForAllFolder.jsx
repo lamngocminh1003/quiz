@@ -14,6 +14,8 @@ import {
 } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import SingleQuestion from "../GlobalComponent/SingleQuestion";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 const ModalAddNewFolderForAllFolder = (props) => {
   let { descending, orderBy, from, username } = props;
 
@@ -45,6 +47,7 @@ const ModalAddNewFolderForAllFolder = (props) => {
     description: "",
     defaultTime: unit[0],
     questions: questionArr,
+    isPrivate: false,
     links: [""],
   });
 
@@ -71,6 +74,7 @@ const ModalAddNewFolderForAllFolder = (props) => {
           correctAnswer: "", // Đặt lại câu trả lời đúng về rỗng
         },
       ],
+      isPrivate: false,
       links: [""],
     });
   };
@@ -80,7 +84,10 @@ const ModalAddNewFolderForAllFolder = (props) => {
       questions: questionArr,
     }));
   }, [questionArr]);
-
+  const handleCheckboxChange = (event) => {
+    // Nếu checkbox được tích, set giá trị isPrivate thành 1, ngược lại set thành 0
+    setNewExam({ ...newExam, isPrivate: event.target.checked ? true : false });
+  };
   const textAreaRefs = useRef(questionArr.map(() => createRef()));
   const addNewQuestion = () => {
     const lastIndexQuestion = questionArr.length - 1;
@@ -172,6 +179,7 @@ const ModalAddNewFolderForAllFolder = (props) => {
           description: newExam.description,
           defaultTime: newExam.defaultTime,
           questions: newExam.questions,
+          isPrivate: newExam.isPrivate,
           links: null,
         })
       );
@@ -192,6 +200,8 @@ const ModalAddNewFolderForAllFolder = (props) => {
               correctAnswer: "",
             },
           ],
+          isPrivate: false,
+
           links: [""],
         });
         setQuestionArr([
@@ -307,27 +317,59 @@ const ModalAddNewFolderForAllFolder = (props) => {
               />
             )}
           />
-          <FormControl variant="filled" className="input-group mb-3">
-            <InputLabel variant="standard" htmlFor="uncontrolled-native">
-              Thời gian làm bài
-            </InputLabel>
-            <NativeSelect
-              value={newExam.defaultTime}
-              onChange={(e) =>
-                setNewExam({ ...newExam, defaultTime: e.target.value })
-              }
-              inputProps={{
-                name: "defaultTime",
-                id: "uncontrolled-native",
-              }}
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <FormControl
+              variant="filled"
+              className="input-group mb-3"
+              style={{ flex: 1 }}
             >
-              {unit.map((item, index) => (
-                <option key={`option${index}`} value={item}>
-                  {item}
-                </option>
-              ))}
-            </NativeSelect>
-          </FormControl>
+              <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                Thời gian làm bài
+              </InputLabel>
+              <NativeSelect
+                value={newExam.defaultTime}
+                onChange={(e) =>
+                  setNewExam({ ...newExam, defaultTime: e.target.value })
+                }
+                inputProps={{
+                  name: "defaultTime",
+                  id: "uncontrolled-native",
+                }}
+              >
+                {unit.map((item, index) => (
+                  <option key={`option${index}`} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </NativeSelect>
+            </FormControl>
+
+            <div style={{ flex: 1 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={newExam.isPrivate === true}
+                    onChange={handleCheckboxChange}
+                    name="isPrivate"
+                  />
+                }
+                label="Bảo mật"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "start",
+                }}
+              />
+              <p
+                style={{
+                  color: "red",
+                  fontSize: "0.9rem",
+                }}
+              >
+                (*) Giới hạn danh sách người dùng thi
+              </p>
+            </div>
+          </div>
           <div className="border border-primary rounded">
             <div className="column pt-2">
               <p className="px-3 fs-5 fw-normal">Câu hỏi:</p>

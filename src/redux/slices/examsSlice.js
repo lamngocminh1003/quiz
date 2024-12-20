@@ -7,6 +7,7 @@ import {
   createNewTestRandom,
   doingTest,
   testGrade,
+  fetchAllExamsInvited,
 } from "../../services/examService";
 
 export const fetchAllExams = createAsyncThunk(
@@ -35,6 +36,33 @@ export const fetchAllExams = createAsyncThunk(
           name: item.name,
           description: item.description,
           defaultTime: item.defaultTime,
+          isPrivate: item.isPrivate,
+          questions: item.questions,
+          links: item.links,
+          createdAt: item.createdAt,
+          modifiedAt: item.modifiedAt,
+        };
+      });
+      return transformedData;
+    }
+  }
+);
+export const fetchAllExamsInvitedRedux = createAsyncThunk(
+  "exams/fetchAllExamsInvited",
+  async (thunkAPI) => {
+    const res = await fetchAllExamsInvited();
+    if (res?.tests) {
+      const transformedData = res?.tests?.map((item) => {
+        return {
+          id: item.id,
+          categoryId: item.category.id,
+          categoryName: item.category.name,
+          username: item.creator.username,
+          fullName: item.creator.name,
+          name: item.name,
+          description: item.description,
+          defaultTime: item.defaultTime,
+          isPrivate: item.isPrivate,
           questions: item.questions,
           links: item.links,
           createdAt: item.createdAt,
@@ -48,7 +76,7 @@ export const fetchAllExams = createAsyncThunk(
 export const createNewExam = createAsyncThunk(
   "exams/createNewExam",
   async (
-    { categoryId, name, description, defaultTime, questions, links },
+    { categoryId, name, description, defaultTime, questions, isPrivate, links },
     thunkAPI
   ) => {
     const res = await createNewTest(
@@ -57,6 +85,7 @@ export const createNewExam = createAsyncThunk(
       description,
       defaultTime,
       questions,
+      isPrivate,
       links
     );
     return res;
@@ -129,6 +158,9 @@ const initialState = {
   isErrorDoing: false,
   isLoadingSubmit: false,
   isErrorSubmit: false,
+  listExamsInvited: [],
+  isLoadingFetchAllInvited: false,
+  isErrorFetchAllInvited: false,
 };
 
 export const examsSlice = createSlice({
@@ -153,6 +185,22 @@ export const examsSlice = createSlice({
         // Add user to the state array
         state.isLoadingFetchAll = false;
         state.isErrorFetchAll = true;
+      })
+      .addCase(fetchAllExamsInvitedRedux.pending, (state, action) => {
+        // Add user to the state array
+        state.isLoadingFetchAllInvited = true;
+        state.isErrorFetchAllInvited = true;
+      })
+      .addCase(fetchAllExamsInvitedRedux.fulfilled, (state, action) => {
+        // Add user to the state array
+        state.isLoadingFetchAllInvited = false;
+        state.isErrorFetchAllInvited = false;
+        state.listExamsInvited = action.payload;
+      })
+      .addCase(fetchAllExamsInvitedRedux.rejected, (state, action) => {
+        // Add user to the state array
+        state.isLoadingFetchAllInvited = false;
+        state.isErrorFetchAllInvited = true;
       })
       .addCase(createNewExam.pending, (state, action) => {
         // Add user to the state array

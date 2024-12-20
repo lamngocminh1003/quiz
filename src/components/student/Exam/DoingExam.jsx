@@ -136,7 +136,6 @@ const DoingExam = () => {
     history.push(`/doing-exam/${testId}/${minutes}`);
     dispatch(doingExam({ testId, minutes }));
   };
-  console.log(result);
 
   return (
     <>

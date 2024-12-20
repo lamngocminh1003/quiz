@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { getUserByUsernameRedux } from "../../redux/slices/usersSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { Box, Tabs, Tab, Typography } from "@mui/material";
+import { Box, Tabs, Tab} from "@mui/material";
 
 const ProfilePage = () => {
   const { username } = useParams();
@@ -23,7 +23,6 @@ const ProfilePage = () => {
     }
   }, [dispatch, username]);
   const dataUser = useSelector((state) => state.users.dataUser);
-  console.log(value);
 
   return (
     <>
@@ -101,13 +100,19 @@ const ProfilePage = () => {
                     value === 0 &&
                     dataUser?.roles?.length > 0 && (
                       <>
+                        {" "}
+                        <DataGridTable
+                          title="Bài thi cần làm"
+                          role={dataUser?.roles[0]}
+                          username={username}
+                        />
                         <DataGridTable
                           title="Kết quả các bài thi"
                           titleButton="Làm bài thi mới"
                           link="all-exams"
                           role={dataUser?.roles[0]}
                           username={username}
-                        />
+                        />{" "}
                       </>
                     )}
                 </Box>

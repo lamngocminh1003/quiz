@@ -12,8 +12,10 @@ import CardComponent from "../AdminPage/CardComponent";
 import AreaChartComponentGlobal from "../GlobalComponent/AreaChartComponentGlobal";
 import ScrollToTopButton from "../input/ScrollToTopButton";
 import TableFolder from "./TableFolder";
+import ModalEditListUsers from "./ModalEditListUsers";
 const AllFolder = () => {
   const [showEdit, setShowEdit] = useState(false);
+  const [showView, setShowView] = useState(false);
   const [dataFolders, setDataFolders] = useState({});
   const [showDelete, setShowDelete] = useState(false);
   const listExams = useSelector((state) => state.exams.listExams);
@@ -25,7 +27,6 @@ const AllFolder = () => {
     dispatch(fetchAllExams({ orderBy, descending }));
   }, [dispatch]);
 
-  const handleEditTable = (folder) => {};
   const handleEditFile = (folder) => {
     setShowEdit(true);
     setDataFolders(folder);
@@ -34,13 +35,22 @@ const AllFolder = () => {
     setShowDelete(true);
     setDataFolders(folder);
   };
+  const handleViewUserList = (folder) => {
+    setShowView(true);
+    setDataFolders(folder);
+  };
   return (
     <>
+      {" "}
+      <ModalEditListUsers
+        setShowEdit={setShowView}
+        showEdit={showView}
+        dataUsers={dataFolders}
+      />
       <ModalEditFolder
         setShowEdit={setShowEdit}
         showEdit={showEdit}
         dataFolders={dataFolders}
-        handleEditTable={handleEditTable}
         descending={descending}
         orderBy={orderBy}
       />
@@ -105,6 +115,7 @@ const AllFolder = () => {
             listExams={listExams}
             handleDeleteFile={handleDeleteFile}
             handleEditFile={handleEditFile}
+            handleViewUserList={handleViewUserList}
           />
           <ScrollToTopButton />
         </div>

@@ -70,13 +70,26 @@ const fetchAllExamsApi = ({
       return error.response;
     });
 };
+const fetchAllExamsInvited = () => {
+  let config = createConfig();
+  let url = `${backendURL}/api/Account/invited?includeOwned=true`;
 
+  return axios
+    .get(url, config)
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      return error.response;
+    });
+};
 const createNewTest = (
   categoryId,
   name,
   description,
   defaultTime,
   questions,
+  isPrivate,
   links
 ) => {
   let config = createConfig();
@@ -88,23 +101,55 @@ const createNewTest = (
       description,
       defaultTime,
       questions,
+      isPrivate,
       links,
     },
     config
   );
+};
+const createUserInvitations = ({ testId, usernames }) => {
+  let config = createConfig();
+  return axios.put(
+    `${backendURL}/api/Test/invitations`,
+    {
+      testId,
+      usernames,
+    },
+    config
+  );
+};
+
+const deleteUserInvitations = ({ testId, usernames }) => {
+  const createConfig = () => {
+    const token = localStorage.getItem("token");
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: {
+        // Đây là cách đúng để gửi payload với phương thức DELETE
+        testId,
+        usernames,
+      },
+    };
+    return config;
+  };
+
+  return axios.delete(`${backendURL}/api/Test/invitations`, createConfig());
 };
 const uploadFileExam = ({
   categoryId,
   testName,
   description,
   defaultTime,
+  isPrivate,
   links,
   File,
 }) => {
   let config = createConfig();
   return axios
     .put(
-      `${backendURL}/api/Test/upload?categoryId=${categoryId}&testName=${testName}&description=${description}&defaultTime=${defaultTime}&links=${links}`,
+      `${backendURL}/api/Test/upload?categoryId=${categoryId}&testName=${testName}&description=${description}&defaultTime=${defaultTime}&isPrivate=${isPrivate}&links=${links}`,
       File,
       config
     )
@@ -213,4 +258,7 @@ export {
   doingTest,
   testGrade,
   uploadFileExam,
+  deleteUserInvitations,
+  createUserInvitations,
+  fetchAllExamsInvited,
 };

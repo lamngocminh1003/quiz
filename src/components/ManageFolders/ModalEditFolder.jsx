@@ -10,8 +10,15 @@ const ModalEditFolder = (props) => {
   const [isShowLoading, setIsShowLoading] = useState(false);
   const dispatch = useDispatch();
 
-  let { setShowEdit, showEdit, dataFolders, descending, orderBy, username } =
-    props;
+  let {
+    setShowEdit,
+    showEdit,
+    dataFolders,
+    descending,
+    orderBy,
+    username,
+    from,
+  } = props;
 
   const prefixes = ["A", "B", "C", "D"];
   const unit = [15, 30, 45, 60, 90, 120];
@@ -171,11 +178,9 @@ const ModalEditFolder = (props) => {
         //success
         setShowEdit(false);
         toast.success("Cập nhật đề thi thành công!");
-        const from = typeof someValue !== "undefined" ? someValue : null; // Replace 'someValue' with your logic
-        if (from === "profilePage") {
+        if ((from = "profilePage")) {
           dispatch(fetchAllExams({ orderBy, descending, creator: username }));
-        }
-        if (!from) {
+        } else {
           dispatch(fetchAllExams({ orderBy, descending }));
         }
       } else {

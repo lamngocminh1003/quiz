@@ -4,6 +4,8 @@ import TableFolder from "../ManageFolders/TableFolder";
 import ModalEditFolder from "../ManageFolders/ModalEditFolder";
 import ModalAddNewFolderForAllFolder from "../ManageFolders/ModalAddNewFolderForAllFolder";
 import ModalDeleteFolder from "../ManageFolders/ModalDeleteFolder";
+import ModalEditListUsers from "../ManageFolders/ModalEditListUsers";
+
 import ModalAddNewExamRandomQues from "../ManageFolders/ModalAddNewExamRandomQues";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -21,6 +23,7 @@ import TableScore from "./TableScore";
 import { useHistory } from "react-router-dom";
 import TableCategories from "../ManageCategories/TableCategories";
 import ModalAddNewCategory from "../ManageCategories/ModalAddNewCategory";
+import TableFolderInvation from "../ManageFolders/TableFolderInvation";
 
 const DataGridTable = (props) => {
   let history = useHistory();
@@ -68,6 +71,7 @@ const DataGridTable = (props) => {
       scoreCount["75-100"]++;
     }
   });
+  const [showView, setShowView] = useState(false);
 
   const data = [
     { id: 0, value: scoreCount["0-25"], label: "0-25" },
@@ -89,6 +93,10 @@ const DataGridTable = (props) => {
   const handleEditFile = (user) => {
     setShowEdit(true);
     setDataFolders(user);
+  };
+  const handleViewUserList = (folder) => {
+    setShowView(true);
+    setDataFolders(folder);
   };
   const handleDeleteFile = (user) => {
     setShowDelete(true);
@@ -113,6 +121,13 @@ const DataGridTable = (props) => {
         descending={descending}
         orderBy={orderBy}
         from="profilePage"
+        username={username}
+      />{" "}
+      <ModalEditListUsers
+        setShowEdit={setShowView}
+        from="profilePage"
+        showEdit={showView}
+        dataUsers={dataFolders}
         username={username}
       />
       <ModalDeleteFolder
@@ -193,7 +208,9 @@ const DataGridTable = (props) => {
                   </span>
                 </span>
               </>
-            ) : usernameLocal === username && role === "Student" ? (
+            ) : usernameLocal === username &&
+              role === "Student" &&
+              title === "Kết quả các bài thi" ? (
               <>
                 {" "}
                 <span className="d-flex gap-2 mt-3 align-items-center">
@@ -243,6 +260,7 @@ const DataGridTable = (props) => {
               roleLocal={roleLocal}
               usernameLocal={usernameLocal}
               username={username}
+              handleViewUserList={handleViewUserList}
             />
           ) : (role === "Teacher" || role === "Admin") &&
             title === "Danh sách môn học" ? (
@@ -264,7 +282,15 @@ const DataGridTable = (props) => {
             <>
               <TableScore listScoresUser={listScoresUser} from="creatorTest" />
             </>
-          ) : role === "Student" && username === usernameLocal ? (
+          ) : role === "Student" &&
+            title === "Bài thi cần làm" &&
+            username === usernameLocal ? (
+            <>
+              <TableFolderInvation />
+            </>
+          ) : role === "Student" &&
+            username === usernameLocal &&
+            title === "Kết quả các bài thi" ? (
             <>
               <TableScore listScoresUser={listScoresUser} />
             </>

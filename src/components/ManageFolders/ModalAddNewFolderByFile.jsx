@@ -17,6 +17,8 @@ import {
   InputLabel,
 } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 const ModalAddNewFolderByFile = (props) => {
   let { descending, orderBy, from, username } = props;
   const fileContent = useRef(null);
@@ -41,6 +43,8 @@ const ModalAddNewFolderByFile = (props) => {
     name: "",
     description: "",
     defaultTime: unit[0],
+    isPrivate: false,
+
     links: [""],
   });
 
@@ -59,11 +63,15 @@ const ModalAddNewFolderByFile = (props) => {
       name: "",
       description: "",
       defaultTime: unit[0],
+      isPrivate: false,
 
       links: [""],
     });
   };
-
+  const handleCheckboxChange = (event) => {
+    // Nếu checkbox được tích, set giá trị isPrivate thành 1, ngược lại set thành 0
+    setNewExam({ ...newExam, isPrivate: event.target.checked ? true : false });
+  };
   const handleOnClickAdd = async () => {
     // Kiểm tra các điều kiện đầu vào (không thay đổi)
     if (!newExam.name.trim(" ").length === 0) {
@@ -153,6 +161,8 @@ const ModalAddNewFolderByFile = (props) => {
               testName: newExam.name,
               description: newExam.description,
               defaultTime: newExam.defaultTime,
+              isPrivate: newExam.isPrivate,
+
               links: null,
               File: fileData,
             });
@@ -165,6 +175,8 @@ const ModalAddNewFolderByFile = (props) => {
                 name: "",
                 description: "",
                 defaultTime: unit[0],
+                isPrivate: false,
+
                 links: [""],
               });
               toast.success("Thêm mới đề thi bằng file CSV thành công!");
@@ -281,27 +293,59 @@ const ModalAddNewFolderByFile = (props) => {
               />
             )}
           />
-          <FormControl variant="filled" className="input-group mb-3">
-            <InputLabel variant="standard" htmlFor="uncontrolled-native">
-              Thời gian làm bài
-            </InputLabel>
-            <NativeSelect
-              value={newExam.defaultTime}
-              onChange={(e) =>
-                setNewExam({ ...newExam, defaultTime: e.target.value })
-              }
-              inputProps={{
-                name: "defaultTime",
-                id: "uncontrolled-native",
-              }}
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <FormControl
+              variant="filled"
+              className="input-group mb-3"
+              style={{ flex: 1 }}
             >
-              {unit.map((item, index) => (
-                <option key={`option${index}`} value={item}>
-                  {item}
-                </option>
-              ))}
-            </NativeSelect>
-          </FormControl>
+              <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                Thời gian làm bài
+              </InputLabel>
+              <NativeSelect
+                value={newExam.defaultTime}
+                onChange={(e) =>
+                  setNewExam({ ...newExam, defaultTime: e.target.value })
+                }
+                inputProps={{
+                  name: "defaultTime",
+                  id: "uncontrolled-native",
+                }}
+              >
+                {unit.map((item, index) => (
+                  <option key={`option${index}`} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </NativeSelect>
+            </FormControl>
+
+            <div style={{ flex: 1 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={newExam.isPrivate === true}
+                    onChange={handleCheckboxChange}
+                    name="isPrivate"
+                  />
+                }
+                label="Bảo mật"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "start",
+                }}
+              />
+              <p
+                style={{
+                  color: "red",
+                  fontSize: "0.9rem",
+                }}
+              >
+                (*) Giới hạn danh sách người dùng thi
+              </p>
+            </div>
+          </div>
           <Box sx={{ gridColumn: "span 4" }}>
             <div className="mb-3" sx={{ gridColumn: "span 4" }}>
               <label for="formFile" className="form-label me-1">

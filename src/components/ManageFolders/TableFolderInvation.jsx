@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   DataGrid,
   viVN,
@@ -8,35 +8,38 @@ import {
   GridToolbarContainer,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { useState } from "react";
+import { fetchAllExamsInvitedRedux } from "../../redux/slices/examsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllScoresUserRedux } from "../../redux/slices/usersSlice";
 import {
   columnInfoFolder,
   columnCategoryName,
   columnUser,
 } from "../input/Column";
+import { useHistory } from "react-router-dom";
 import TestFile from "./TestFile";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import PublicIcon from "@mui/icons-material/Public";
 import { Box, Typography } from "@mui/material";
-import {
-  Edit,
-  Delete,
-  SupervisedUserCircle,
-  DoNotDisturbOnOutlined,
-} from "@mui/icons-material";
-
-const TableFolder = (props) => {
+const TableFolderInvation = (props) => {
   const [pageSize, setPageSize] = useState(10);
-  const {
-    listExams,
-    handleDeleteFile,
-    handleEditFile,
-    from,
-    roleLocal,
-    usernameLocal,
-    handleViewUserList,
-    username,
-  } = props;
+  let history = useHistory();
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchAllExamsInvitedRedux());
+    dispatch(fetchAllScoresUserRedux());
+  }, [dispatch]);
+  const listExamsInvited = useSelector((state) => state.exams.listExamsInvited);
+  const listScoresUser = useSelector((state) => state.users.listScoresUser);
+
+  // Tạo một mảng chứa các testId trong listScoresUser
+  const testIdsInScoresUser = listScoresUser.map((score) => score.testId);
+
+  // Lọc listExamsInvited để loại bỏ các phần tử có id trùng với testId
+  const filteredExams = listExamsInvited.filter(
+    (exam) => !testIdsInScoresUser.includes(exam.id)
+  );
 
   const columns2 = [
     {
@@ -53,9 +56,14 @@ const TableFolder = (props) => {
         );
       },
     },
+  ];
+  const handleViewTest = (params) => {
+    history.push(`/exam/${params.row.id}`);
+  };
+  const viewTest = [
     {
-      field: "Sửa",
-      headerName: "Sửa",
+      field: "viewTest",
+      headerName: "Xem đề thi",
       disableExport: true,
       sortable: false, // Tắt sắp xếp cho cột "Thao tác"
       filterable: false, // Tắt lọc cho cột "Thao tác"
@@ -63,44 +71,16 @@ const TableFolder = (props) => {
         return (
           <>
             <button
-              onClick={() => handleEditFile(params.row)}
+              onClick={() => handleViewTest(params)}
               variant="contained"
-              title="Sửa đề thi"
+              title="Xem đề thi"
               className="btn btn-warning"
             >
-              <Edit />
+              <i className="fa-solid fa-file"></i>{" "}
             </button>
           </>
         );
       },
-    },
-    {
-      field: "Xóa",
-      headerName: "Xóa",
-      disableExport: true,
-      sortable: false, // Tắt sắp xếp cho cột "Thao tác"
-      filterable: false, // Tắt lọc cho cột "Thao tác"
-      renderCell: (params) => {
-        return (
-          <>
-            <button
-              onClick={() => handleDeleteFile(params.row)}
-              variant="contained"
-              title="Xóa đề thi"
-              className="btn btn-danger"
-            >
-              <Delete />
-            </button>
-          </>
-        );
-      },
-    },
-  ];
-  const defaultTimeColumn = [
-    {
-      field: "defaultTime",
-      headerName: "Thời gian kiểm tra",
-      cellClassName: "name-column--cell",
     },
   ];
 
@@ -131,33 +111,7 @@ const TableFolder = (props) => {
       },
     },
   ];
-  const columnUserList = [
-    {
-      field: "userList",
-      headerName: "DS truy cập",
-      disableExport: true,
-      sortable: false, // Tắt sắp xếp cho cột "Thao tác"
-      filterable: false, // Tắt lọc cho cột "Thao tác"
-      renderCell: (params) => {
-        return (
-          <>
-            {params.row.isPrivate ? (
-              <button
-                onClick={() => handleViewUserList(params.row)}
-                variant="contained"
-                title="Danh sách truy cập"
-                className="btn btn-outline-success"
-              >
-                <SupervisedUserCircle />
-              </button>
-            ) : (
-              <DoNotDisturbOnOutlined style={{ color: "gray" }} />
-            )}
-          </>
-        );
-      },
-    },
-  ];
+
   const columnPrivate = [
     {
       field: "isPrivate",
@@ -211,44 +165,12 @@ const TableFolder = (props) => {
   const columnAdmin = [
     ...columnInfoFolder,
     ...columnCategoryName,
-    ...defaultTimeColumn,
+    ...viewTest,
     ...columnPrivate,
-    ...columnUserList,
     ...columnUser,
     ...modifiedAtColumn,
     ...columns2,
   ];
-  const columnTeacher = [
-    ...columnInfoFolder,
-    ...columnCategoryName,
-    ...defaultTimeColumn,
-    ...columnPrivate,
-    ...columnUserList,
-    ...modifiedAtColumn,
-    ...columns2,
-  ];
-  const columnOther = [
-    ...columnInfoFolder,
-    ...columnCategoryName,
-    ...defaultTimeColumn,
-    ...modifiedAtColumn,
-  ];
-  // const selectedColumns =
-  //   from === "profilePage" ? columnTeacher : columnAdmin || [];
-  let selectedColumns;
-  if (from === "profilePage") {
-    if (roleLocal === "Admin") {
-      selectedColumns = columnTeacher;
-    }
-    if (username === usernameLocal) {
-      selectedColumns = columnTeacher;
-    }
-    if (username !== usernameLocal) {
-      selectedColumns = columnOther;
-    }
-  } else {
-    selectedColumns = columnAdmin;
-  }
 
   function CustomToolbar() {
     return (
@@ -269,13 +191,13 @@ const TableFolder = (props) => {
   return (
     <>
       <Box style={{ height: 600, width: "100%" }}>
-        {listExams?.length > 0 ? (
+        {filteredExams?.length > 0 ? (
           <DataGrid
-            rows={listExams?.map((row, index) => ({
+            rows={filteredExams?.map((row, index) => ({
               ...row,
               stt: index + 1,
             }))}
-            columns={selectedColumns}
+            columns={columnAdmin}
             components={{ Toolbar: CustomToolbar }}
             localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
             checkboxSelection
@@ -295,4 +217,4 @@ const TableFolder = (props) => {
   );
 };
 
-export default TableFolder;
+export default TableFolderInvation;

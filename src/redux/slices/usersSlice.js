@@ -4,6 +4,7 @@ import {
   fetchAllUsers,
   fetchAllScoresUser,
   fetchAllScoresByCreatorTest,
+  fetchAllUsersByTestId,
 } from "../../services/userService";
 export const fetchAllScoresByCreatorTestRedux = createAsyncThunk(
   "exams/fetchAllScoresByCreatorTest",
@@ -42,6 +43,13 @@ export const fetchAllUsersRedux = createAsyncThunk(
     return res;
   }
 );
+export const fetchAllUsersByTestIdRedux = createAsyncThunk(
+  "users/fetchAllUsersByTestId",
+  async (testId, thunkAPI) => {
+    const res = await fetchAllUsersByTestId(testId);
+    return res;
+  }
+);
 export const fetchAllScoresUserRedux = createAsyncThunk(
   "exams/fetchAllScoresUser",
   async (thunkAPI) => {
@@ -54,6 +62,7 @@ export const fetchAllScoresUserRedux = createAsyncThunk(
           categoryName: item.test.category.name,
           username: item.test.creator.username,
           name: item.test.name,
+          testId: item.test.id,
           description: item.test.description,
           timeTaken: item.timeTaken,
           score: item.score,
@@ -74,6 +83,9 @@ const initialState = {
   isErrorFetchAllScores: false,
   isLoadingGetUser: false,
   isErrorGetUser: false,
+  isLoadingGetUserByTestId: false,
+  isErrorGetUserByTestId: false,
+  listUsersByTestId: [],
 };
 
 export const usersSlice = createSlice({
@@ -146,6 +158,22 @@ export const usersSlice = createSlice({
         // Add user to the state array
         state.isLoadingFetchAll = false;
         state.isErrorFetchAll = true;
+      })
+      .addCase(fetchAllUsersByTestIdRedux.pending, (state, action) => {
+        // Add user to the state array
+        state.isLoadingGetUserByTestId = true;
+        state.isErrorGetUserByTestId = false;
+      })
+      .addCase(fetchAllUsersByTestIdRedux.fulfilled, (state, action) => {
+        // Add user to the state array
+        state.isLoadingGetUserByTestId = false;
+        state.isErrorGetUserByTestId = false;
+        state.listUsersByTestId = action.payload.data.invitedUsers;
+      })
+      .addCase(fetchAllUsersByTestIdRedux.rejected, (state, action) => {
+        // Add user to the state array
+        state.isLoadingGetUserByTestId = false;
+        state.isErrorGetUserByTestId = true;
       });
   },
 });

@@ -73,6 +73,13 @@ const fetchAllUsers = () => {
   let config = createConfig();
   return axios.get(`${backendURL}/api/Account/all`, config);
 };
+const fetchAllUsersByTestId = (testId) => {
+  let config = createConfig();
+  return axios.get(
+    `${backendURL}/api/Test/invitations?testId=${testId}`,
+    config
+  );
+};
 const fetchAllScoresUser = () => {
   let config = createConfig();
   return axios.get(
@@ -146,4 +153,5 @@ export {
   fetchAllScoresUser,
   fetchAllScoresByCreatorTest,
   updateUserPassword,
+  fetchAllUsersByTestId,
 };

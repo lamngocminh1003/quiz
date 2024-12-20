@@ -8,6 +8,7 @@ import {
 } from "../../redux/slices/examsSlice";
 import { fetchAllSubjects } from "../../redux/slices/subjectsSlice";
 import { fetchAllQuestions } from "../../redux/slices/questionSlice";
+
 import {
   TextField,
   Box,
@@ -115,13 +116,13 @@ const ModalAddNewExamRandomQues = (props) => {
           numberOfQuestions: listQuestions?.length || 0,
           minutes: unit[0],
         });
-        const from = typeof someValue !== "undefined" ? someValue : null; // Replace 'someValue' with your logic
 
         if (from === "profilePage" && role === "Student") {
           history.push(
             `/doing-exam/${res.payload.data.test.id}/${newExam.minutes}`
           );
-        } else if (from === "profilePage") {
+        }
+        if (from === "profilePage") {
           dispatch(fetchAllExams({ orderBy, descending, creator: username }));
         }
         if (!from) {

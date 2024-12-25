@@ -17,11 +17,18 @@ export const fetchAllScoresByCreatorTestRedux = createAsyncThunk(
           id: index,
           categoryName: item.test.category.name,
           name: item.test.name,
+          testId: item.test.id,
+          examId: item?.test.exam?.id || "",
+          examName: item?.test.exam?.examName || "",
+          startAt: item?.test.exam?.startAt || "",
+          endAt: item?.exam?.endAt || "",
           description: item.test.description,
           username: item.participant.username,
           fullName: item.participant.name,
+          timeFinish: item.participant.createdAt,
           timeTaken: item.timeTaken,
           score: item.score,
+          done: "ok",
         };
       });
 
@@ -66,6 +73,11 @@ export const fetchAllScoresUserRedux = createAsyncThunk(
           description: item.test.description,
           timeTaken: item.timeTaken,
           score: item.score,
+          examId: item?.test.exam?.id || "",
+          examName: item?.test.exam?.examName || "",
+          startAt: item?.test.exam?.startAt || "",
+          endAt: item?.exam?.endAt || "",
+          timeFinish: item.participant.createdAt,
         };
       });
 

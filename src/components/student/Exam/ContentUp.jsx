@@ -7,6 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 const ContentUp = (props) => {
   const dispatch = useDispatch();
   const [timeEdit, setTimeEdit] = useState("");
+  const [timeStart, setTimeStart] = useState("");
+  const [timeEnd, setTimeEnd] = useState("");
+
   const dataExam = useSelector((state) => state?.exams?.listExams[0]);
   const { id, dateFormat } = props;
   useEffect(() => {
@@ -17,6 +20,14 @@ const ContentUp = (props) => {
     if (dataExam?.modifiedAt) {
       const localDate = dateFormat(dataExam?.modifiedAt);
       setTimeEdit(localDate);
+    }
+    if (dataExam?.startAt) {
+      const localDate = dateFormat(dataExam?.startAt);
+      setTimeStart(localDate);
+    }
+    if (dataExam?.endAt) {
+      const localDate = dateFormat(dataExam?.endAt);
+      setTimeEnd(localDate);
     }
   }, [dataExam]);
   let history = useHistory();
@@ -74,6 +85,34 @@ const ContentUp = (props) => {
                   Thời gian cập nhật gần đây: {timeEdit}
                 </p>
               </div>
+              {dataExam?.isPrivate && (
+                <>
+                  <div className="col-sm-6">
+                    <p className="mb-0">
+                      <i className="fa fa-arrow-right text-primary me-2"></i>
+                      Mã kỳ thi: {dataExam?.examId}
+                    </p>
+                  </div>
+                  <div className="col-sm-6">
+                    <p className="mb-0">
+                      <i className="fa fa-arrow-right text-primary me-2"></i>
+                      Tên kỳ thi: {dataExam?.examName}
+                    </p>
+                  </div>
+                  <div className="col-sm-6">
+                    <p className="mb-0">
+                      <i className="fa fa-arrow-right text-primary me-2"></i>
+                      Thời gian bắt đầu: {timeStart}
+                    </p>
+                  </div>
+                  <div className="col-sm-6">
+                    <p className="mb-0">
+                      <i className="fa fa-arrow-right text-primary me-2"></i>
+                      Thời gian kết thúc: {timeEnd}
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
             <div className="d-flex justify-content-end">
               <button

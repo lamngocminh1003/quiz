@@ -11,6 +11,8 @@ import AllQuestion from "../components/ManageQuestions/Question";
 import Header from "../components/Nav/Header";
 import Home from "../components/Home/Home";
 import Comment from "../components/ManageComment/Comment";
+import Examination from "../components/ManageExamination/Examination";
+
 import Footer from "../components/Nav/Footer";
 import AdminPage from "../components/AdminPage/AdminPage";
 import ProfilePage from "../components/ProfilePage/ProfilePage";
@@ -39,7 +41,8 @@ const AppRoutes = (props) => {
           <Route path="/all-questions" component={AllQuestion} />
           <PrivateRoutes path="/user" component={Users} />
           <PrivateRoutes path="/admin-page" component={AdminPage} />
-          <PrivateRoutes path="/comment" component={Comment} />
+          <PrivateRoutes path="/comment" component={Comment} />{" "}
+          <PrivateRoutes path="/examination" component={Examination} />
           <PrivateRoutes
             path="/doing-exam/:testId/:minutes"
             component={DoingExam}

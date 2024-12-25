@@ -5,13 +5,17 @@ import ModalEditFolder from "../ManageFolders/ModalEditFolder";
 import ModalAddNewFolderForAllFolder from "../ManageFolders/ModalAddNewFolderForAllFolder";
 import ModalDeleteFolder from "../ManageFolders/ModalDeleteFolder";
 import ModalEditListUsers from "../ManageFolders/ModalEditListUsers";
-
+import ModalEditExamination from "../ManageExamination/ModalEditExamination";
+import ModalAddNewExamination from "../ManageExamination/ModalAddNewExamination";
+import ModalDeleteExamination from "../ManageExamination/ModalDeleteExamination";
 import ModalAddNewExamRandomQues from "../ManageFolders/ModalAddNewExamRandomQues";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAllScoresUserRedux,
   fetchAllScoresByCreatorTestRedux,
 } from "../../redux/slices/usersSlice";
+import { fetchAllExaminationRedux } from "../../redux/slices/examinationSlice";
+
 import { fetchAllSubjects } from "../../redux/slices/subjectsSlice";
 import CardComponent from "../AdminPage/CardComponent";
 import PieChartComponentGlobal from "../GlobalComponent/PieChartComponentGlobal";
@@ -24,6 +28,7 @@ import { useHistory } from "react-router-dom";
 import TableCategories from "../ManageCategories/TableCategories";
 import ModalAddNewCategory from "../ManageCategories/ModalAddNewCategory";
 import TableFolderInvation from "../ManageFolders/TableFolderInvation";
+import TableExamination from "../ManageExamination/TableExamination";
 
 const DataGridTable = (props) => {
   let history = useHistory();
@@ -43,6 +48,9 @@ const DataGridTable = (props) => {
   const [dataCategories, setDataCategories] = useState({});
   const [showDeleteCategories, setShowDeleteCategories] = useState(false);
   const listSubjects = useSelector((state) => state.subjects.listSubjects);
+  const [showEditExamination, setShowEditExamination] = useState(false);
+  const [dataExamination, setDataExamination] = useState({});
+  const [showDeleteExamination, setShowDeleteExamination] = useState(false);
   // Filter the categories based on the username
   const filteredCategories = listSubjects?.categories?.filter(
     (category) => category.creator.username === username
@@ -72,7 +80,9 @@ const DataGridTable = (props) => {
     }
   });
   const [showView, setShowView] = useState(false);
-
+  const listExamination = useSelector(
+    (state) => state.examination.listExamination
+  );
   const data = [
     { id: 0, value: scoreCount["0-25"], label: "0-25" },
     { id: 1, value: scoreCount["25-50"], label: "25-50" },
@@ -84,6 +94,9 @@ const DataGridTable = (props) => {
       dispatch(fetchAllExams({ orderBy, descending, creator: username }));
       dispatch(fetchAllSubjects({ orderBy, descending }));
       dispatch(fetchAllScoresByCreatorTestRedux(username));
+      dispatch(
+        fetchAllExaminationRedux({ orderBy, descending, CreatorId: username })
+      );
     }
     if (role === "Student" && username === usernameLocal) {
       dispatch(fetchAllScoresUserRedux());
@@ -111,7 +124,15 @@ const DataGridTable = (props) => {
     setShowDeleteCategories(true);
     setDataCategories(category.row);
   };
+  const handleEditExamination = (Examination) => {
+    setShowEditExamination(true);
+    setDataExamination(Examination.row);
+  };
 
+  const handleDeleteExamination = (Examination) => {
+    setShowDeleteExamination(true);
+    setDataExamination(Examination.row);
+  };
   return (
     <>
       <ModalEditFolder
@@ -152,6 +173,24 @@ const DataGridTable = (props) => {
         dataCategories={dataCategories}
         descending={descending}
         orderBy={orderBy}
+      />{" "}
+      <ModalEditExamination
+        setShowEdit={setShowEditExamination}
+        showEdit={showEditExamination}
+        dataExamination={dataExamination}
+        descending={descending}
+        orderBy={orderBy}
+        from="profilePage"
+        username={username}
+      />
+      <ModalDeleteExamination
+        setShowDelete={setShowDeleteExamination}
+        showDelete={showDeleteExamination}
+        dataExamination={dataExamination}
+        descending={descending}
+        orderBy={orderBy}
+        from="profilePage"
+        username={username}
       />
       <div className="card mb-4">
         <div className="card-body">
@@ -196,6 +235,8 @@ const DataGridTable = (props) => {
                     <ModalAddNewCategory
                       orderBy={orderBy}
                       descending={descending}
+                      from="profilePage"
+                      username={username}
                     />
                   </span>{" "}
                   <span className="d-flex  ">
@@ -204,6 +245,30 @@ const DataGridTable = (props) => {
                       icon="fa-solid fa-swatchbook"
                       color="info"
                       content={`Số lượng: ${updatedListSubjects?.categories?.length}`}
+                    />
+                  </span>
+                </span>
+              </>
+            ) : usernameLocal === username &&
+              (role === "Teacher" || role === "Admin") &&
+              title === "Danh sách kỳ thi" ? (
+              <>
+                {" "}
+                <span className="d-flex gap-2 mt-3 align-items-center">
+                  <span className="d-flex  ">
+                    <ModalAddNewExamination
+                      orderBy={orderBy}
+                      descending={descending}
+                      from="profilePage"
+                      username={username}
+                    />
+                  </span>{" "}
+                  <span className="d-flex  ">
+                    <CardComponent
+                      title="Kỳ thi"
+                      icon="fa-solid fa-file-signature"
+                      color="secondary"
+                      content={`Số lượng: ${listExamination?.length}`}
                     />
                   </span>
                 </span>
@@ -269,6 +334,20 @@ const DataGridTable = (props) => {
                 listSubjects={updatedListSubjects}
                 handleDeleteCategory={handleDeleteCategory}
                 handleEditCategory={handleEditCategory}
+                height="300"
+                from="profilePage"
+                roleLocal={roleLocal}
+                usernameLocal={usernameLocal}
+                username={username}
+              />{" "}
+            </>
+          ) : (role === "Teacher" || role === "Admin") &&
+            title === "Danh sách kỳ thi" ? (
+            <>
+              <TableExamination
+                listExamination={listExamination}
+                handleDeleteExamination={handleDeleteExamination}
+                handleEditExamination={handleEditExamination}
                 height="300"
                 from="profilePage"
                 roleLocal={roleLocal}

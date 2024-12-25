@@ -13,6 +13,7 @@ import {
   columnInfoFolder,
   columnCategoryName,
   columnUser,
+  columnExaminationInfo,
 } from "../input/Column";
 import TestFile from "./TestFile";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
@@ -211,6 +212,7 @@ const TableFolder = (props) => {
   const columnAdmin = [
     ...columnInfoFolder,
     ...columnCategoryName,
+    ...columnExaminationInfo,
     ...defaultTimeColumn,
     ...columnPrivate,
     ...columnUserList,
@@ -221,6 +223,7 @@ const TableFolder = (props) => {
   const columnTeacher = [
     ...columnInfoFolder,
     ...columnCategoryName,
+    ...columnExaminationInfo,
     ...defaultTimeColumn,
     ...columnPrivate,
     ...columnUserList,
@@ -230,11 +233,11 @@ const TableFolder = (props) => {
   const columnOther = [
     ...columnInfoFolder,
     ...columnCategoryName,
+    ...columnExaminationInfo,
     ...defaultTimeColumn,
     ...modifiedAtColumn,
   ];
-  // const selectedColumns =
-  //   from === "profilePage" ? columnTeacher : columnAdmin || [];
+
   let selectedColumns;
   if (from === "profilePage") {
     if (roleLocal === "Admin") {

@@ -7,6 +7,7 @@ import { fetchAllExams } from "../../redux/slices/examsSlice";
 import { fetchAllSubjects } from "../../redux/slices/subjectsSlice";
 import ExportCSV from "../input/ExportCSV";
 import * as XLSX from "xlsx";
+import { fetchAllExaminationRedux } from "../../redux/slices/examinationSlice";
 
 import {
   TextField,
@@ -25,18 +26,19 @@ const ModalAddNewFolderByFile = (props) => {
 
   const dispatch = useDispatch();
   const listSubjects = useSelector((state) => state.subjects.listSubjects);
+  const listExamination = useSelector(
+    (state) => state.examination.listExamination
+  );
   useEffect(() => {
     dispatch(fetchAllSubjects({ orderBy, descending }));
+    dispatch(fetchAllExaminationRedux({ orderBy, descending }));
   }, []);
   const [isShowLoading, setIsShowLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const prefixes = ["A", "B", "C", "D"];
+  const [inputValueExam, setInputValueExam] = useState("");
+
   const unit = [15, 30, 45, 60, 90, 120];
-  const handleShow = () => {
-    dispatch(fetchAllSubjects({ orderBy, descending }));
-    setShow(true);
-  };
 
   const [newExam, setNewExam] = useState({
     categoryId: 1,
@@ -44,34 +46,48 @@ const ModalAddNewFolderByFile = (props) => {
     description: "",
     defaultTime: unit[0],
     isPrivate: false,
-
     links: [""],
+    exam: null,
   });
 
   const handleClose = () => {
     setShow(false);
-    setQuestionArr([
-      {
-        id: uuidv4(),
-        description: "",
-        answers: prefixes.slice(0, 2).map((prefix) => prefix + ". "),
-        correctAnswer: "",
-      },
-    ]);
+
     setNewExam({
       categoryId: 1,
       name: "",
       description: "",
       defaultTime: unit[0],
       isPrivate: false,
-
+      exam: null,
       links: [""],
     });
+  };
+  const handleShow = () => {
+    dispatch(fetchAllSubjects({ orderBy, descending }));
+    dispatch(fetchAllExaminationRedux({ orderBy, descending }));
+
+    setNewExam({
+      categoryId: 1,
+      name: "",
+      description: "",
+      defaultTime: unit[0],
+      isPrivate: false,
+      exam: null,
+      links: [""],
+    });
+    setShow(true);
   };
   const handleCheckboxChange = (event) => {
     // Nếu checkbox được tích, set giá trị isPrivate thành 1, ngược lại set thành 0
     setNewExam({ ...newExam, isPrivate: event.target.checked ? true : false });
   };
+  useEffect(() => {
+    setNewExam((prev) => ({
+      ...prev,
+      exam: newExam.isPrivate ? listExamination?.[0]?.id || null : null,
+    }));
+  }, [newExam.isPrivate, listExamination]);
   const handleOnClickAdd = async () => {
     // Kiểm tra các điều kiện đầu vào (không thay đổi)
     if (!newExam.name.trim(" ").length === 0) {
@@ -162,8 +178,8 @@ const ModalAddNewFolderByFile = (props) => {
               description: newExam.description,
               defaultTime: newExam.defaultTime,
               isPrivate: newExam.isPrivate,
-
               links: null,
+              examId: newExam.exam,
               File: fileData,
             });
 
@@ -176,6 +192,7 @@ const ModalAddNewFolderByFile = (props) => {
                 description: "",
                 defaultTime: unit[0],
                 isPrivate: false,
+                exam: null,
 
                 links: [""],
               });
@@ -292,7 +309,7 @@ const ModalAddNewFolderByFile = (props) => {
                 }}
               />
             )}
-          />
+          />{" "}
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             <FormControl
               variant="filled"
@@ -343,9 +360,51 @@ const ModalAddNewFolderByFile = (props) => {
                 }}
               >
                 (*) Giới hạn danh sách người dùng thi
-              </p>
+                <br />
+                (*) Bài thi phải được bảo mật khi trong kỳ thi
+              </p>{" "}
             </div>
           </div>
+          <Autocomplete
+            sx={{ gridColumn: "span 12", minWidth: 120, marginY: 2 }}
+            value={
+              listExamination?.length > 0
+                ? listExamination.find(
+                    (option) => option.id === newExam.exam
+                  ) || null
+                : null
+            }
+            onChange={(event, newValue) => {
+              if (newValue) {
+                setNewExam((prev) => ({
+                  ...prev,
+                  exam: newValue.id,
+                }));
+              }
+            }}
+            inputValue={inputValueExam}
+            onInputChange={(event, newInputValue) => {
+              setInputValueExam(newInputValue);
+            }}
+            id="controllable-states-demo"
+            options={listExamination}
+            getOptionLabel={(option) => option?.examName || ""}
+            disabled={!newExam.isPrivate} // Disable khi isPrivate === false
+            renderOption={(props, option) => (
+              <Box component="li" {...props}>
+                {option?.examName}
+              </Box>
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Kỳ thi"
+                inputProps={{
+                  ...params.inputProps,
+                }}
+              />
+            )}
+          />
           <Box sx={{ gridColumn: "span 4" }}>
             <div className="mb-3" sx={{ gridColumn: "span 4" }}>
               <label for="formFile" className="form-label me-1">

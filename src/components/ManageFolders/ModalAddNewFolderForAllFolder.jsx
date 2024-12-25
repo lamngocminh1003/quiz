@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { createNewExam, fetchAllExams } from "../../redux/slices/examsSlice";
 import { fetchAllSubjects } from "../../redux/slices/subjectsSlice";
+import { fetchAllExaminationRedux } from "../../redux/slices/examinationSlice";
 import {
   TextField,
   Box,
@@ -20,16 +21,25 @@ const ModalAddNewFolderForAllFolder = (props) => {
   let { descending, orderBy, from, username } = props;
 
   const dispatch = useDispatch();
+  const listExamination = useSelector(
+    (state) => state.examination.listExamination
+  );
   const listSubjects = useSelector((state) => state.subjects.listSubjects);
   useEffect(() => {
+    dispatch(fetchAllExaminationRedux({ orderBy, descending }));
+
     dispatch(fetchAllSubjects({ orderBy, descending }));
   }, []);
   const [isShowLoading, setIsShowLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [inputValueExam, setInputValueExam] = useState("");
+
   const prefixes = ["A", "B", "C", "D"];
   const unit = [15, 30, 45, 60, 90, 120];
   const handleShow = () => {
+    dispatch(fetchAllExaminationRedux({ orderBy, descending }));
+
     dispatch(fetchAllSubjects({ orderBy, descending }));
     setShow(true);
   };
@@ -49,8 +59,14 @@ const ModalAddNewFolderForAllFolder = (props) => {
     questions: questionArr,
     isPrivate: false,
     links: [""],
+    exam: null,
   });
-
+  useEffect(() => {
+    setNewExam((prev) => ({
+      ...prev,
+      exam: newExam.isPrivate ? listExamination?.[0]?.id || null : null,
+    }));
+  }, [newExam.isPrivate, listExamination]);
   const handleClose = () => {
     setShow(false);
     setQuestionArr([
@@ -75,6 +91,7 @@ const ModalAddNewFolderForAllFolder = (props) => {
         },
       ],
       isPrivate: false,
+      exam: null,
       links: [""],
     });
   };
@@ -172,6 +189,7 @@ const ModalAddNewFolderForAllFolder = (props) => {
     }
     try {
       setIsShowLoading(true);
+
       const res = await dispatch(
         createNewExam({
           categoryId: newExam.categoryId,
@@ -180,6 +198,7 @@ const ModalAddNewFolderForAllFolder = (props) => {
           defaultTime: newExam.defaultTime,
           questions: newExam.questions,
           isPrivate: newExam.isPrivate,
+          examId: newExam.exam,
           links: null,
         })
       );
@@ -201,6 +220,7 @@ const ModalAddNewFolderForAllFolder = (props) => {
             },
           ],
           isPrivate: false,
+          exam: null,
 
           links: [""],
         });
@@ -367,9 +387,51 @@ const ModalAddNewFolderForAllFolder = (props) => {
                 }}
               >
                 (*) Giới hạn danh sách người dùng thi
+                <br />
+                (*) Bài thi phải được bảo mật khi trong kỳ thi
               </p>
             </div>
-          </div>
+          </div>{" "}
+          <Autocomplete
+            sx={{ gridColumn: "span 12", minWidth: 120, marginY: 2 }}
+            value={
+              listExamination?.length > 0
+                ? listExamination.find(
+                    (option) => option.id === newExam.exam
+                  ) || null
+                : null
+            }
+            onChange={(event, newValue) => {
+              if (newValue) {
+                setNewExam((prev) => ({
+                  ...prev,
+                  exam: newValue.id,
+                }));
+              }
+            }}
+            inputValue={inputValueExam}
+            onInputChange={(event, newInputValue) => {
+              setInputValueExam(newInputValue);
+            }}
+            id="controllable-states-demo"
+            options={listExamination}
+            getOptionLabel={(option) => option?.examName || ""}
+            disabled={!newExam.isPrivate} // Disable khi isPrivate === false
+            renderOption={(props, option) => (
+              <Box component="li" {...props}>
+                {option?.examName}
+              </Box>
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Kỳ thi"
+                inputProps={{
+                  ...params.inputProps,
+                }}
+              />
+            )}
+          />
           <div className="border border-primary rounded">
             <div className="column pt-2">
               <p className="px-3 fs-5 fw-normal">Câu hỏi:</p>

@@ -8,6 +8,7 @@ import {
   fetchAllUsersRedux,
   fetchAllUsersByTestIdRedux,
 } from "../../redux/slices/usersSlice";
+
 import { TextField, Tabs, Tab, Box, Autocomplete } from "@mui/material";
 import "./ModalEditListUsers.scss";
 import { useDispatch, useSelector } from "react-redux";
@@ -54,6 +55,7 @@ const ModalAddUserInvations = (props) => {
   const listUserWithStudentRole = listUsers.filter((listUsers) =>
     listUsers.roles.includes("Student")
   );
+
   const fileContent = useRef(null);
 
   const [pageSize, setPageSize] = useState(10);
@@ -82,10 +84,10 @@ const ModalAddUserInvations = (props) => {
     );
   }
   useEffect(() => {
-    if (showEdit) {
+    if (showEdit && dataTest) {
       dispatch(fetchAllUsersRedux());
     }
-  }, [dispatch, showEdit]);
+  }, [dispatch, showEdit, dataTest]);
 
   const [value, setValue] = useState(0);
 

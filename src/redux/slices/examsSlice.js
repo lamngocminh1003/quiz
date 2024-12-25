@@ -31,6 +31,10 @@ export const fetchAllExams = createAsyncThunk(
           id: item.id,
           categoryId: item.category.id,
           categoryName: item.category.name,
+          examId: item?.exam?.id || "",
+          examName: item?.exam?.examName || "",
+          startAt: item?.exam?.startAt || "",
+          endAt: item?.exam?.endAt || "",
           username: item.creator.username,
           fullName: item.creator.name,
           name: item.name,
@@ -76,7 +80,16 @@ export const fetchAllExamsInvitedRedux = createAsyncThunk(
 export const createNewExam = createAsyncThunk(
   "exams/createNewExam",
   async (
-    { categoryId, name, description, defaultTime, questions, isPrivate, links },
+    {
+      categoryId,
+      name,
+      description,
+      defaultTime,
+      questions,
+      examId,
+      isPrivate,
+      links,
+    },
     thunkAPI
   ) => {
     const res = await createNewTest(
@@ -86,6 +99,7 @@ export const createNewExam = createAsyncThunk(
       defaultTime,
       questions,
       isPrivate,
+      examId,
       links
     );
     return res;

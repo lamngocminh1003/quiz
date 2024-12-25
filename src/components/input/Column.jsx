@@ -1,5 +1,6 @@
 import { Box, Typography } from "@mui/material";
-import { ErrorOutline } from "@mui/icons-material";
+import { ErrorOutline, DoNotDisturbOnOutlined } from "@mui/icons-material";
+
 import { renderCellExpand } from "./DesignLongContentInColumn";
 import { format } from "date-fns"; // Import thư viện định dạng ngày tháng
 export const columnsIndex = [
@@ -196,7 +197,7 @@ export const columnInfoFolderName = [
     field: "name",
     headerName: "Đề thi",
     cellClassName: "name-column--cell",
-    minWidth: 120,
+    minWidth: 200,
   },
 ];
 export const columnInfoFolderDes = [
@@ -218,5 +219,86 @@ export const columnCategoryName = [
     headerName: "Môn học",
     cellClassName: "name-column--cell",
     minWidth: 200,
+  },
+];
+export const columnExaminationInfo = [
+  {
+    field: "examName",
+    headerName: "Tên kỳ thi",
+    cellClassName: "name-column--cell",
+    flex: 1,
+    minWidth: 100,
+    renderCell: (params) => {
+      if (!params.value) {
+        return <DoNotDisturbOnOutlined style={{ color: "gray" }} />;
+      }
+      return params.value; // Hiển thị chuỗi ngày giờ
+    },
+  },
+  {
+    field: "startAt",
+    headerName: "Thời gian bắt đầu",
+    cellClassName: "name-column--cell",
+    flex: 1,
+    minWidth: 150,
+    renderCell: (params) => {
+      if (!params.value) {
+        return <DoNotDisturbOnOutlined style={{ color: "gray" }} />;
+      }
+      return params.value; // Hiển thị chuỗi ngày giờ
+    },
+
+    valueGetter: (params) => {
+      const originalDate = params.value; // Lấy giá trị ngày từ dữ liệu
+
+      if (originalDate) {
+        // Chuyển đổi ngày giờ từ định dạng gốc sang đối tượng Date và sau đó chuyển đổi sang múi giờ Việt Nam
+        const localDate = new Date(originalDate).toLocaleString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh",
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+
+        return localDate; // Trả về ngày và giờ đã định dạng theo múi giờ Việt Nam
+      }
+      return "";
+    },
+  },
+  {
+    field: "endAt",
+    headerName: "Thời gian kết thúc",
+    cellClassName: "name-column--cell",
+    flex: 1,
+    minWidth: 150,
+    renderCell: (params) => {
+      if (!params.value) {
+        return <DoNotDisturbOnOutlined style={{ color: "gray" }} />;
+      }
+      return params.value; // Hiển thị chuỗi ngày giờ
+    },
+
+    valueGetter: (params) => {
+      const originalDate = params.value; // Lấy giá trị ngày từ dữ liệu
+
+      if (originalDate) {
+        // Chuyển đổi ngày giờ từ định dạng gốc sang đối tượng Date và sau đó chuyển đổi sang múi giờ Việt Nam
+        const localDate = new Date(originalDate).toLocaleString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh",
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+
+        return localDate; // Trả về ngày và giờ đã định dạng theo múi giờ Việt Nam
+      }
+      return ""; // Hoặc giá trị mặc định khi không có ngày
+    },
   },
 ];

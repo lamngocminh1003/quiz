@@ -7,6 +7,7 @@ import { fetchAllSubjects } from "../../redux/slices/subjectsSlice";
 import { fetchAllExams } from "../../redux/slices/examsSlice";
 import { fetchAllUsersRedux } from "../../redux/slices/usersSlice";
 import { fetchAllComment } from "../../redux/slices/commentsSlice";
+import { fetchAllExaminationRedux } from "../../redux/slices/examinationSlice";
 import ProgressBarComponent from "./ProgressBarComponent";
 import { useDispatch, useSelector } from "react-redux";
 function AdminPage() {
@@ -16,14 +17,20 @@ function AdminPage() {
   const listExams = useSelector((state) => state.exams.listExams);
   const listUsers = useSelector((state) => state.users.listUsers);
   const listComments = useSelector((state) => state.comments.listComments);
+  const listExamination = useSelector(
+    (state) => state.examination.listExamination
+  );
   const listUsersLength = listUsers?.length;
   const listExamsLength = listExams?.length;
   const listCommentsLength = listComments?.length;
+  const listExaminationLength = listExamination?.length;
 
   useEffect(() => {
     dispatch(fetchAllSubjects({}));
     dispatch(fetchAllExams({}));
     dispatch(fetchAllComment({}));
+    dispatch(fetchAllExaminationRedux({ orderBy: "Id", descending: true }));
+
     dispatch(fetchAllUsersRedux());
   }, [dispatch]);
   return (
@@ -63,6 +70,15 @@ function AdminPage() {
                     sizeXl="3"
                     sizeMd="6"
                     content={`Số lượng: ${listSubjectsLength}`}
+                  />{" "}
+                  <CardComponent
+                    title="Kỳ thi"
+                    content={`Số lượng: ${listExaminationLength}`}
+                    icon="fa-solid fa-file-signature"
+                    link="/examination"
+                    color="secondary"
+                    sizeXl="3"
+                    sizeMd="6"
                   />
                   <CardComponent
                     title="Phản hồi"
@@ -72,7 +88,7 @@ function AdminPage() {
                     color="warning"
                     sizeXl="3"
                     sizeMd="6"
-                  />
+                  />{" "}
                 </div>
                 <div className="row">
                   <div className="col-xl-8 col-lg-7">

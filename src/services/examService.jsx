@@ -90,6 +90,7 @@ const createNewTest = (
   defaultTime,
   questions,
   isPrivate,
+  examId,
   links
 ) => {
   let config = createConfig();
@@ -102,6 +103,7 @@ const createNewTest = (
       defaultTime,
       questions,
       isPrivate,
+      examId,
       links,
     },
     config
@@ -144,12 +146,13 @@ const uploadFileExam = ({
   defaultTime,
   isPrivate,
   links,
+  examId,
   File,
 }) => {
   let config = createConfig();
   return axios
     .put(
-      `${backendURL}/api/Test/upload?categoryId=${categoryId}&testName=${testName}&description=${description}&defaultTime=${defaultTime}&isPrivate=${isPrivate}&links=${links}`,
+      `${backendURL}/api/Test/upload?categoryId=${categoryId}&testName=${testName}&description=${description}&defaultTime=${defaultTime}&examId=${examId}&isPrivate=${isPrivate}&links=${links}`,
       File,
       config
     )

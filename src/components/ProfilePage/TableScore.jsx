@@ -27,7 +27,7 @@ const TableScore = (props) => {
   const defaultTimeColumn = [
     {
       field: "timeTaken",
-      headerName: "Thời gian kiểm tra",
+      headerName: "Thời gian làm bài",
       cellClassName: "name-column--cell",
       valueGetter: (params) => {
         const originalDate = params.value; // Lấy giá trị ngày từ dữ liệu
@@ -40,6 +40,36 @@ const TableScore = (props) => {
       },
     },
   ];
+  const timeFinishColumn = [
+    {
+      field: "timeFinish",
+      headerName: "Thời gian kiểm tra",
+      cellClassName: "name-column--cell",
+      flex: 1,
+      minWidth: 150,
+
+      valueGetter: (params) => {
+        const originalDate = params.value; // Lấy giá trị ngày từ dữ liệu
+
+        if (originalDate) {
+          // Chuyển đổi ngày giờ từ định dạng gốc sang đối tượng Date và sau đó chuyển đổi sang múi giờ Việt Nam
+          const localDate = new Date(originalDate).toLocaleString("vi-VN", {
+            timeZone: "Asia/Ho_Chi_Minh",
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
+
+          return localDate; // Trả về ngày và giờ đã định dạng theo múi giờ Việt Nam
+        }
+        return "";
+      },
+    },
+  ];
+
   const columnScore = [
     {
       field: "score",
@@ -116,6 +146,7 @@ const TableScore = (props) => {
     ...columnInfoFolder,
     ...columnScore,
     ...columnEvaluate,
+    ...timeFinishColumn,
     ...defaultTimeColumn,
     {
       field: "username",
@@ -123,6 +154,11 @@ const TableScore = (props) => {
       cellClassName: "name-column--cell",
     },
     ...columnCategoryName,
+    {
+      field: "examName",
+      headerName: "Kỳ thi",
+      cellClassName: "name-column--cell",
+    },
   ];
   const columns2 = [
     ...columnsIndex,
@@ -134,11 +170,16 @@ const TableScore = (props) => {
     },
     ...columnScore,
     ...columnEvaluate,
-
+    ...timeFinishColumn,
     ...defaultTimeColumn,
     ...columnInfoFolderName,
     ...columnInfoFolderDes,
     ...columnCategoryName,
+    {
+      field: "examName",
+      headerName: "Kỳ thi",
+      cellClassName: "name-column--cell",
+    },
   ];
 
   let selectedColumns;

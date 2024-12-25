@@ -32,6 +32,7 @@ const TableFolderInvation = (props) => {
   }, [dispatch]);
   const listExamsInvited = useSelector((state) => state.exams.listExamsInvited);
   const listScoresUser = useSelector((state) => state.users.listScoresUser);
+  console.log(listExamsInvited);
 
   // Tạo một mảng chứa các testId trong listScoresUser
   const testIdsInScoresUser = listScoresUser.map((score) => score.testId);
@@ -181,7 +182,7 @@ const TableFolderInvation = (props) => {
         <GridToolbarExport
           printOptions={{ disableToolbarButton: true }}
           csvOptions={{
-            fileName: `Quản lý đề thi `,
+            fileName: `Quản lý người mời `,
             utf8WithBom: true,
           }}
         />

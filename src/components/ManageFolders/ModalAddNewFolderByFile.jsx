@@ -17,7 +17,6 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { v4 as uuidv4 } from "uuid";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 const ModalAddNewFolderByFile = (props) => {
@@ -26,12 +25,20 @@ const ModalAddNewFolderByFile = (props) => {
 
   const dispatch = useDispatch();
   const listSubjects = useSelector((state) => state.subjects.listSubjects);
+  let usernameLocal = localStorage.getItem("username");
+
   const listExamination = useSelector(
     (state) => state.examination.listExamination
   );
   useEffect(() => {
     dispatch(fetchAllSubjects({ orderBy, descending }));
-    dispatch(fetchAllExaminationRedux({ orderBy, descending }));
+    dispatch(
+      fetchAllExaminationRedux({
+        orderBy,
+        descending,
+        CreatorId: usernameLocal,
+      })
+    );
   }, []);
   const [isShowLoading, setIsShowLoading] = useState(false);
   const [show, setShow] = useState(false);
@@ -65,8 +72,13 @@ const ModalAddNewFolderByFile = (props) => {
   };
   const handleShow = () => {
     dispatch(fetchAllSubjects({ orderBy, descending }));
-    dispatch(fetchAllExaminationRedux({ orderBy, descending }));
-
+    dispatch(
+      fetchAllExaminationRedux({
+        orderBy,
+        descending,
+        CreatorId: usernameLocal,
+      })
+    );
     setNewExam({
       categoryId: 1,
       name: "",

@@ -17,8 +17,10 @@ import { v4 as uuidv4 } from "uuid";
 import SingleQuestion from "../GlobalComponent/SingleQuestion";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+
 const ModalAddNewFolderForAllFolder = (props) => {
-  let { descending, orderBy, from, username } = props;
+  let { descending, orderBy, username } = props;
+  let usernameLocal = localStorage.getItem("username");
 
   const dispatch = useDispatch();
   const listExamination = useSelector(
@@ -26,8 +28,13 @@ const ModalAddNewFolderForAllFolder = (props) => {
   );
   const listSubjects = useSelector((state) => state.subjects.listSubjects);
   useEffect(() => {
-    dispatch(fetchAllExaminationRedux({ orderBy, descending }));
-
+    dispatch(
+      fetchAllExaminationRedux({
+        orderBy,
+        descending,
+        CreatorId: usernameLocal,
+      })
+    );
     dispatch(fetchAllSubjects({ orderBy, descending }));
   }, []);
   const [isShowLoading, setIsShowLoading] = useState(false);
@@ -38,8 +45,13 @@ const ModalAddNewFolderForAllFolder = (props) => {
   const prefixes = ["A", "B", "C", "D"];
   const unit = [15, 30, 45, 60, 90, 120];
   const handleShow = () => {
-    dispatch(fetchAllExaminationRedux({ orderBy, descending }));
-
+    dispatch(
+      fetchAllExaminationRedux({
+        orderBy,
+        descending,
+        CreatorId: usernameLocal,
+      })
+    );
     dispatch(fetchAllSubjects({ orderBy, descending }));
     setShow(true);
   };

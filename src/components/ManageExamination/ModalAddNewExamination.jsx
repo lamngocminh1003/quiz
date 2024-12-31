@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
@@ -11,6 +11,8 @@ const ModalAddNewExamination = (props) => {
   const today = new Date();
   const twoWeeksLater = new Date();
   twoWeeksLater.setDate(today.getDate() + 14);
+  const [startAt, setStartAt] = useState("");
+  const [endAt, setEndAt] = useState("");
 
   // Format dates to ISO strings
   const formatDate = (date) => date.toISOString();
@@ -101,6 +103,19 @@ const ModalAddNewExamination = (props) => {
       console.error("Error adding exam:", error);
     }
   };
+  useEffect(() => {
+    // Convert startAt and endAt to Vietnam Time (UTC +7)
+    const startTime = new Date(exam.startAt);
+    startTime.setHours(startTime.getHours() + 7); // Add 7 hours for Vietnam Time (UTC+7)
+    const formattedStartTime = startTime.toISOString().slice(0, 19); // Format it to "YYYY-MM-DDTHH:mm"
+
+    const endTime = new Date(exam.endAt);
+    endTime.setHours(endTime.getHours() + 7); // Add 7 hours for Vietnam Time (UTC+7)
+    const formattedEndTime = endTime.toISOString().slice(0, 19); // Format it to "YYYY-MM-DDTHH:mm"
+
+    setStartAt(formattedStartTime);
+    setEndAt(formattedEndTime);
+  }, [exam.startAt, exam.endAt]);
   return (
     <>
       <Button
@@ -149,8 +164,10 @@ const ModalAddNewExamination = (props) => {
             <input
               type="datetime-local"
               className="form-control"
-              value={exam.startAt.slice(0, 19)} // Remove milliseconds and "Z" for input
-              onChange={(e) => handleChange("startAt", e.target.value + "Z")}
+              value={startAt} // Display start time in Vietnam Time
+              onChange={(e) =>
+                handleChange("startAt", new Date(e.target.value).toISOString())
+              } // Store in UTC format
             />
           </div>
 
@@ -159,8 +176,10 @@ const ModalAddNewExamination = (props) => {
             <input
               type="datetime-local"
               className="form-control"
-              value={exam.endAt.slice(0, 19)} // Remove milliseconds and "Z" for input
-              onChange={(e) => handleChange("endAt", e.target.value + "Z")}
+              value={endAt} // Display end time in Vietnam Time
+              onChange={(e) =>
+                handleChange("endAt", new Date(e.target.value).toISOString())
+              } // Store in UTC format
             />
           </div>
         </Modal.Body>

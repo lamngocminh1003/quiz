@@ -107,6 +107,23 @@ const ModalEditExamination = (props) => {
       });
     }
   }, [showEdit, dataExamination]);
+  const [startAt, setStartAt] = useState("");
+  const [endAt, setEndAt] = useState("");
+
+  useEffect(() => {
+    // Convert startAt to Vietnam Time (UTC +7)
+    const startTime = new Date(exam.startAt);
+    startTime.setHours(startTime.getHours() + 7); // Adjust for Vietnam Time (UTC+7)
+    const formattedStartTime = startTime.toISOString().slice(0, 19); // Format to "YYYY-MM-DDTHH:mm"
+
+    // Convert endAt to Vietnam Time (UTC +7)
+    const endTime = new Date(exam.endAt);
+    endTime.setHours(endTime.getHours() + 7); // Adjust for Vietnam Time (UTC+7)
+    const formattedEndTime = endTime.toISOString().slice(0, 19); // Format to "YYYY-MM-DDTHH:mm"
+
+    setStartAt(formattedStartTime);
+    setEndAt(formattedEndTime);
+  }, [exam.startAt, exam.endAt]);
   return (
     <>
       <Modal backdrop="static" centered show={showEdit} onHide={handleClose}>
@@ -143,8 +160,10 @@ const ModalEditExamination = (props) => {
             <input
               type="datetime-local"
               className="form-control"
-              value={exam.startAt.slice(0, 19)} // Remove milliseconds and "Z" for input
-              onChange={(e) => handleChange("startAt", e.target.value + "Z")}
+              value={startAt} // Display Vietnam Time for start
+              onChange={(e) =>
+                handleChange("startAt", new Date(e.target.value).toISOString())
+              } // Store in UTC format
             />
           </div>
           <div className="input-group mb-3">
@@ -152,8 +171,10 @@ const ModalEditExamination = (props) => {
             <input
               type="datetime-local"
               className="form-control"
-              value={exam.endAt.slice(0, 19)} // Remove milliseconds and "Z" for input
-              onChange={(e) => handleChange("endAt", e.target.value + "Z")}
+              value={endAt} // Display Vietnam Time for end
+              onChange={(e) =>
+                handleChange("endAt", new Date(e.target.value).toISOString())
+              } // Store in UTC format
             />
           </div>
         </Modal.Body>

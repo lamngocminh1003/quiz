@@ -175,7 +175,6 @@ const TableExamination = (props) => {
       </GridToolbarContainer>
     );
   }
-  console.log(listExamination);
 
   return (
     <>
